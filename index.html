@@ -1043,11 +1043,11 @@
     <div class="form-grid">
       <div class="form-group">
         <label>Pet name</label>
-        <input type="text" placeholder="e.g. Bruno">
+        <input type="text" id="petName" placeholder="e.g. Bruno">
       </div>
       <div class="form-group">
         <label>Breed</label>
-        <select>
+        <select id="breed">
           <option value="">Select breed</option>
           <option>Labrador Retriever</option>
           <option>Indian Breed (Desi)</option>
@@ -1065,7 +1065,7 @@
       </div>
       <div class="form-group">
         <label>Pet's age</label>
-        <select>
+        <select id="petAge">
           <option>Under 6 months</option>
           <option>6–12 months</option>
           <option>1–3 years</option>
@@ -1075,14 +1075,14 @@
       </div>
       <div class="form-group">
         <label>Gender</label>
-        <select>
+        <select id="gender">
           <option>Male</option>
           <option>Female</option>
         </select>
       </div>
       <div class="form-group full">
         <label>Your address</label>
-        <input type="text" placeholder="Flat / Tower / Apartment, Area, City">
+        <input type="text" id="address" placeholder="Flat / Tower / Apartment, Area, City">
       </div>
       <div class="form-group">
         <label>Date</label>
@@ -1090,7 +1090,7 @@
       </div>
       <div class="form-group">
         <label>Time slot</label>
-        <select>
+        <select id="timeSlot">
           <option>6:00 AM – 7:00 AM</option>
           <option>7:00 AM – 8:00 AM</option>
           <option>8:00 AM – 9:00 AM</option>
@@ -1102,11 +1102,11 @@
       </div>
       <div class="form-group">
         <label>Phone number</label>
-        <input type="tel" placeholder="+91 98765 43210">
+        <input type="tel" id="phone" placeholder="+91 98765 43210">
       </div>
       <div class="form-group">
         <label>Payment</label>
-        <select>
+        <select id="payment">
           <option>UPI (PhonePe / GPay)</option>
           <option>Cash on delivery</option>
           <option>Debit / Credit Card</option>
@@ -1115,11 +1115,11 @@
       </div>
       <div class="form-group full">
         <label>Special instructions (optional)</label>
-        <textarea rows="2" placeholder="e.g. Bruno gets anxious around loud sounds..."></textarea>
+        <textarea id="instructions" rows="2" placeholder="e.g. Bruno gets anxious around loud sounds..."></textarea>
       </div>
     </div>
 
-    <button class="btn-primary" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitBooking()">
+    <button class="btn-primary" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitMainBooking()">
       Confirm Booking →
     </button>
   </div>
@@ -1403,6 +1403,55 @@
   function submitBooking() {
     closeModal();
     showToast('🐾 Booking confirmed! Your pet executive will be assigned shortly.');
+  }
+
+  // ====== Google Sheets integration for the "Book in under 2 minutes" form ======
+  // 1. Deploy the Apps Script (see instructions) as a Web App.
+  // 2. Paste the Web App URL between the quotes below.
+  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwXkrOy7QcoXrXUPWFdesleiu4qK0a-zwBUgZSN8ix0n1ToClc8kjBtYI_LNT-kei63/exec';
+
+  function submitMainBooking() {
+    const activeTab = document.querySelector('#serviceTabs .service-tab.active');
+    const data = {
+      service:      activeTab ? activeTab.textContent.trim() : '',
+      petName:      document.getElementById('petName').value.trim(),
+      breed:        document.getElementById('breed').value,
+      petAge:       document.getElementById('petAge').value,
+      gender:       document.getElementById('gender').value,
+      address:      document.getElementById('address').value.trim(),
+      date:         document.getElementById('bookDate').value,
+      timeSlot:     document.getElementById('timeSlot').value,
+      phone:        document.getElementById('phone').value.trim(),
+      payment:      document.getElementById('payment').value,
+      instructions: document.getElementById('instructions').value.trim()
+    };
+
+    // Basic validation
+    if (!data.petName || !data.phone) {
+      showToast('⚠️ Please enter at least your pet name and phone number.');
+      return;
+    }
+
+    // Guard: endpoint not configured yet
+    if (SHEET_ENDPOINT.indexOf('PASTE_YOUR') === 0) {
+      showToast('⚙️ Form not connected yet — add your Google Sheet URL in the code.');
+      console.warn('Booking data (would be sent to sheet):', data);
+      return;
+    }
+
+    const fd = new FormData();
+    Object.keys(data).forEach(k => fd.append(k, data[k]));
+
+    showToast('⏳ Submitting your booking...');
+    fetch(SHEET_ENDPOINT, { method: 'POST', body: fd })
+      .then(() => {
+        showToast('🐾 Booking confirmed! Your details have been saved.');
+        // Reset fields
+        ['petName','address','phone','instructions'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+      })
+      .catch(() => showToast('❌ Something went wrong. Please try again.'));
   }
 
   function addToCart(item) {

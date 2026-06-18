@@ -1,64 +1,1430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Personal Page</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-      text-align: center;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      padding: 3rem 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      max-width: 420px;
-    }
-    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-    p { opacity: 0.9; margin-bottom: 1.5rem; }
-    button {
-      font-size: 1rem;
-      padding: 0.7rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      background: #fff;
-      color: #764ba2;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-    button:hover { transform: translateY(-2px); }
-    #clock { margin-top: 1.5rem; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urban Paws – Pet Services for Metro Cities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paw: #E8531A;
+    --paw-deep: #B8400F;
+    --paw-soft: #FDF0EB;
+    --paw-amber: #F5A623;
+    --night: #0F0D0B;
+    --bark: #2C1F14;
+    --moss: #1A3A2A;
+    --sage: #2D5A3D;
+    --cream: #FDFAF7;
+    --warm-gray: #8A7F75;
+    --border: rgba(0,0,0,0.08);
+    --card-bg: #FFFFFF;
+    --text: #1A1410;
+    --muted: #6B5E54;
+    --radius: 16px;
+    --radius-sm: 8px;
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(253,250,247,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.4rem;
+    color: var(--paw);
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .logo-paw { font-size: 1.6rem; }
+
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none; font-size: 0.9rem; font-weight: 500;
+    color: var(--muted);
+    transition: color var(--transition);
+  }
+  .nav-links a:hover { color: var(--paw); }
+
+  .nav-cta {
+    background: var(--paw); color: #fff;
+    border: none; border-radius: 100px;
+    padding: 10px 24px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: background var(--transition);
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--paw-deep); }
+
+  /* HERO */
+  .hero {
+    min-height: calc(100vh - 64px);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; align-items: center;
+    padding: 4rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(232,83,26,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--paw-soft); color: var(--paw-deep);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; margin-bottom: 1.5rem;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: clamp(2.8rem, 5vw, 4.5rem);
+    line-height: 1.08; letter-spacing: -0.02em;
+    color: var(--night);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    font-style: normal; color: var(--paw);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem; color: var(--muted); line-height: 1.7;
+    max-width: 460px; margin-bottom: 2.5rem;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--paw); color: #fff;
+    border: none; border-radius: 100px;
+    padding: 14px 32px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: all var(--transition);
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--paw-deep); transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent; color: var(--text);
+    border: 1.5px solid var(--border); border-radius: 100px;
+    padding: 14px 32px; font-size: 1rem; font-weight: 500;
+    cursor: pointer; transition: all var(--transition);
+    text-decoration: none; display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--paw); color: var(--paw); }
+
+  .hero-visual {
+    display: flex; justify-content: flex-end; align-items: center;
+    position: relative;
+  }
+
+  .hero-card-stack {
+    position: relative; width: 360px; height: 440px;
+  }
+
+  .hero-card {
+    position: absolute; border-radius: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero-card-main {
+    width: 320px; height: 380px; top: 30px; left: 20px;
+    background: var(--night);
+    display: flex; flex-direction: column;
+    justify-content: flex-end; padding: 1.5rem;
+  }
+
+  .hero-card-float {
+    width: 200px; height: 100px;
+    top: 0; left: 0;
+    background: #fff;
+    display: flex; align-items: center; gap: 12px;
+    padding: 1rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
+  .float-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--paw-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+
+  .float-text { font-size: 0.8rem; }
+  .float-text strong { display: block; font-weight: 600; font-size: 0.85rem; }
+  .float-text span { color: var(--sage); font-weight: 500; }
+
+  .hero-card-badge {
+    position: absolute; bottom: 16px; right: 16px;
+    background: var(--paw);
+    color: #fff; border-radius: 100px;
+    padding: 8px 16px; font-size: 0.8rem; font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .hero-paw-art {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .big-paw {
+    font-size: 8rem;
+    line-height: 1;
+    filter: drop-shadow(0 20px 40px rgba(232,83,26,0.2));
+  }
+
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 3rem;
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.8rem; color: var(--night);
+  }
+  .stat-label { font-size: 0.8rem; color: var(--muted); }
+
+  /* SECTION STRUCTURE */
+  section { padding: 5rem 6rem; }
+  section:nth-child(even) { background: #fff; }
+
+  .section-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--paw);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.1; color: var(--night);
+    margin-bottom: 1rem;
+  }
+  .section-sub {
+    font-size: 1.05rem; color: var(--muted); max-width: 520px;
+    line-height: 1.7; margin-bottom: 3rem;
+  }
+
+  /* SERVICES GRID */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card:hover {
+    border-color: var(--paw);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(232,83,26,0.1);
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--paw), var(--paw-amber));
+    transform: scaleX(0);
+    transition: transform var(--transition);
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--paw-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; margin-bottom: 1.25rem;
+  }
+
+  .service-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1.1rem;
+    margin-bottom: 0.5rem; color: var(--night);
+  }
+  .service-card p {
+    font-size: 0.9rem; color: var(--muted);
+    line-height: 1.6; margin-bottom: 1.25rem;
+  }
+
+  .service-price {
+    font-weight: 600; font-size: 0.95rem;
+    color: var(--paw);
+  }
+
+  .service-tag {
+    display: inline-block; padding: 4px 10px;
+    background: var(--paw-soft); color: var(--paw-deep);
+    border-radius: 100px; font-size: 0.75rem; font-weight: 600;
+    margin-left: 0.5rem;
+  }
+
+  /* BOOKING FLOW */
+  .booking-section { background: var(--night) !important; color: #fff; }
+  .booking-section .section-label { color: var(--paw-amber); }
+  .booking-section .section-title { color: #fff; }
+  .booking-section .section-sub { color: rgba(255,255,255,0.6); }
+
+  .booking-form-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 2.5rem;
+    max-width: 720px;
+  }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1/-1; }
+
+  .form-group label {
+    font-size: 0.85rem; font-weight: 500;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    color: #fff; font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    transition: border-color var(--transition);
+    appearance: none;
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none; border-color: var(--paw);
+    background: rgba(255,255,255,0.1);
+  }
+  .form-group select option { background: var(--night); color: #fff; }
+
+  .service-tabs {
+    display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .service-tab {
+    padding: 8px 18px; border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent; color: rgba(255,255,255,0.6);
+    font-size: 0.85rem; font-weight: 500; cursor: pointer;
+    transition: all var(--transition);
+    font-family: 'Inter', sans-serif;
+  }
+  .service-tab.active,
+  .service-tab:hover {
+    background: var(--paw); border-color: var(--paw);
+    color: #fff;
+  }
+
+  /* FOOD MENU */
+  .menu-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .menu-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    transition: all var(--transition);
+  }
+  .menu-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
+
+  .menu-card-img {
+    height: 120px; background: var(--paw-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+  }
+
+  .menu-card-body { padding: 1rem 1.25rem; }
+  .menu-card-body h4 {
+    font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;
+    color: var(--night);
+  }
+  .menu-card-body p { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
+
+  .menu-price-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .menu-price { font-weight: 700; color: var(--paw); }
+  .menu-badge {
+    font-size: 0.7rem; padding: 3px 8px;
+    border-radius: 100px; font-weight: 600;
+  }
+  .badge-veg { background: #E8F5E9; color: #2E7D32; }
+  .badge-nonveg { background: #FBE9E7; color: #BF360C; }
+
+  /* SHOP */
+  .shop-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+  }
+  .shop-item {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem;
+    text-align: center; cursor: pointer;
+    transition: all var(--transition);
+  }
+  .shop-item:hover { border-color: var(--paw); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(232,83,26,0.08); }
+  .shop-item-icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+  .shop-item h4 { font-size: 0.9rem; font-weight: 600; color: var(--night); margin-bottom: 0.25rem; }
+  .shop-item p { font-size: 0.8rem; color: var(--muted); }
+  .shop-item .price { font-weight: 700; color: var(--paw); font-size: 1rem; margin-top: 0.5rem; display: block; }
+
+  /* HOW IT WORKS */
+  .steps-flow {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; position: relative;
+  }
+  .steps-flow::before {
+    content: '';
+    position: absolute;
+    top: 32px; left: 10%; right: 10%; height: 1px;
+    background: var(--border); z-index: 0;
+  }
+
+  .step {
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+    padding: 0 1rem; position: relative; z-index: 1;
+  }
+  .step-num {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--paw); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.2rem;
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+  }
+  .step h4 { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: var(--night); }
+  .step p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* TESTIMONIALS */
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .testimonial-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.75rem;
+  }
+  .stars { color: var(--paw-amber); font-size: 1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testimonial-text { font-size: 0.95rem; color: var(--text); line-height: 1.7; margin-bottom: 1.25rem; }
+  .reviewer { display: flex; align-items: center; gap: 12px; }
+  .reviewer-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--paw-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem; color: var(--paw);
+  }
+  .reviewer-name { font-weight: 600; font-size: 0.9rem; color: var(--night); }
+  .reviewer-city { font-size: 0.8rem; color: var(--muted); }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .pricing-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 2rem;
+    position: relative;
+  }
+  .pricing-card.featured {
+    background: var(--night); color: #fff;
+    border-color: var(--night);
+  }
+  .pricing-card.featured .plan-price,
+  .pricing-card.featured h3 { color: #fff; }
+  .pricing-card.featured .plan-desc { color: rgba(255,255,255,0.6); }
+  .pricing-card.featured .plan-feature { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.08); }
+  .plan-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--paw); color: #fff;
+    padding: 4px 16px; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 700;
+    white-space: nowrap;
+  }
+  .pricing-card h3 {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem;
+    margin-bottom: 0.5rem; color: var(--night);
+  }
+  .plan-price {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.5rem;
+    color: var(--night); line-height: 1;
+    margin: 1rem 0 0.25rem;
+  }
+  .plan-price span { font-size: 1rem; font-weight: 400; opacity: 0.6; }
+  .plan-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .plan-features { list-style: none; margin-bottom: 1.5rem; }
+  .plan-feature {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .plan-feature::before { content: '✓'; color: var(--paw); font-weight: 700; }
+
+  /* EMERGENCY BANNER */
+  .emergency-banner {
+    background: #1A0A05;
+    color: #fff; padding: 1.5rem 6rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+  }
+  .emergency-left { display: flex; align-items: center; gap: 1rem; }
+  .sos-badge {
+    background: #CC0000; color: #fff;
+    padding: 6px 12px; border-radius: var(--radius-sm);
+    font-weight: 800; font-size: 0.9rem; letter-spacing: 0.1em;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  .emergency-text { font-size: 0.95rem; }
+  .emergency-text strong { display: block; font-size: 1rem; margin-bottom: 0.2rem; }
+  .emergency-text span { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+
+  /* FOOTER */
+  footer {
+    background: var(--night);
+    color: rgba(255,255,255,0.7);
+    padding: 4rem 6rem 2rem;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem; margin-bottom: 3rem;
+  }
+  .footer-brand .logo { color: #fff; margin-bottom: 1rem; display: flex; }
+  .footer-brand p { font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+  .footer-col h5 {
+    font-weight: 600; color: #fff;
+    margin-bottom: 1rem; font-size: 0.9rem;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-col a {
+    text-decoration: none; font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    transition: color var(--transition);
+  }
+  .footer-col a:hover { color: var(--paw); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 1.5rem;
+    display: flex; justify-content: space-between;
+    align-items: center; font-size: 0.8rem;
+  }
+  .footer-bottom a { color: rgba(255,255,255,0.4); text-decoration: none; }
+
+  /* CITY BADGES */
+  .city-badges { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .city-badge {
+    padding: 6px 14px; border-radius: 100px;
+    background: #fff; border: 1px solid var(--border);
+    font-size: 0.8rem; font-weight: 500; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .city-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--paw); }
+
+  /* APP DOWNLOAD SECTION */
+  .app-section {
+    background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%) !important;
+    color: #fff;
+    display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem;
+  }
+  .app-section .section-label { color: var(--paw-amber); }
+  .app-section .section-title { color: #fff; }
+  .app-section .section-sub { color: rgba(255,255,255,0.6); }
+  .app-badges { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .app-badge {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 14px; padding: 12px 20px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; transition: all var(--transition);
+    text-decoration: none;
+  }
+  .app-badge:hover { background: rgba(255,255,255,0.18); }
+  .app-badge-icon { font-size: 1.5rem; }
+  .app-badge-text { }
+  .app-badge-text small { display: block; font-size: 0.7rem; color: rgba(255,255,255,0.6); }
+  .app-badge-text strong { font-size: 1rem; color: #fff; }
+  .app-mockup {
+    display: flex; justify-content: center;
+    position: relative;
+  }
+  .phone-frame {
+    width: 220px; height: 440px; border-radius: 36px;
+    background: #1A1A1A; border: 6px solid #333;
+    overflow: hidden; position: relative;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    background: var(--cream);
+    display: flex; flex-direction: column;
+  }
+  .phone-header {
+    background: var(--paw); padding: 1rem;
+    color: #fff; font-weight: 700; font-size: 0.9rem;
+  }
+  .phone-body { padding: 0.75rem; flex: 1; overflow: hidden; }
+  .phone-service-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.5rem; margin-bottom: 0.5rem;
+  }
+  .phone-service-tile {
+    background: #fff; border-radius: 10px;
+    padding: 0.75rem; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .phone-service-tile span { font-size: 1.4rem; display: block; margin-bottom: 0.25rem; }
+  .phone-service-tile small { font-size: 0.6rem; color: var(--muted); font-weight: 500; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.7);
+    align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 24px;
+    padding: 2.5rem; max-width: 480px; width: 100%;
+    position: relative; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-close {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    background: none; border: none; font-size: 1.5rem;
+    cursor: pointer; color: var(--muted);
+  }
+  .modal h2 {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--night);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 2000;
+    background: var(--night); color: #fff;
+    padding: 1rem 1.5rem; border-radius: 14px;
+    font-size: 0.9rem; font-weight: 500;
+    transform: translateY(100px); opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-paw { font-size: 1.1rem; margin-right: 0.5rem; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 3rem 2rem; text-align: center; min-height: auto; }
+    .hero-visual { justify-content: center; margin-top: 3rem; }
+    .hero-sub { max-width: 100%; }
+    .hero-actions { justify-content: center; }
+    .hero-stats { justify-content: center; }
+    section { padding: 3rem 2rem; }
+    .steps-flow { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .steps-flow::before { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-col:first-child { grid-column: 1/-1; }
+    .emergency-banner { padding: 1.5rem 2rem; flex-direction: column; text-align: center; }
+    .app-section { grid-template-columns: 1fr; }
+    footer { padding: 3rem 2rem 2rem; }
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 2.2rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
 </head>
 <body>
-  <div class="card">
-    <h1>Hello! 👋</h1>
-    <p>Your page is now live in the browser.</p>
-    <button id="greetBtn">Click me</button>
-    <div id="clock"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <span class="logo-paw">🐾</span>
+    Urban Paws
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#food">Pet Food</a></li>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#booking">Book</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#booking" class="nav-cta">Book a Service</a>
+</nav>
+
+<!-- EMERGENCY BANNER -->
+<div class="emergency-banner">
+  <div class="emergency-left">
+    <span class="sos-badge">SOS</span>
+    <div class="emergency-text">
+      <strong>24/7 Pet Emergency Line Available</strong>
+      <span>Medicine delivery, emergency vet consult & urgent boarding — always on call</span>
+    </div>
+  </div>
+  <a href="tel:+911800PAWS24" class="btn-primary" style="white-space:nowrap;background:var(--paw);">
+    📞 1800-PAWS-24
+  </a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      🌆 Made for metro pet parents
+    </div>
+    <h1>Your dog deserves the <em>city life</em> too.</h1>
+    <p class="hero-sub">
+      Urban Paws brings professional dog walking, fresh-cooked meals, grooming, boarding, vet care & more — right to your apartment door in Bengaluru, Mumbai, Delhi & beyond.
+    </p>
+    <div class="hero-actions">
+      <a href="#booking" class="btn-primary">Book a Service ↗</a>
+      <a href="#services" class="btn-outline">Explore Services</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">12K+</div>
+        <div class="stat-label">Happy pets served</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Average rating</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Metro cities</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card-stack">
+      <div class="hero-card hero-card-main">
+        <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:6rem; line-height:1;">🐕</span>
+        </div>
+        <div>
+          <p style="color:rgba(255,255,255,0.5); font-size:0.75rem; margin-bottom:4px;">Currently active</p>
+          <p style="color:#fff; font-weight:600; font-size:0.95rem;">Bruno's morning walk in progress</p>
+          <p style="color:var(--paw); font-size:0.8rem; margin-top:4px;">📍 Koramangala, Bengaluru</p>
+        </div>
+        <div class="hero-card-badge">🟢 Live tracking</div>
+      </div>
+      <div class="hero-card hero-card-float">
+        <div class="float-icon">🍲</div>
+        <div class="float-text">
+          <strong>Fresh meal on way</strong>
+          <span>Arrives in 22 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CITIES -->
+<div style="background:#fff; padding:1.5rem 6rem; border-bottom:1px solid var(--border);">
+  <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.75rem; font-weight:500;">Available in</p>
+  <div class="city-badges">
+    <div class="city-badge"><span class="city-dot"></span>Bengaluru</div>
+    <div class="city-badge"><span class="city-dot"></span>Mumbai</div>
+    <div class="city-badge"><span class="city-dot"></span>Delhi NCR</div>
+    <div class="city-badge"><span class="city-dot"></span>Pune</div>
+    <div class="city-badge"><span class="city-dot"></span>Hyderabad</div>
+    <div class="city-badge"><span class="city-dot"></span>Chennai</div>
+    <div class="city-badge"><span class="city-dot"></span>Kolkata</div>
+    <div class="city-badge"><span class="city-dot"></span>Ahmedabad</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What we do</div>
+  <h2 class="section-title">Every service your pet needs</h2>
+  <p class="section-sub">From daily walks to emergency care — one app, one partner, all covered.</p>
+
+  <div class="services-grid">
+    <div class="service-card" onclick="openBooking('Pet Walking')">
+      <div class="service-icon">🦮</div>
+      <h3>Pet Walking</h3>
+      <p>Professional pet executors take your dog for a 20–30 min walk. Live GPS tracking, paw cleaning on return & route recorded.</p>
+      <div class="service-price">From ₹89/walk <span class="service-tag">Most Popular</span></div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Pet Feeding')">
+      <div class="service-icon">🍲</div>
+      <h3>Fresh Pet Food</h3>
+      <p>Freshly cooked meals delivered in 30–35 min. Veg & non-veg options from a cloud kitchen with vet-approved specific ingredients.</p>
+      <div class="service-price">From ₹30/bowl</div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Grooming')">
+      <div class="service-icon">✂️</div>
+      <h3>Washing & Grooming</h3>
+      <p>Full bath, blow dry, nail clipping, ear cleaning, and breed-specific grooming at your doorstep.</p>
+      <div class="service-price">From ₹499/session</div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Boarding')">
+      <div class="service-icon">🏠</div>
+      <h3>Pet Boarding</h3>
+      <p>Heading out of the city for 24+ hours? Leave your dog or cat with our verified host families. Daily updates guaranteed.</p>
+      <div class="service-price">From ₹599/night</div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Vaccination')">
+      <div class="service-icon">💉</div>
+      <h3>Vaccination & Medicine</h3>
+      <p>Vet visits at home for scheduled vaccinations, medicine delivery within 2 hours, and health check-ups.</p>
+      <div class="service-price">From ₹299/visit</div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Pet Taxi')">
+      <div class="service-icon">🚐</div>
+      <h3>Pet Taxi & Transport</h3>
+      <p>Dedicated Maruti Omni transport for your pets — no more rejection from autos or Ola. Safe, calm, air-conditioned rides.</p>
+      <div class="service-price">From ₹199/trip</div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Pet Insurance')">
+      <div class="service-icon">🛡️</div>
+      <h3>Pet Insurance</h3>
+      <p>Affordable health coverage for accidents, illnesses, and surgeries. Get a quote and enroll in under 5 minutes.</p>
+      <div class="service-price">From ₹999/year</div>
+    </div>
+
+    <div class="service-card" onclick="openBooking('Pet Sitting')">
+      <div class="service-icon">🧡</div>
+      <h3>Pet Sitting</h3>
+      <p>In-home sitting while you're at work. Our sitter comes to you — no displacement stress for your pet.</p>
+      <div class="service-price">From ₹299/session</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background:#fff;">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">Ready in 4 easy steps</h2>
+  <p class="section-sub">From download to doorstep in under 3 minutes.</p>
+  <div class="steps-flow">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Download the app</h4>
+      <p>Available on iOS and Android. Sign up with your phone number — takes 30 seconds.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Add your pet</h4>
+      <p>Tell us your pet's breed, age, gender, and any special requirements.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Choose a service</h4>
+      <p>Pick walk, food, grooming, boarding or any service and your preferred time slot.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Track in real time</h4>
+      <p>Your assigned pet executive arrives. Watch live on map, get photos & updates.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOD MENU -->
+<section id="food">
+  <div class="section-label">Pet kitchen</div>
+  <h2 class="section-title">Fresh food, zero preservatives</h2>
+  <p class="section-sub">Cooked fresh daily in our cloud kitchen. Vet-approved ingredients. Both veg and non-veg options — because we know not every family can cook chicken.</p>
+
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-img">🍚</div>
+      <div class="menu-card-body">
+        <h4>Rice & Curd</h4>
+        <p>Freshly cooked rice with curd. Approx. 300g. No preservatives.</p>
+        <div class="menu-price-row">
+          <span class="menu-price">₹30/bowl</span>
+          <span class="menu-badge badge-veg">🌿 Veg</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🍗</div>
+      <div class="menu-card-body">
+        <h4>Rice & Chicken</h4>
+        <p>Freshly cooked rice + chicken 100g. Approx. 450g. Turmeric added.</p>
+        <div class="menu-price-row">
+          <span class="menu-price">₹80/bowl</span>
+          <span class="menu-badge badge-nonveg">🥩 Non-veg</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🥩</div>
+      <div class="menu-card-body">
+        <h4>Rice & Raw Egg</h4>
+        <p>Rice with raw egg. Approx. 400g. Rich in protein.</p>
+        <div class="menu-price-row">
+          <span class="menu-price">₹75/bowl</span>
+          <span class="menu-badge badge-nonveg">🥩 Non-veg</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🥛</div>
+      <div class="menu-card-body">
+        <h4>Rice & Milk</h4>
+        <p>Freshly cooked rice with full-fat milk. Approx. 300g. Easy digestion.</p>
+        <div class="menu-price-row">
+          <span class="menu-price">₹30/bowl</span>
+          <span class="menu-badge badge-veg">🌿 Veg</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🥕</div>
+      <div class="menu-card-body">
+        <h4>Chicken & Carrots</h4>
+        <p>Chicken 100g + freshly cooked carrots. Approx. 400g. High fibre.</p>
+        <div class="menu-price-row">
+          <span class="menu-price">₹75/bowl</span>
+          <span class="menu-badge badge-nonveg">🥩 Non-veg</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="menu-card-img">🥚</div>
+      <div class="menu-card-body">
+        <h4>Rice & Boiled Egg</h4>
+        <p>Rice + boiled egg (1). Approx. 400g. Great for puppies.</p>
+        <div class="menu-price-row">
+          <span class="menu-price">₹40/bowl</span>
+          <span class="menu-badge badge-nonveg">🥩 Non-veg</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script>
-    document.getElementById("greetBtn").addEventListener("click", () => {
-      alert("It works! 🎉");
-    });
+  <div style="margin-top:2rem; padding:1.5rem; background:var(--paw-soft); border-radius:var(--radius); display:flex; align-items:center; gap:1rem;">
+    <span style="font-size:2rem;">🛒</span>
+    <div>
+      <strong>Customizable add-ons available</strong>
+      <p style="font-size:0.85rem; color:var(--muted); margin-top:0.25rem;">Carrots (59g), Chick peas (30g), Raw Egg (1), Boiled Egg (1), Dry pedigree (xx g), Sweet Bread (5 pcs), Wheat Bread (5 pcs), Bowl of Milk — all priced from ₹5</p>
+    </div>
+  </div>
+</section>
 
-    function tick() {
-      document.getElementById("clock").textContent = new Date().toLocaleTimeString();
-    }
-    setInterval(tick, 1000);
-    tick();
-  </script>
+<!-- SHOP -->
+<section id="shop" style="background:#fff;">
+  <div class="section-label">Pet supplies</div>
+  <h2 class="section-title">Everything your pet needs, delivered</h2>
+  <p class="section-sub">Quality grooming products, accessories, and essentials — curated by our vet team and shipped same day.</p>
+
+  <div class="shop-grid">
+    <div class="shop-item" onclick="addToCart('Shampoo')">
+      <span class="shop-item-icon">🧴</span>
+      <h4>Pet Shampoo</h4>
+      <p>Hypoallergenic, vet-approved</p>
+      <span class="price">₹349</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Soap Bar')">
+      <span class="shop-item-icon">🧼</span>
+      <h4>Pet Soap</h4>
+      <p>Oatmeal & aloe vera</p>
+      <span class="price">₹199</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Grooming Brush')">
+      <span class="shop-item-icon">🪮</span>
+      <h4>Grooming Brush</h4>
+      <p>Dematting & detangling</p>
+      <span class="price">₹449</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Food Bowl Set')">
+      <span class="shop-item-icon">🥣</span>
+      <h4>Food & Water Bowl</h4>
+      <p>Stainless steel, anti-tip</p>
+      <span class="price">₹599</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Personalized Tag')">
+      <span class="shop-item-icon">🏷️</span>
+      <h4>ID Tag</h4>
+      <p>Laser engraved, custom</p>
+      <span class="price">₹149</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Leash')">
+      <span class="shop-item-icon">🦮</span>
+      <h4>Retractable Leash</h4>
+      <p>5m, reflective, padded handle</p>
+      <span class="price">₹799</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Dog Shoes')">
+      <span class="shop-item-icon">👟</span>
+      <h4>Pet Shoes</h4>
+      <p>Anti-slip, waterproof 4-pack</p>
+      <span class="price">₹699</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Paw Balm')">
+      <span class="shop-item-icon">🐾</span>
+      <h4>Paw Balm</h4>
+      <p>Soothes cracked paws</p>
+      <span class="price">₹249</span>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section id="booking" class="booking-section">
+  <div class="section-label">Quick booking</div>
+  <h2 class="section-title">Book in under 2 minutes</h2>
+  <p class="section-sub">Select your service, fill in your pet's details, and we'll assign a verified executive near you.</p>
+
+  <div class="booking-form-card">
+    <div class="service-tabs" id="serviceTabs">
+      <button class="service-tab active" onclick="selectService(this)">🦮 Walk</button>
+      <button class="service-tab" onclick="selectService(this)">🍲 Food</button>
+      <button class="service-tab" onclick="selectService(this)">✂️ Grooming</button>
+      <button class="service-tab" onclick="selectService(this)">🏠 Boarding</button>
+      <button class="service-tab" onclick="selectService(this)">💉 Vaccination</button>
+      <button class="service-tab" onclick="selectService(this)">🚐 Pet Taxi</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Pet name</label>
+        <input type="text" placeholder="e.g. Bruno">
+      </div>
+      <div class="form-group">
+        <label>Breed</label>
+        <select>
+          <option value="">Select breed</option>
+          <option>Labrador Retriever</option>
+          <option>Indian Breed (Desi)</option>
+          <option>German Shepherd</option>
+          <option>Beagle</option>
+          <option>Siberian Husky</option>
+          <option>Rottweiler</option>
+          <option>Shih Tzu</option>
+          <option>Dobermann</option>
+          <option>American Bully</option>
+          <option>Pomeranian</option>
+          <option>Persian Cat</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Pet's age</label>
+        <select>
+          <option>Under 6 months</option>
+          <option>6–12 months</option>
+          <option>1–3 years</option>
+          <option>3–7 years</option>
+          <option>7+ years</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Your address</label>
+        <input type="text" placeholder="Flat / Tower / Apartment, Area, City">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="bookDate">
+      </div>
+      <div class="form-group">
+        <label>Time slot</label>
+        <select>
+          <option>6:00 AM – 7:00 AM</option>
+          <option>7:00 AM – 8:00 AM</option>
+          <option>8:00 AM – 9:00 AM</option>
+          <option>9:00 AM – 10:00 AM</option>
+          <option>4:00 PM – 5:00 PM</option>
+          <option>5:00 PM – 6:00 PM</option>
+          <option>6:00 PM – 7:00 PM</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Phone number</label>
+        <input type="tel" placeholder="+91 98765 43210">
+      </div>
+      <div class="form-group">
+        <label>Payment</label>
+        <select>
+          <option>UPI (PhonePe / GPay)</option>
+          <option>Cash on delivery</option>
+          <option>Debit / Credit Card</option>
+          <option>Urban Paws Wallet</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Special instructions (optional)</label>
+        <textarea rows="2" placeholder="e.g. Bruno gets anxious around loud sounds..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitBooking()">
+      Confirm Booking →
+    </button>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-label">Pricing & plans</div>
+  <h2 class="section-title">Transparent, no surprises</h2>
+  <p class="section-sub">Pay per use, or subscribe for families with multiple pets and daily needs.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Pay as you go</h3>
+      <div class="plan-price">₹0 <span>/month</span></div>
+      <div class="plan-desc">No subscription, no commitment. Book anytime.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Walk from ₹89</li>
+        <li class="plan-feature">Food delivery from ₹30</li>
+        <li class="plan-feature">Grooming from ₹499</li>
+        <li class="plan-feature">Platform fee ₹1–₹2/order</li>
+        <li class="plan-feature">Basic live tracking</li>
+      </ul>
+      <button class="btn-outline" style="width:100%;" onclick="openBooking('Walk')">Get started</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="plan-badge">Most popular</div>
+      <h3>Urban Paws Pro</h3>
+      <div class="plan-price">₹999 <span>/month</span></div>
+      <div class="plan-desc">For the committed pet parent. Save 30% on every service.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">15 walks included per month</li>
+        <li class="plan-feature">10% off food orders</li>
+        <li class="plan-feature">Priority booking</li>
+        <li class="plan-feature">Zero platform fee</li>
+        <li class="plan-feature">HD live tracking + photos</li>
+        <li class="plan-feature">Free 1 grooming/month</li>
+      </ul>
+      <button class="btn-primary" style="width:100%;" onclick="showToast('🐾 Pro plan selected! Redirecting to checkout...')">Subscribe now</button>
+    </div>
+
+    <div class="pricing-card">
+      <h3>Multi-pet Family</h3>
+      <div class="plan-price">₹1,799 <span>/month</span></div>
+      <div class="plan-desc">For families with 2+ dogs or cats.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">Up to 3 pets registered</li>
+        <li class="plan-feature">30 walks/month total</li>
+        <li class="plan-feature">Unlimited food orders (10% off)</li>
+        <li class="plan-feature">Free boarding up to 2 nights</li>
+        <li class="plan-feature">Dedicated account manager</li>
+        <li class="plan-feature">Emergency line access</li>
+      </ul>
+      <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section style="background:#fff;">
+  <div class="section-label">What pet parents say</div>
+  <h2 class="section-title">Trusted by 12,000+ families</h2>
+  <p class="section-sub">Real stories from real pet parents across metro India.</p>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"I'm vegetarian and couldn't cook non-veg for my Lab, Bruno. Urban Paws food delivery changed everything — fresh cooked chicken rice every day. Bruno is so much healthier!"</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">RP</div>
+        <div>
+          <div class="reviewer-name">Ritu Patel</div>
+          <div class="reviewer-city">Koramangala, Bengaluru</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"I work long hours and live on the 18th floor. Autos always refused to take Simba anywhere. The Urban Paws pet taxi is the only cab that's never said no — and it's clean and calm."</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">AK</div>
+        <div>
+          <div class="reviewer-name">Arjun Kumar</div>
+          <div class="reviewer-city">Powai, Mumbai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Traveled for work 3 days unexpectedly. Urban Paws boarding was confirmed in 10 minutes. Got photos and updates every morning. Felt like family looked after Coco."</p>
+      <div class="reviewer">
+        <div class="reviewer-avatar">SN</div>
+        <div>
+          <div class="reviewer-name">Sneha Nair</div>
+          <div class="reviewer-city">Indiranagar, Bengaluru</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APP DOWNLOAD -->
+<section class="app-section">
+  <div>
+    <div class="section-label">Get the app</div>
+    <h2 class="section-title">Always in your pocket</h2>
+    <p class="section-sub">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
+    <div class="app-badges">
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">🍎</span>
+        <div class="app-badge-text">
+          <small>Download on the</small>
+          <strong>App Store</strong>
+        </div>
+      </a>
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">▶️</span>
+        <div class="app-badge-text">
+          <small>Get it on</small>
+          <strong>Google Play</strong>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="app-mockup">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="phone-header">🐾 Urban Paws</div>
+        <div class="phone-body">
+          <p style="font-size:0.65rem; font-weight:600; color:var(--muted); margin:0.5rem 0 0.4rem;">Our Services</p>
+          <div class="phone-service-row">
+            <div class="phone-service-tile"><span>🦮</span><small>Pet Walking</small></div>
+            <div class="phone-service-tile"><span>🍲</span><small>Pet Feeding</small></div>
+          </div>
+          <div class="phone-service-row">
+            <div class="phone-service-tile"><span>✂️</span><small>Grooming</small></div>
+            <div class="phone-service-tile"><span>🏠</span><small>Boarding</small></div>
+          </div>
+          <div class="phone-service-row">
+            <div class="phone-service-tile"><span>💉</span><small>Vaccination</small></div>
+            <div class="phone-service-tile"><span>🚐</span><small>Pet Taxi</small></div>
+          </div>
+          <div class="phone-service-row">
+            <div class="phone-service-tile"><span>🛡️</span><small>Insurance</small></div>
+            <div class="phone-service-tile"><span>🛒</span><small>Shop</small></div>
+          </div>
+        </div>
+        <div style="background:#fff; border-top:1px solid var(--border); padding:0.5rem; display:flex; justify-content:space-around;">
+          <div style="text-align:center; font-size:0.6rem; color:var(--paw);">🏠<br>Home</div>
+          <div style="text-align:center; font-size:0.6rem; color:var(--muted);">🛒<br>Shop</div>
+          <div style="text-align:center; font-size:0.6rem; color:var(--muted);">📞<br>Support</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand footer-col">
+      <a href="#" class="logo">🐾 Urban Paws</a>
+      <p>Making city life better for pets and their parents. Professional, trusted, always nearby.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Services</h5>
+      <ul>
+        <li><a href="#services">Pet Walking</a></li>
+        <li><a href="#food">Pet Food</a></li>
+        <li><a href="#services">Grooming</a></li>
+        <li><a href="#services">Boarding</a></li>
+        <li><a href="#services">Vaccination</a></li>
+        <li><a href="#services">Pet Taxi</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Partner with us</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <ul>
+        <li><a href="#">Help center</a></li>
+        <li><a href="#">Track your order</a></li>
+        <li><a href="#">Emergency line</a></li>
+        <li><a href="#">Refund policy</a></li>
+        <li><a href="#">Contact us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Urban Paws Pvt. Ltd. All rights reserved.</span>
+    <div style="display:flex; gap:1.5rem;">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 id="modalTitle">Book a Service</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Your name</label>
+        <input type="text" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" placeholder="+91 XXXXX XXXXX">
+      </div>
+      <div class="form-group full">
+        <label>Address</label>
+        <input type="text" placeholder="Your apartment, area, city">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <select>
+          <option>Morning (6–9 AM)</option>
+          <option>Afternoon (12–3 PM)</option>
+          <option>Evening (5–8 PM)</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" style="width:100%; margin-top:1.5rem;" onclick="submitBooking()">
+      Confirm Booking →
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-paw">🐾</span>
+  <span id="toastMsg">Booking confirmed!</span>
+</div>
+
+<script>
+  // Set today's date as default
+  const dateInput = document.getElementById('bookDate');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    dateInput.min = today;
+  }
+
+  function selectService(el) {
+    document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function openBooking(service) {
+    const modal = document.getElementById('bookingModal');
+    document.getElementById('modalTitle').textContent = 'Book ' + service;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('bookingModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('bookingModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function submitBooking() {
+    closeModal();
+    showToast('🐾 Booking confirmed! Your pet executive will be assigned shortly.');
+  }
+
+  function addToCart(item) {
+    showToast('🛒 ' + item + ' added to cart!');
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+</script>
 </body>
 </html>
