@@ -1,33 +1,22 @@
 /**
- * Urban Paws — Booking form -> Google Sheets + Telegram push notification
+ * Urban Paws — Booking form -> Google Sheets + Email notification
  *
  * Receives POST data from the "Book in under 2 minutes" form on index.html,
- * appends one row per booking to the spreadsheet, and sends an instant
- * Telegram message to your phone.
+ * appends one row per booking to the spreadsheet, and emails you the details.
  *
- * SETUP (sheet side):
+ * SETUP:
  *   1. Open your sheet -> Extensions -> Apps Script
- *   2. Paste this whole file, replacing any default code
- *   3. Deploy -> New deployment -> type "Web app"
- *        - Execute as: Me
- *        - Who has access: Anyone
- *   4. Copy the Web app URL and paste it into SHEET_ENDPOINT in index.html
- *
- * SETUP (Telegram side):  see the steps in the chat.
- *   - Create a bot via @BotFather  -> paste its token into TELEGRAM_BOT_TOKEN
- *   - Get your chat id from @userinfobot -> paste it into TELEGRAM_CHAT_ID
+ *   2. Select ALL existing code, delete it, and paste THIS whole file
+ *   3. Save (Cmd/Ctrl + S)
+ *   4. Run `testEmail` once -> approve the authorization prompt
+ *   5. Deploy -> Manage deployments -> Edit (pencil) -> Version: New version -> Deploy
+ *      (Keeps the same Web app URL, so index.html needs no change.)
  */
 
 var SHEET_ID = '1wiD8RSO7CTzuvOvJ4k8lLEsU8zlHryLU962VZy16ZAU';
 
-// ====== Telegram settings ======
-var TELEGRAM_BOT_TOKEN = '8986229504:AAE-AtX9oZ2CxfXjhkUhdnGH5M3TNsGMdvM';
-var TELEGRAM_CHAT_ID   = '8952517954';
-
 // ====== Email notification ======
-// Sends an email on every booking (backup to Telegram). Your phone's mail
-// app push will alert you. Leave blank ('') to disable email notifications.
-// Multiple recipients: one string, comma-separated.
+// Who gets the booking email. Multiple recipients: one comma-separated string.
 var NOTIFY_EMAIL = 'rakeshkskumar21@gmail.com,karthikk.rakesh@gmail.com';
 
 function doPost(e) {
@@ -42,7 +31,7 @@ function doPost(e) {
       ]);
     }
 
-    var p = e.parameter;
+    var p = (e && e.parameter) || {};
     sheet.appendRow([
       new Date(),
       p.service      || '',
@@ -58,8 +47,7 @@ function doPost(e) {
       p.instructions || ''
     ]);
 
-    // Fire the notifications (won't block the row if either fails)
-    sendTelegramNotification(p);
+    // Email the booking (won't block the row if it fails)
     sendEmailNotification(p);
 
     return ContentService
@@ -69,45 +57,6 @@ function doPost(e) {
     return ContentService
       .createTextOutput(JSON.stringify({ result: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function sendTelegramNotification(p) {
-  if (TELEGRAM_BOT_TOKEN.indexOf('PASTE_') === 0 || TELEGRAM_CHAT_ID.indexOf('PASTE_') === 0) {
-    return; // not configured yet — skip silently
-  }
-  p = p || {};               // guard: never crash on a missing payload
-
-  var lines = [
-    '🐾 *New Urban Paws Booking!*',
-    '',
-    '🛎 *Service:* ' + (p.service || '-'),
-    '🐶 *Pet:* ' + (p.petName || '-') + ' (' + (p.breed || '-') + ')',
-    '🎂 *Age:* ' + (p.petAge || '-') + '   ⚧ ' + (p.gender || '-'),
-    '📍 *Address:* ' + (p.address || '-'),
-    '📅 *Date:* ' + (p.date || '-') + '   ⏰ ' + (p.timeSlot || '-'),
-    '📞 *Phone:* ' + (p.phone || '-'),
-    '💳 *Payment:* ' + (p.payment || '-')
-  ];
-  if (p.instructions) lines.push('📝 *Notes:* ' + p.instructions);
-
-  var url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
-  var payload = {
-    chat_id: TELEGRAM_CHAT_ID,
-    text: lines.join('\n'),
-    parse_mode: 'Markdown'
-  };
-
-  try {
-    UrlFetchApp.fetch(url, {
-      method: 'post',
-      contentType: 'application/json',
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
-    });
-  } catch (err) {
-    // Don't fail the booking if Telegram is down
-    console.error('Telegram send failed: ' + err);
   }
 }
 
@@ -149,14 +98,16 @@ function sendEmailNotification(p) {
   ].join('\n');
 
   try {
+    console.log('sendEmailNotification: sending to ' + NOTIFY_EMAIL +
+                ' | remaining quota=' + MailApp.getRemainingDailyQuota());
     MailApp.sendEmail({
       to: NOTIFY_EMAIL,
       subject: subject,
       body: plain,
       htmlBody: htmlBody
     });
+    console.log('sendEmailNotification: MailApp.sendEmail returned OK');
   } catch (err) {
-    // Don't fail the booking if email is down
     console.error('Email send failed: ' + err);
   }
 }
@@ -174,14 +125,12 @@ function doGet() {
   return ContentService.createTextOutput('Urban Paws booking endpoint is running.');
 }
 
-// Run this once from the editor to test your Telegram + email setup.
-function testTelegram() {
-  var p = {
+// Run this once from the editor to test your email setup.
+function testEmail() {
+  sendEmailNotification({
     service: 'Walk', petName: 'Bruno', breed: 'Labrador',
     petAge: '1–3 years', gender: 'Male', address: 'Test address',
     date: '2026-06-16', timeSlot: '7:00 AM – 8:00 AM',
     phone: '+91 98765 43210', payment: 'UPI', instructions: 'This is a test.'
-  };
-  sendTelegramNotification(p);
-  sendEmailNotification(p);
+  });
 }
