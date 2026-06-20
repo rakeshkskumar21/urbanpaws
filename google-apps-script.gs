@@ -67,6 +67,11 @@ function sendEmailNotification(p) {
   var subject = '🐾 New Urban Paws Booking — ' + (p.service || 'Booking') +
                 ' for ' + (p.petName || 'a pet');
 
+  // Remaining email quota (recipients left today). Read before sending.
+  var quotaLeft = MailApp.getRemainingDailyQuota();
+  var quotaNote = 'Email quota left today: ' + quotaLeft + ' recipients (~' +
+                  Math.floor(quotaLeft / 2) + ' bookings)';
+
   var htmlBody =
     '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#222">' +
       '<h2 style="margin:0 0 12px">🐾 New Urban Paws Booking!</h2>' +
@@ -82,6 +87,7 @@ function sendEmailNotification(p) {
         row('💳 Payment',  p.payment) +
         (p.instructions ? row('📝 Notes', p.instructions) : '') +
       '</table>' +
+      '<p style="margin-top:14px;font-size:12px;color:#888">' + quotaNote + '</p>' +
     '</div>';
 
   // Plain-text fallback for clients that don't render HTML.
@@ -94,12 +100,14 @@ function sendEmailNotification(p) {
     'Date: '         + (p.date || '-') + '  Time: ' + (p.timeSlot || '-'),
     'Phone: '        + (p.phone || '-'),
     'Payment: '      + (p.payment || '-'),
-    p.instructions ? 'Notes: ' + p.instructions : ''
+    p.instructions ? 'Notes: ' + p.instructions : '',
+    '',
+    quotaNote
   ].join('\n');
 
   try {
     console.log('sendEmailNotification: sending to ' + NOTIFY_EMAIL +
-                ' | remaining quota=' + MailApp.getRemainingDailyQuota());
+                ' | remaining quota=' + quotaLeft);
     MailApp.sendEmail({
       to: NOTIFY_EMAIL,
       subject: subject,
@@ -123,6 +131,11 @@ function row(label, value) {
 // Lets you open the Web app URL in a browser to confirm it's live.
 function doGet() {
   return ContentService.createTextOutput('Urban Paws booking endpoint is running.');
+}
+
+// Run this from the editor to see how many emails you can still send today.
+function checkQuota() {
+  console.log('Emails left today: ' + MailApp.getRemainingDailyQuota());
 }
 
 // Run this once from the editor to test your email setup.

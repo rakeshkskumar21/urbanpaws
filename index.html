@@ -715,7 +715,7 @@
       <span>Medicine delivery, emergency vet consult & urgent boarding — always on call</span>
     </div>
   </div>
-  <a href="tel:+911800PAWS24" class="btn-primary" style="white-space:nowrap;background:var(--paw);">
+  <a href="tel:+918951895191" class="btn-primary" style="white-space:nowrap;background:var(--paw);">
     📞 1800-PAWS-24
   </a>
 </div>
@@ -757,7 +757,7 @@
         </div>
         <div>
           <p style="color:rgba(255,255,255,0.5); font-size:0.75rem; margin-bottom:4px;">Currently active</p>
-          <p style="color:#fff; font-weight:600; font-size:0.95rem;">Bruno's morning walk in progress</p>
+          <p style="color:#fff; font-weight:600; font-size:0.95rem;">Jimmy's morning walk in progress</p>
           <p style="color:var(--paw); font-size:0.8rem; margin-top:4px;">📍 Whitefield, Bengaluru</p>
         </div>
         <div class="hero-card-badge">🟢 Live tracking</div>
@@ -766,7 +766,7 @@
         <div class="float-icon">🍲</div>
         <div class="float-text">
           <strong>Fresh meal on way</strong>
-          <span>Arrives in 22 min</span>
+          <span>Arrives in 32 min</span>
         </div>
       </div>
     </div>
@@ -778,13 +778,13 @@
   <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.75rem; font-weight:500;">Available in</p>
   <div class="city-badges">
     <div class="city-badge"><span class="city-dot"></span>Bengaluru</div>
-    <div class="city-badge"><span class="city-dot"></span>Mumbai</div>
-    <div class="city-badge"><span class="city-dot"></span>Delhi NCR</div>
-    <div class="city-badge"><span class="city-dot"></span>Pune</div>
-    <div class="city-badge"><span class="city-dot"></span>Hyderabad</div>
-    <div class="city-badge"><span class="city-dot"></span>Chennai</div>
-    <div class="city-badge"><span class="city-dot"></span>Kolkata</div>
-    <div class="city-badge"><span class="city-dot"></span>Ahmedabad</div>
+    <div class="city-badge"><span class="city-dot"></span>Whitefield</div>
+    <div class="city-badge"><span class="city-dot"></span>Siddapura</div>
+    <div class="city-badge"><span class="city-dot"></span>Nallurhalli</div>
+    <div class="city-badge"><span class="city-dot"></span>Kundanahalli</div>
+    <div class="city-badge"><span class="city-dot"></span>Brookfield</div>
+    <div class="city-badge"><span class="city-dot"></span>Thubarahalli</div>
+    <div class="city-badge"><span class="city-dot"></span>Hoodi</div>
   </div>
 </div>
 
@@ -1182,7 +1182,7 @@
 <!-- TESTIMONIALS -->
 <section style="background:#fff;">
   <div class="section-label">What pet parents say</div>
-  <h2 class="section-title">Trusted by 12,000+ families</h2>
+  <h2 class="section-title">Trusted by 1000+ families</h2>
   <p class="section-sub">Real stories from real pet parents across metro India.</p>
 
   <div class="testimonials-grid">
@@ -1318,7 +1318,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2024 Urban Paws Pvt. Ltd. All rights reserved.</span>
+    <span>© 2024 RubDeJim Services Pvt. Ltd. All rights reserved.</span>
     <div style="display:flex; gap:1.5rem;">
       <a href="#">Privacy Policy</a>
       <a href="#">Terms of Service</a>
@@ -1385,10 +1385,25 @@
   }
 
   function openBooking(service) {
-    const modal = document.getElementById('bookingModal');
-    document.getElementById('modalTitle').textContent = 'Book ' + service;
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    // Pre-select the matching service tab in the booking form (if one exists)
+    const tabKeywords = {
+      'Pet Walking': 'Walk',
+      'Pet Feeding': 'Food',
+      'Grooming': 'Grooming',
+      'Boarding': 'Boarding',
+      'Vaccination': 'Vaccination',
+      'Pet Taxi': 'Taxi',
+      'Walk': 'Walk'
+    };
+    const keyword = tabKeywords[service];
+    if (keyword) {
+      document.querySelectorAll('#serviceTabs .service-tab').forEach(function (tab) {
+        if (tab.textContent.indexOf(keyword) !== -1) selectService(tab);
+      });
+    }
+
+    // Scroll to the booking form
+    document.getElementById('booking').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function closeModal() {
