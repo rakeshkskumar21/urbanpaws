@@ -19,6 +19,14 @@ var SHEET_ID = '1wiD8RSO7CTzuvOvJ4k8lLEsU8zlHryLU962VZy16ZAU';
 // Who gets the booking email. Multiple recipients: one comma-separated string.
 var NOTIFY_EMAIL = 'urbanpawsbooking@gmail.com';
 
+// Address that emails are sent FROM (also used as Reply-To).
+// NOTE: to send AS this address, add it under Gmail -> Settings -> Accounts ->
+// "Send mail as" and verify it on the Google account that runs this script.
+// If it isn't a verified alias, Gmail ignores `from` and sends from the
+// account's own address — `replyTo` still works regardless.
+var FROM_EMAIL = 'hello@urbanpaws.app';
+var FROM_NAME  = 'Urban Paws';
+
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
@@ -117,7 +125,10 @@ function sendEmailNotification(p) {
       to: NOTIFY_EMAIL,
       subject: subject,
       body: plain,
-      htmlBody: htmlBody
+      htmlBody: htmlBody,
+      from: FROM_EMAIL,
+      name: FROM_NAME,
+      replyTo: FROM_EMAIL
     });
     console.log('sendEmailNotification: MailApp.sendEmail returned OK');
   } catch (err) {
@@ -170,7 +181,15 @@ function sendCustomerConfirmation(p) {
 
   try {
     console.log('sendCustomerConfirmation: sending to ' + to);
-    MailApp.sendEmail({ to: to, subject: subject, body: plain, htmlBody: htmlBody });
+    MailApp.sendEmail({
+      to: to,
+      subject: subject,
+      body: plain,
+      htmlBody: htmlBody,
+      from: FROM_EMAIL,
+      name: FROM_NAME,
+      replyTo: FROM_EMAIL
+    });
     console.log('sendCustomerConfirmation: MailApp.sendEmail returned OK');
   } catch (err) {
     console.error('Customer confirmation send failed: ' + err);
