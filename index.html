@@ -641,7 +641,7 @@
     margin-bottom: 0.5rem; color: var(--night);
   }
   .plan-price {
-    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.5rem;
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: 2.5rem;
     color: var(--night); line-height: 1;
     margin: 1rem 0 0.25rem;
   }
@@ -1289,7 +1289,7 @@
 
   <div class="pricing-grid">
     <div class="pricing-card">
-      <h3>Pay as you go</h3>
+      <h3>Starter (Pay as you go)</h3>
       <div class="plan-price">₹0 <span>/month</span></div>
       <div class="plan-desc">No subscription, no commitment. Book anytime.</div>
       <ul class="plan-features">
@@ -1297,45 +1297,70 @@
         <li class="plan-feature">Food delivery from ₹30</li>
         <li class="plan-feature">Grooming from ₹499</li>
         <li class="plan-feature">Platform fee ₹1–₹2/order</li>
-        <li class="plan-feature">Basic live tracking</li>
+        <li class="plan-feature">Basic live 🟢 tracking/photos</li>
       </ul>
       <button class="btn-outline" style="width:100%;" onclick="openBooking('Walk')">Get started</button>
     </div>
 
     <div class="pricing-card featured">
       <div class="plan-badge">Most popular</div>
-      <h3>Urban Paws Pro</h3>
-      <div class="plan-price">₹999 <span>/month</span></div>
+      <h3>Casual</h3>
+      <div class="plan-price">₹1,289 <span>/month</span></div>
       <div class="plan-desc">For the committed pet parent. Save 30% on every service.</div>
       <ul class="plan-features">
         <li class="plan-feature">15 walks included per month</li>
-        <li class="plan-feature">10% off food orders</li>
+        <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
+        <li class="plan-feature">Free delivery on medicines</li>
+        <li class="plan-feature">10% off on food orders</li>
         <li class="plan-feature">Priority booking</li>
-        <li class="plan-feature">Zero platform fee</li>
-        <li class="plan-feature">HD live tracking + photos</li>
-        <li class="plan-feature">Free 1 grooming/month</li>
+        <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
+        
       </ul>
       <button class="btn-primary" style="width:100%;" onclick="showToast('🐾 Pro plan selected! Redirecting to checkout...')">Subscribe now</button>
     </div>
 
     <div class="pricing-card">
-      <h3>Multi-pet Family</h3>
-      <div class="plan-price">₹1,799 <span>/month</span></div>
-      <div class="plan-desc">For families with 2+ dogs or cats.</div>
+      <h3>Standard Pro</h3>
+      <div class="plan-price">₹4,500 <span>/month</span></div>
+      <div class="plan-desc">For families with 1 dog or cat.</div>
       <ul class="plan-features">
-        <li class="plan-feature">Up to 3 pets registered</li>
-        <li class="plan-feature">30 walks/month total</li>
-        <li class="plan-feature">Unlimited food orders (10% off)</li>
-        <li class="plan-feature">Free boarding up to 2 nights</li>
+        <li class="plan-feature">30 walks included per month</li>
+        <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
+        <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
+        <li class="plan-feature">Free delivery on medicines</li>
+        <li class="plan-feature">10% off on food orders</li>
         <li class="plan-feature">Dedicated account manager</li>
         <li class="plan-feature">Emergency line access</li>
+        <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
+
       </ul>
+      
       <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
+    </div>
+    <div>
+      <div class="pricing-card">
+        <h3>Premium</h3>
+        <div class="plan-price">₹5,889 <span>/month</span></div>
+        <div class="plan-desc">For families with 2+ dogs or cats.</div>
+        <ul class="plan-features">
+          <li class="plan-feature">30 walks included per month for 2 pets</li>
+          <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
+          <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
+          <li class="plan-feature">Free delivery on medicines</li>
+          <li class="plan-feature">Free boarding up to 2 nights</li>
+          <li class="plan-feature">10% off on food orders</li>
+          <li class="plan-feature">Dedicated account manager</li>
+          <li class="plan-feature">Emergency line access</li>
+          <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
+
+       </ul>
+       <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
+
     </div>
   </div>
 </section>
-
-<!-- TESTIMONIALS -->
+<!---
+ TESTIMONIALS 
 <section style="background:#fff;">
   <div class="section-label">What pet parents say</div>
   <h2 class="section-title">Trusted by 1000+ families</h2>
@@ -1377,12 +1402,14 @@
     </div>
   </div>
 </section>
+   -->
+
 
 <!-- APP DOWNLOAD -->
 <section class="app-section">
   <div>
     <div class="section-label">Get the app</div>
-    <h2 class="section-title">Always in your pocket</h2>
+    <h2 class="section-title">Always in your pocket (Coming soon..)</h2>
     <p class="section-sub">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
     <div class="app-badges">
       <a href="#" class="app-badge">
