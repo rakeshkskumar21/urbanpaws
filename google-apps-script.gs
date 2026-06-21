@@ -17,7 +17,7 @@ var SHEET_ID = '1wiD8RSO7CTzuvOvJ4k8lLEsU8zlHryLU962VZy16ZAU';
 
 // ====== Email notification ======
 // Who gets the booking email. Multiple recipients: one comma-separated string.
-var NOTIFY_EMAIL = 'rakeshkskumar21@gmail.com,karthikk.rakesh@gmail.com';
+var NOTIFY_EMAIL = 'urbanpawsbooking@gmail.com';
 
 function doPost(e) {
   try {
@@ -27,7 +27,7 @@ function doPost(e) {
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         'Timestamp', 'Service', 'Pet Name', 'Breed', 'Pet Age', 'Gender',
-        'Address', 'Date', 'Time Slot', 'Phone', 'Payment', 'Instructions'
+        'Address', 'Date', 'Time Slot', 'Phone', 'Email', 'Payment', 'Instructions'
       ]);
     }
 
@@ -43,12 +43,16 @@ function doPost(e) {
       p.date         || '',
       p.timeSlot     || '',
       p.phone        || '',
+      p.email        || '',
       p.payment      || '',
       p.instructions || ''
     ]);
 
-    // Email the booking (won't block the row if it fails)
+    // Email the booking to the team (won't block the row if it fails)
     sendEmailNotification(p);
+
+    // Email a confirmation to the customer, if they gave an email
+    sendCustomerConfirmation(p);
 
     return ContentService
       .createTextOutput(JSON.stringify({ result: 'success' }))
@@ -84,6 +88,7 @@ function sendEmailNotification(p) {
         row('📅 Date',     p.date) +
         row('⏰ Time Slot', p.timeSlot) +
         row('📞 Phone',    p.phone) +
+        row('📧 Email',    p.email) +
         row('💳 Payment',  p.payment) +
         (p.instructions ? row('📝 Notes', p.instructions) : '') +
       '</table>' +
@@ -120,6 +125,58 @@ function sendEmailNotification(p) {
   }
 }
 
+// Sends a booking-confirmation email to the customer's own email address.
+function sendCustomerConfirmation(p) {
+  p = p || {};
+  var to = (p.email || '').trim();
+  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return; // no/invalid email -> skip
+
+  var subject = '🐾 Your Urban Paws booking is confirmed — ' + (p.service || 'Booking');
+
+  var htmlBody =
+    '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#222">' +
+      '<h2 style="margin:0 0 12px">🐾 Booking confirmed!</h2>' +
+      '<p style="margin:0 0 14px">Hi' + (p.petName ? ' (' + p.petName + "'s parent)" : '') +
+        ', thanks for booking with Urban Paws. Here are your details:</p>' +
+      '<table cellpadding="6" style="border-collapse:collapse">' +
+        row('🛎 Service',  p.service) +
+        row('🐶 Pet',      (p.petName || '-') + ' (' + (p.breed || '-') + ')') +
+        row('📍 Address',  p.address) +
+        row('📅 Date',     p.date) +
+        row('⏰ Time Slot', p.timeSlot) +
+        row('📞 Phone',    p.phone) +
+        row('💳 Payment',  p.payment) +
+        (p.instructions ? row('📝 Notes', p.instructions) : '') +
+      '</table>' +
+      '<p style="margin-top:14px">Your pet executive will be assigned shortly. ' +
+        'If anything looks wrong, just reply to this email.</p>' +
+      '<p style="margin-top:14px;color:#888">— The Urban Paws team</p>' +
+    '</div>';
+
+  var plain = [
+    'Booking confirmed!',
+    'Thanks for booking with Urban Paws. Here are your details:',
+    'Service: '  + (p.service || '-'),
+    'Pet: '      + (p.petName || '-') + ' (' + (p.breed || '-') + ')',
+    'Address: '  + (p.address || '-'),
+    'Date: '     + (p.date || '-') + '  Time: ' + (p.timeSlot || '-'),
+    'Phone: '    + (p.phone || '-'),
+    'Payment: '  + (p.payment || '-'),
+    p.instructions ? 'Notes: ' + p.instructions : '',
+    '',
+    'Your pet executive will be assigned shortly.',
+    '— The Urban Paws team'
+  ].join('\n');
+
+  try {
+    console.log('sendCustomerConfirmation: sending to ' + to);
+    MailApp.sendEmail({ to: to, subject: subject, body: plain, htmlBody: htmlBody });
+    console.log('sendCustomerConfirmation: MailApp.sendEmail returned OK');
+  } catch (err) {
+    console.error('Customer confirmation send failed: ' + err);
+  }
+}
+
 // Small helper to render one labeled row in the email table.
 function row(label, value) {
   return '<tr>' +
@@ -140,10 +197,13 @@ function checkQuota() {
 
 // Run this once from the editor to test your email setup.
 function testEmail() {
-  sendEmailNotification({
+  var p = {
     service: 'Walk', petName: 'Bruno', breed: 'Labrador',
     petAge: '1–3 years', gender: 'Male', address: 'Test address',
     date: '2026-06-16', timeSlot: '7:00 AM – 8:00 AM',
-    phone: '+91 98765 43210', payment: 'UPI', instructions: 'This is a test.'
-  });
+    phone: '+91 98765 43210', email: NOTIFY_EMAIL.split(',')[0],
+    payment: 'UPI', instructions: 'This is a test.'
+  };
+  sendEmailNotification(p);
+  sendCustomerConfirmation(p);
 }

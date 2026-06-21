@@ -1091,18 +1091,26 @@
       <div class="form-group">
         <label>Time slot</label>
         <select id="timeSlot">
-          <option>6:00 AM – 7:00 AM</option>
-          <option>7:00 AM – 8:00 AM</option>
-          <option>8:00 AM – 9:00 AM</option>
-          <option>9:00 AM – 10:00 AM</option>
-          <option>4:00 PM – 5:00 PM</option>
-          <option>5:00 PM – 6:00 PM</option>
-          <option>6:00 PM – 7:00 PM</option>
+          <option>6:00 AM – 6:30 AM</option>
+          <option>6:30 AM – 7:30 AM</option>
+          <option>7:30 AM – 8:00 AM</option>
+          <option>8:30 AM – 9:00 AM</option>
+        
+          <option>5:30 PM – 6:00 PM</option>
+          <option>6:30 PM – 7:00 PM</option>
+          <option>7:30 PM – 8:00 PM</option>
+          <option>8:30 PM – 9:00 PM</option>
+          <option>9:00 PM – 9:30 PM</option>
+
         </select>
       </div>
       <div class="form-group">
         <label>Phone number</label>
         <input type="tel" id="phone" placeholder="+91 98765 43210">
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" required>
       </div>
       <div class="form-group">
         <label>Payment</label>
@@ -1437,13 +1445,18 @@
       date:         document.getElementById('bookDate').value,
       timeSlot:     document.getElementById('timeSlot').value,
       phone:        document.getElementById('phone').value.trim(),
+      email:        document.getElementById('email').value.trim(),
       payment:      document.getElementById('payment').value,
       instructions: document.getElementById('instructions').value.trim()
     };
 
     // Basic validation
-    if (!data.petName || !data.phone) {
-      showToast('⚠️ Please enter at least your pet name and phone number.');
+    if (!data.petName || !data.phone || !data.email) {
+      showToast('⚠️ Please enter your pet name, phone number and email address.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      showToast('⚠️ Please enter a valid email address.');
       return;
     }
 
@@ -1462,7 +1475,7 @@
       .then(() => {
         showToast('🐾 Booking confirmed! Your details have been saved.');
         // Reset fields
-        ['petName','address','phone','instructions'].forEach(id => {
+        ['petName','address','phone','email','instructions'].forEach(id => {
           document.getElementById(id).value = '';
         });
       })
