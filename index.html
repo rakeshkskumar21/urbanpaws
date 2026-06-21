@@ -3,7 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Urban Paws – Pet Services for Metro Cities</title>
+
+<!-- ============================================================
+     SEO  —  primary keywords: "pet walking", "pet food delivery"
+     NOTE: replace https://www.urbanpaws.in/ everywhere below with
+     your real live domain (canonical, og:url, sitemap, JSON-LD).
+     ============================================================ -->
+<title>Pet Walking &amp; Fresh Pet Food Delivery in Bengaluru | Urban Paws</title>
+<meta name="description" content="Book professional dog walking with live GPS tracking and fresh, vet-approved pet food delivered in 30 minutes across Whitefield &amp; Bengaluru. Walks from ₹89, meals from ₹30.">
+<meta name="keywords" content="pet walking, dog walking, dog walking near me, pet feeding, pet food delivery, fresh dog food delivery, dog food delivery Bengaluru, pet walking Whitefield, dog walker Bengaluru, home cooked dog food">
+<meta name="author" content="Urban Paws">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://www.urbanpaws.in/">
+<meta name="theme-color" content="#E8531A">
+
+<!-- Geo targeting -->
+<meta name="geo.region" content="IN-KA">
+<meta name="geo.placename" content="Whitefield, Bengaluru">
+<meta name="geo.position" content="12.9698;77.7500">
+<meta name="ICBM" content="12.9698, 77.7500">
+
+<!-- Open Graph (Facebook / WhatsApp / LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Urban Paws">
+<meta property="og:title" content="Pet Walking &amp; Fresh Pet Food Delivery in Bengaluru | Urban Paws">
+<meta property="og:description" content="Professional dog walking with live GPS tracking and fresh, vet-approved meals delivered in 30 minutes across Whitefield &amp; Bengaluru.">
+<meta property="og:url" content="https://www.urbanpaws.in/">
+<meta property="og:locale" content="en_IN">
+<meta property="og:image" content="https://www.urbanpaws.in/og-image.jpg">
+<meta property="og:image:alt" content="Urban Paws — pet walking and fresh pet food delivery">
+
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pet Walking &amp; Fresh Pet Food Delivery in Bengaluru | Urban Paws">
+<meta name="twitter:description" content="Professional dog walking with live GPS tracking and fresh, vet-approved meals delivered in 30 minutes across Whitefield &amp; Bengaluru.">
+<meta name="twitter:image" content="https://www.urbanpaws.in/og-image.jpg">
+
+<!-- Structured data: LocalBusiness + the two priority services + FAQ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://www.urbanpaws.in/#business",
+      "name": "Urban Paws",
+      "description": "On-demand pet services — professional pet walking with live GPS tracking and fresh, vet-approved pet food delivery across Whitefield and Bengaluru.",
+      "url": "https://www.urbanpaws.in/",
+      "image": "https://www.urbanpaws.in/og-image.jpg",
+      "priceRange": "₹₹",
+      "telephone": "+91-8001800729",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Whitefield",
+        "addressRegion": "Karnataka",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 12.9698,
+        "longitude": 77.7500
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Bengaluru" },
+        { "@type": "Place", "name": "Whitefield" },
+        { "@type": "Place", "name": "Siddapura" },
+        { "@type": "Place", "name": "Nallurhalli" },
+        { "@type": "Place", "name": "Kundanahalli" },
+        { "@type": "Place", "name": "Brookfield" },
+        { "@type": "Place", "name": "Thubarahalli" },
+        { "@type": "Place", "name": "Hoodi" }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "07:00",
+        "closes": "21:00"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Pet services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Pet Walking" },
+            "priceCurrency": "INR",
+            "price": "89"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": { "@type": "Service", "name": "Fresh Pet Food Delivery" },
+            "priceCurrency": "INR",
+            "price": "30"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.urbanpaws.in/#pet-walking",
+      "serviceType": "Pet Walking",
+      "name": "Professional Pet Walking & Dog Walking",
+      "description": "Trained pet executives take your dog for a 20–30 minute walk with live GPS tracking, recorded route, and paw cleaning on return. From ₹89 per walk.",
+      "provider": { "@id": "https://www.urbanpaws.in/#business" },
+      "areaServed": { "@type": "City", "name": "Bengaluru" },
+      "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "89" }
+    },
+    {
+      "@type": "Service",
+      "@id": "https://www.urbanpaws.in/#pet-food-delivery",
+      "serviceType": "Pet Food Delivery",
+      "name": "Fresh Pet Food Delivery & Pet Feeding",
+      "description": "Freshly cooked, vet-approved meals (veg & non-veg) delivered in 30–35 minutes from our cloud kitchen. No preservatives. From ₹30 per bowl.",
+      "provider": { "@id": "https://www.urbanpaws.in/#business" },
+      "areaServed": { "@type": "City", "name": "Bengaluru" },
+      "offers": { "@type": "Offer", "priceCurrency": "INR", "price": "30" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How much does dog walking cost in Bengaluru?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Urban Paws pet walking starts at ₹89 per walk. Each walk is a 20–30 minute session with live GPS tracking, a recorded route, and paw cleaning on return."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you deliver fresh pet food in Whitefield and Bengaluru?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We cook fresh, vet-approved meals daily in our cloud kitchen and deliver them in 30–35 minutes across Whitefield and Bengaluru. Both veg and non-veg bowls are available from ₹30."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which areas does Urban Paws serve?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Urban Paws operates across Bengaluru including Whitefield, Siddapura, Nallurhalli, Kundanahalli, Brookfield, Thubarahalli and Hoodi."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
