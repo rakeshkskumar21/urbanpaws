@@ -75,7 +75,9 @@ function doPost(e) {
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         'Timestamp', 'Booking ID', 'Service', 'Pet Name', 'Breed', 'Pet Age', 'Gender',
-        'Address', 'Date', 'Time Slot', 'Phone', 'Email', 'Payment', 'Instructions'
+        'Address', 'Date', 'Time Slot', 'Phone', 'Email', 'Payment', 'Instructions',
+        'Allergies', 'Limping', 'Recent Surgery', 'Eating Habits',
+        'Vaccinated', 'Temperament', 'Other Issues'
       ]);
     }
 
@@ -100,7 +102,14 @@ function doPost(e) {
       p.phone        || '',
       p.email        || '',
       p.payment      || '',
-      p.instructions || ''
+      p.instructions || '',
+      p.allergies    || '',
+      p.limping      || '',
+      p.recentSurgery || '',
+      p.eatingHabits || '',
+      p.vaccinated   || '',
+      p.temperament  || '',
+      p.otherIssues  || ''
     ]);
 
     // Email the booking to the team (won't block the row if it fails)
@@ -147,6 +156,14 @@ function sendEmailNotification(p) {
         row('📧 Email',    p.email) +
         row('💳 Payment',  p.payment) +
         (p.instructions ? row('📝 Notes', p.instructions) : '') +
+        '<tr><td colspan="2" style="padding-top:10px;font-weight:bold;color:#e07b00">🏥 Health Info</td></tr>' +
+        row('🤧 Allergies',      p.allergies     || '-') +
+        row('🦵 Limping',        p.limping       || '-') +
+        row('🏥 Recent Surgery', p.recentSurgery || '-') +
+        row('🍽 Eating Habits',  p.eatingHabits  || '-') +
+        row('💉 Vaccinated',     p.vaccinated    || '-') +
+        row('🐶 Temperament',    p.temperament   || '-') +
+        (p.otherIssues ? row('⚠️ Other Issues', p.otherIssues) : '') +
       '</table>' +
       '<p style="margin-top:14px;font-size:12px;color:#888">' + quotaNote + '</p>' +
     '</div>';

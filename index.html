@@ -190,7 +190,7 @@
   /* NAV */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(253,250,247,0.95);
+    background: rgba(252, 225, 198, 0.95);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     padding: 0 2rem;
@@ -456,12 +456,18 @@
     border-radius: 24px;
     padding: 2.5rem;
     max-width: 720px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; }
 
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .form-group.full { grid-column: 1/-1; }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea { width: 100%; box-sizing: border-box; }
 
   .form-group label {
     font-size: 0.85rem; font-weight: 500;
@@ -489,6 +495,147 @@
     background: rgba(255,255,255,0.1);
   }
   .form-group select option { background: var(--night); color: #fff; }
+
+  /* MOBILE NAV CONTROLS */
+  .mob-controls { display: none; align-items: center; gap: 4px; }
+  .mob-icon-btn {
+    background: none; border: none; cursor: pointer;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; color: var(--night);
+    transition: background 0.15s;
+  }
+  .mob-icon-btn:hover { background: rgba(0,0,0,0.07); }
+  .mob-icon-btn svg { display: block; }
+
+  /* MOBILE SEARCH BAR */
+  .mob-search-bar {
+    display: none;
+    position: sticky; top: 64px; z-index: 99;
+    background: rgba(252,225,198,0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 1rem;
+  }
+  .mob-search-bar.open { display: block; }
+  .mob-search-inner {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border-radius: 100px;
+    padding: 8px 16px; border: 1px solid var(--border);
+  }
+  .mob-search-inner input {
+    border: none; background: transparent; outline: none;
+    font-size: 15px; width: 100%; font-family: 'Inter', sans-serif; color: var(--night);
+  }
+  .mob-search-inner input::placeholder { color: #aaa; }
+  .mob-search-bar .search-dropdown { position: static; border-radius: 12px; margin-top: 8px; }
+
+  /* BURGER MENU */
+  .burger-menu {
+    display: none;
+    position: fixed; top: 64px; left: 0; right: 0; z-index: 98;
+    background: rgba(252,225,198,0.98);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1rem;
+    transform: translateY(-10px); opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    pointer-events: none;
+  }
+  .burger-menu.open {
+    display: block;
+    transform: translateY(0); opacity: 1;
+    pointer-events: all;
+  }
+  .burger-menu ul { list-style: none; padding: 0.5rem 0; }
+  .burger-menu ul li a {
+    display: block; padding: 13px 1.5rem;
+    font-size: 1rem; font-weight: 500; color: var(--night);
+    text-decoration: none; transition: background 0.15s, color 0.15s;
+  }
+  .burger-menu ul li a:hover { background: rgba(0,0,0,0.05); color: var(--paw); }
+
+  /* SEARCH */
+  .nav-search {
+    position: relative;
+    display: flex; align-items: center;
+    background: rgba(0,0,0,0.07);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 100px;
+    padding: 6px 14px;
+    gap: 6px;
+    width: 220px;
+    transition: width 0.3s, box-shadow 0.2s;
+  }
+  .nav-search:focus-within {
+    width: 280px;
+    box-shadow: 0 0 0 2px var(--paw);
+    background: #fff;
+  }
+  .search-icon { font-size: 0.85rem; flex-shrink: 0; }
+  .nav-search input {
+    border: none; background: transparent;
+    font-size: 0.85rem; color: var(--night);
+    width: 100%; outline: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .nav-search input::placeholder { color: #999; }
+  .search-dropdown {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    z-index: 999;
+    overflow: hidden;
+    display: none;
+  }
+  .search-dropdown.open { display: block; }
+  .search-result {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none;
+    color: var(--night);
+    font-size: 0.88rem;
+  }
+  .search-result:hover { background: var(--cream); }
+  .search-result-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .search-result-text strong { display: block; font-weight: 600; }
+  .search-result-text span { font-size: 0.78rem; color: #888; }
+  .search-no-result { padding: 12px 16px; color: #999; font-size: 0.85rem; }
+
+  /* FAQ */
+  .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
+  .faq-item { border-bottom: 1px solid #eee; }
+  .faq-item:first-child { border-top: 1px solid #eee; }
+  .faq-q {
+    width: 100%; background: none; border: none; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 0; gap: 1rem;
+    font-size: 1rem; font-weight: 600; color: var(--night);
+    text-align: left; font-family: 'Inter', sans-serif;
+    transition: color var(--transition);
+  }
+  .faq-q:hover { color: var(--paw); }
+  .faq-icon { font-size: 1.4rem; font-weight: 300; color: var(--paw); flex-shrink: 0; transition: transform 0.3s; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-a { display: none; padding-bottom: 1.2rem; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-a p { margin: 0; color: #555; line-height: 1.7; font-size: 0.95rem; }
+
+  .field-error {
+    font-size: 0.78rem;
+    color: #ff5c5c;
+    margin-top: 2px;
+    display: none;
+  }
+  .field-error.visible { display: block; }
+  .form-group input.invalid,
+  .form-group select.invalid,
+  .form-group textarea.invalid {
+    border-color: #ff5c5c !important;
+  }
 
   .service-tabs {
     display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;
@@ -656,28 +803,7 @@
   }
   .plan-feature::before { content: '✓'; color: var(--paw); font-weight: 700; }
 
-  /* EMERGENCY BANNER */
-  .emergency-banner {
-    background: #1A0A05;
-    color: #fff; padding: 1.5rem 6rem;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 2rem;
-  }
-  .emergency-left { display: flex; align-items: center; gap: 1rem; }
-  .sos-badge {
-    background: #CC0000; color: #fff;
-    padding: 6px 12px; border-radius: var(--radius-sm);
-    font-weight: 800; font-size: 0.9rem; letter-spacing: 0.1em;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-  }
-  .emergency-text { font-size: 0.95rem; }
-  .emergency-text strong { display: block; font-size: 1rem; margin-bottom: 0.2rem; }
-  .emergency-text span { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
-
+ 
   /* FOOTER */
   footer {
     background: var(--night);
@@ -810,8 +936,11 @@
 
   /* RESPONSIVE */
   @media (max-width: 1024px) {
-    nav { padding: 1 1.5rem; }
+    nav { padding: 0 1.5rem; }
     .nav-links { display: none; }
+    .nav-search { display: none; }
+    .nav-cta { display: none; }
+    .mob-controls { display: flex; }
     .hero { grid-template-columns: 1fr; padding: 3rem 2rem; text-align: center; min-height: auto; }
     .hero-visual { justify-content: center; margin-top: 3rem; }
     .hero-sub { max-width: 100%; }
@@ -833,12 +962,32 @@
     .pricing-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; }
     .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+
+    .booking-form-card {
+      padding: 1.25rem;
+      border-radius: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px; /* prevents iOS auto-zoom on focus */
+    }
+    .service-tabs { gap: 0.5rem; }
+    .service-tab { font-size: 0.78rem; padding: 6px 10px; }
+    .burger-menu { top: 64px; }
   }
 </style>
 </head>
 <body>
+<!--===========================   ===========================   ===========================   ===========================   ===========================   =========================== -->
+<!--===========================   ===========================   ===========================   ===========================   ===========================   =========================== -->
+<!--===========================   ===========================   ===========================   ===========================   ===========================   =========================== -->
 
-<!-- NAV -->
+<!--===========================  NAV =========================== -->
 <nav>
   <a href="#" class="logo">
     <span class="logo-paw">🐾</span>
@@ -851,10 +1000,49 @@
     <li><a href="#booking">Book</a></li>
     <li><a href="#pricing">Pricing</a></li>
   </ul>
+
+  <div class="nav-search" id="navSearch">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search services, FAQs…" autocomplete="off" oninput="runSearch(this.value)" onfocus="runSearch(this.value)" />
+    <div class="search-dropdown" id="searchDropdown"></div>
+  </div>
+
   <a href="#booking" class="nav-cta">Book a Service</a>
+
+  <!-- Mobile controls -->
+  <div class="mob-controls">
+    <button class="mob-icon-btn" onclick="toggleMobSearch()" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="mob-icon-btn" onclick="toggleBurger()" aria-label="Menu" id="burgerBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
 </nav>
 
-<!-- EMERGENCY BANNER -->
+<!-- Mobile search bar (shows below nav on toggle) -->
+<div class="mob-search-bar" id="mobSearchBar">
+  <div class="mob-search-inner">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="mobSearchInput" placeholder="Search services, FAQs…" autocomplete="off" oninput="runSearch(this.value)" onfocus="runSearch(this.value)" />
+  </div>
+  <div class="search-dropdown" id="mobSearchDropdown"></div>
+</div>
+
+<!-- Burger menu drawer -->
+<div class="burger-menu" id="burgerMenu">
+  <ul>
+    <li><a href="#services" onclick="closeBurger()">🛎 Services</a></li>
+    <li><a href="#food" onclick="closeBurger()">🍲 Pet Food</a></li>
+    <li><a href="#shop" onclick="closeBurger()">🛒 Shop</a></li>
+    <li><a href="#booking" onclick="closeBurger()">📅 Book</a></li>
+    <li><a href="#pricing" onclick="closeBurger()">💳 Pricing</a></li>
+    <li><a href="#faq" onclick="closeBurger()">❓ FAQs</a></li>
+  </ul>
+  <a href="#booking" class="btn-primary" style="margin:1rem 1.5rem 0; display:block; text-align:center;" onclick="closeBurger()">Book a Service →</a>
+</div>
+
+<!--===========================  EMERGENCY BANNER 
 <div class="emergency-banner">
   <div class="emergency-left">
     <span class="sos-badge">SOS</span>
@@ -867,35 +1055,37 @@
     📞 1800-PAWS-24
   </a>
 </div>
+-->
 
-<!-- HERO -->
+<!--===========================  HERO =========================== -->
 <section class="hero" id="home">
   <div class="hero-content">
     <div class="hero-eyebrow">
       🌆 Made for metro pet parents
     </div>
-    <h1>Your dog deserves the <em>city life</em> too.</h1>
+    <h1>Your dog deserves the <em>good walk</em> & <em>fresh food </em> too.</h1>
     <p class="hero-sub">
-      Urban Paws brings professional dog walking, fresh-cooked meals, grooming, boarding, vet care & more — right to your apartment door in Bengaluru, Mumbai, Delhi & beyond.
+      Urban Paws brings professional dog walking, fresh-cooked meals, grooming, boarding, vet care & more — right to your apartment door in Bengaluru.
     </p>
     <div class="hero-actions">
       <a href="#booking" class="btn-primary">Book a Service ↗</a>
       <a href="#services" class="btn-outline">Explore Services</a>
     </div>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-num">12K+</div>
-        <div class="stat-label">Happy pets served</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">4.9★</div>
-        <div class="stat-label">Average rating</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">8</div>
-        <div class="stat-label">Metro cities</div>
-      </div>
-    </div>
+
+<!--===========================  CITIES===========================  -->
+<div style="background:#fff; padding:2.5rem 0rem; border-bottom:1px solid var(--border);">
+  <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.75rem; font-weight:500;">Currently Available in</p>
+  <div class="city-badges">
+    <div class="city-badge"><span class="city-dot"></span>Bengaluru</div>
+    <div class="city-badge"><span class="city-dot"></span>Whitefield</div>
+    <div class="city-badge"><span class="city-dot"></span>Siddapura</div>
+    <div class="city-badge"><span class="city-dot"></span>Nallurhalli</div>
+    <div class="city-badge"><span class="city-dot"></span>Kundanahalli</div>
+    <div class="city-badge"><span class="city-dot"></span>Brookfield</div>
+    <div class="city-badge"><span class="city-dot"></span>Hoodi</div>
+  </div>
+</div>
+
   </div>
   <div class="hero-visual">
     <div class="hero-card-stack">
@@ -913,30 +1103,15 @@
       <div class="hero-card hero-card-float">
         <div class="float-icon">🍲</div>
         <div class="float-text">
-          <strong>Fresh meal on way</strong>
-          <span>Arrives in 32 min</span>
+          <strong>Fresh meal on the way</strong>
+          <span>Arrives in 45 min</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CITIES -->
-<div style="background:#fff; padding:1.5rem 6rem; border-bottom:1px solid var(--border);">
-  <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.75rem; font-weight:500;">Available in</p>
-  <div class="city-badges">
-    <div class="city-badge"><span class="city-dot"></span>Bengaluru</div>
-    <div class="city-badge"><span class="city-dot"></span>Whitefield</div>
-    <div class="city-badge"><span class="city-dot"></span>Siddapura</div>
-    <div class="city-badge"><span class="city-dot"></span>Nallurhalli</div>
-    <div class="city-badge"><span class="city-dot"></span>Kundanahalli</div>
-    <div class="city-badge"><span class="city-dot"></span>Brookfield</div>
-    <div class="city-badge"><span class="city-dot"></span>Thubarahalli</div>
-    <div class="city-badge"><span class="city-dot"></span>Hoodi</div>
-  </div>
-</div>
-
-<!-- SERVICES -->
+<!--===========================  SERVICES===========================  -->
 <section id="services">
   <div class="section-label">What we do</div>
   <h2 class="section-title">Every service your pet needs</h2>
@@ -946,29 +1121,29 @@
     <div class="service-card" onclick="openBooking('Pet Walking')">
       <div class="service-icon">🦮</div>
       <h3>Pet Walking</h3>
-      <p>Professional pet executors take your dog for a 20–30 min walk. Live GPS tracking, paw cleaning on return & route recorded.</p>
-      <div class="service-price">From ₹89/walk <span class="service-tag">Most Popular</span></div>
+      <p>Professional pet executors take your dog for a 15-45 min walk. Live photos, paw cleaning on return & route recorded.</p>
+      <div class="service-price">Starting From ₹89/walk <span class="service-tag">Most Popular</span></div>
     </div>
 
     <div class="service-card" onclick="openBooking('Pet Feeding')">
       <div class="service-icon">🍲</div>
       <h3>Fresh Pet Food</h3>
-      <p>Freshly cooked meals delivered in 30–35 min. Veg & non-veg options from a cloud kitchen with vet-approved specific ingredients.</p>
-      <div class="service-price">From ₹30/bowl</div>
+      <p>Freshly cooked meals delivered in 45–55 min. Veg & non-veg options from a cloud kitchen with vet-approved specific ingredients.</p>
+      <div class="service-price">From ₹28/bowl</div>
     </div>
 
     <div class="service-card" onclick="openBooking('Grooming')">
       <div class="service-icon">✂️</div>
-      <h3>Washing & Grooming</h3>
+      <h3>Washing & Grooming at your home</h3>
       <p>Full bath, blow dry, nail clipping, ear cleaning, and breed-specific grooming at your doorstep.</p>
-      <div class="service-price">From ₹499/session</div>
+      <div class="service-price">From ₹478/session</div>
     </div>
 
     <div class="service-card" onclick="openBooking('Boarding')">
       <div class="service-icon">🏠</div>
       <h3>Pet Boarding</h3>
       <p>Heading out of the city for 24+ hours? Leave your dog or cat with our verified host families. Daily updates guaranteed.</p>
-      <div class="service-price">From ₹599/night</div>
+      <div class="service-price">From ₹478/night</div>
     </div>
 
     <div class="service-card" onclick="openBooking('Vaccination')">
@@ -981,56 +1156,27 @@
     <div class="service-card" onclick="openBooking('Pet Taxi')">
       <div class="service-icon">🚐</div>
       <h3>Pet Taxi & Transport</h3>
-      <p>Dedicated Maruti Omni transport for your pets — no more rejection from autos or Ola. Safe, calm, air-conditioned rides.</p>
-      <div class="service-price">From ₹199/trip</div>
+      <p>Dedicated four wheeler vehcile transport for your pets — no more rejection from autos. Safe, calm, air-conditioned rides.</p>
+      <div class="service-price">Starting From ₹289 per 7-8km</div>
     </div>
 
     <div class="service-card" onclick="openBooking('Pet Insurance')">
       <div class="service-icon">🛡️</div>
-      <h3>Pet Insurance</h3>
+      <h3>Pet Insurance (coming soon)</h3>
       <p>Affordable health coverage for accidents, illnesses, and surgeries. Get a quote and enroll in under 5 minutes.</p>
       <div class="service-price">From ₹999/year</div>
     </div>
 
     <div class="service-card" onclick="openBooking('Pet Sitting')">
       <div class="service-icon">🧡</div>
-      <h3>Pet Sitting</h3>
+      <h3>Pet Sitting (coming soon)</h3>
       <p>In-home sitting while you're at work. Our sitter comes to you — no displacement stress for your pet.</p>
       <div class="service-price">From ₹299/session</div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section style="background:#fff;">
-  <div class="section-label">How it works</div>
-  <h2 class="section-title">Ready in 4 easy steps</h2>
-  <p class="section-sub">From download to doorstep in under 3 minutes.</p>
-  <div class="steps-flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h4>Download the app</h4>
-      <p>Available on iOS and Android. Sign up with your phone number — takes 30 seconds.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h4>Add your pet</h4>
-      <p>Tell us your pet's breed, age, gender, and any special requirements.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h4>Choose a service</h4>
-      <p>Pick walk, food, grooming, boarding or any service and your preferred time slot.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h4>Track in real time</h4>
-      <p>Your assigned pet executive arrives. Watch live on map, get photos & updates.</p>
-    </div>
-  </div>
-</section>
-
-<!-- FOOD MENU -->
+<!--===========================  FOOD MENU =========================== -->
 <section id="food">
   <div class="section-label">Pet kitchen</div>
   <h2 class="section-title">Fresh food, zero preservatives</h2>
@@ -1114,7 +1260,7 @@
   </div>
 </section>
 
-<!-- SHOP -->
+<!--===========================  SHOP =========================== -->
 <section id="shop" style="background:#fff;">
   <div class="section-label">Pet supplies</div>
   <h2 class="section-title">Everything your pet needs, delivered</h2>
@@ -1171,117 +1317,7 @@
     </div>
   </div>
 </section>
-
-<!-- BOOKING -->
-<section id="booking" class="booking-section">
-  <div class="section-label">Quick booking</div>
-  <h2 class="section-title">Book in under 2 minutes</h2>
-  <p class="section-sub">Select your service, fill in your pet's details, and we'll assign a verified executive near you.</p>
-
-  <div class="booking-form-card">
-    <div class="service-tabs" id="serviceTabs">
-      <button class="service-tab active" onclick="selectService(this)">🦮 Walk</button>
-      <button class="service-tab" onclick="selectService(this)">🍲 Food</button>
-      <button class="service-tab" onclick="selectService(this)">✂️ Grooming</button>
-      <button class="service-tab" onclick="selectService(this)">🏠 Boarding</button>
-      <button class="service-tab" onclick="selectService(this)">💉 Vaccination</button>
-      <button class="service-tab" onclick="selectService(this)">🚐 Pet Taxi</button>
-    </div>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Pet name</label>
-        <input type="text" id="petName" placeholder="e.g. Bruno" required>
-      </div>
-      <div class="form-group">
-        <label>Breed</label>
-        <select id="breed">
-          <option value="">Select breed</option>
-          <option>Labrador Retriever</option>
-          <option>Indian Breed (Desi)</option>
-          <option>German Shepherd</option>
-          <option>Beagle</option>
-          <option>Siberian Husky</option>
-          <option>Rottweiler</option>
-          <option>Shih Tzu</option>
-          <option>Dobermann</option>
-          <option>American Bully</option>
-          <option>Pomeranian</option>
-          <option>Persian Cat</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Pet's age</label>
-        <select id="petAge">
-          <option>Under 6 months</option>
-          <option>6–12 months</option>
-          <option>1–3 years</option>
-          <option>3–7 years</option>
-          <option>7+ years</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Gender</label>
-        <select id="gender">
-          <option>Male</option>
-          <option>Female</option>
-        </select>
-      </div>
-      <div class="form-group full">
-        <label>Your address</label>
-        <input type="text" id="address" placeholder="Flat / Tower / Apartment, Area, City">
-      </div>
-      <div class="form-group">
-        <label>Date</label>
-        <input type="date" id="bookDate" required>
-      </div>
-      <div class="form-group">
-        <label>Time slot</label>
-        <select id="timeSlot">
-          <option>6:00 AM – 6:30 AM</option>
-          <option>6:30 AM – 7:30 AM</option>
-          <option>7:30 AM – 8:00 AM</option>
-          <option>8:30 AM – 9:00 AM</option>
-        
-          <option>5:30 PM – 6:00 PM</option>
-          <option>6:30 PM – 7:00 PM</option>
-          <option>7:30 PM – 8:00 PM</option>
-          <option>8:30 PM – 9:00 PM</option>
-          <option>9:00 PM – 9:30 PM</option>
-
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Phone number</label>
-        <input type="tel" id="phone" placeholder="+91 98765 43210" required>
-      </div>
-      <div class="form-group">
-        <label>Email address</label>
-        <input type="email" id="email" placeholder="you@example.com" required>
-      </div>
-      <div class="form-group">
-        <label>Payment</label>
-        <select id="payment">
-          <option>UPI (PhonePe / GPay)</option>
-          <option>Cash on delivery</option>
-          <option>Debit / Credit Card</option>
-          <option>Urban Paws Wallet</option>
-        </select>
-      </div>
-      <div class="form-group full">
-        <label>Special instructions (optional)</label>
-        <textarea id="instructions" rows="2" placeholder="e.g. Bruno gets anxious around loud sounds..."></textarea>
-      </div>
-    </div>
-
-    <button class="btn-primary" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitMainBooking()">
-      Confirm Booking →
-    </button>
-  </div>
-</section>
-
-<!-- PRICING -->
+<!--===========================  PRICING =========================== -->
 <section id="pricing">
   <div class="section-label">Pricing & plans</div>
   <h2 class="section-title">Transparent, no surprises</h2>
@@ -1293,9 +1329,12 @@
       <div class="plan-price">₹0 <span>/month</span></div>
       <div class="plan-desc">No subscription, no commitment. Book anytime.</div>
       <ul class="plan-features">
-        <li class="plan-feature">Walk from ₹89</li>
-        <li class="plan-feature">Food delivery from ₹30</li>
-        <li class="plan-feature">Grooming from ₹499</li>
+        <li class="plan-feature">Dog Walking - ₹89 for 15 min</li>
+        <li class="plan-feature">Dog Walking - ₹149 for 30 min</li>
+        <li class="plan-feature">Dog Walking - ₹199 for 45 min</li>
+
+        <li class="plan-feature">Food delivery from ₹28</li>
+        <li class="plan-feature">Grooming at your home from ₹478</li>
         <li class="plan-feature">Platform fee ₹1–₹2/order</li>
         <li class="plan-feature">Basic live 🟢 tracking/photos</li>
       </ul>
@@ -1308,15 +1347,14 @@
       <div class="plan-price">₹1,289 <span>/month</span></div>
       <div class="plan-desc">For the committed pet parent. Save 30% on every service.</div>
       <ul class="plan-features">
-        <li class="plan-feature">15 walks included per month</li>
+        <li class="plan-feature">15 walks included per month for 30 min</li>
         <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
         <li class="plan-feature">Free delivery on medicines</li>
         <li class="plan-feature">10% off on food orders</li>
         <li class="plan-feature">Priority booking</li>
         <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
-        
       </ul>
-      <button class="btn-primary" style="width:100%;" onclick="showToast('🐾 Pro plan selected! Redirecting to checkout...')">Subscribe now</button>
+      <button class="btn-primary" style="width:100%;" onclick="openBooking('Walk')">Get Started</button>
     </div>
 
     <div class="pricing-card">
@@ -1324,7 +1362,7 @@
       <div class="plan-price">₹4,500 <span>/month</span></div>
       <div class="plan-desc">For families with 1 dog or cat.</div>
       <ul class="plan-features">
-        <li class="plan-feature">30 walks included per month</li>
+        <li class="plan-feature">30 walks included per month for 30 min</li>
         <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
         <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
         <li class="plan-feature">Free delivery on medicines</li>
@@ -1343,7 +1381,7 @@
         <div class="plan-price">₹5,889 <span>/month</span></div>
         <div class="plan-desc">For families with 2+ dogs or cats.</div>
         <ul class="plan-features">
-          <li class="plan-feature">30 walks included per month for 2 pets</li>
+          <li class="plan-feature">30 walks included per month for 2 pets for 30 min</li>
           <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
           <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
           <li class="plan-feature">Free delivery on medicines</li>
@@ -1359,8 +1397,236 @@
     </div>
   </div>
 </section>
-<!---
- TESTIMONIALS 
+<!--===========================  HOW IT WORKS =========================== -->
+<section style="background:#fff;">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">Ready in 4 easy steps</h2>
+  <p class="section-sub">From download to doorstep in under 3 minutes.</p>
+  <div class="steps-flow">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Download the App OR open "Book in under 2 minutes" below</h4>
+      <p>Available on Android. Sign up with your phone number — takes 30 seconds.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Add your pet</h4>
+      <p>Tell us your pet's breed, age, gender, and any special requirements.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Choose a service</h4>
+      <p>Pick walk, food, grooming, boarding or any service and your preferred time slot.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Check in real time</h4>
+      <p>Your assigned pet executive arrives. Get photos & updates.</p>
+    </div>
+  </div>
+</section>
+<!--=========================== BOOKING ======================== -->
+<section id="booking" class="booking-section">
+  <div class="section-label">Quick booking</div>
+  <h2 class="section-title">Book in under 2 minutes</h2>
+  <p class="section-sub">Select your service, fill in your pet's details, and we'll assign a verified executive near you.</p>
+
+  <div class="booking-form-card">
+    <div class="service-tabs" id="serviceTabs">
+      <button class="service-tab active" onclick="selectService(this)">🦮 Walk</button>
+      <button class="service-tab" onclick="selectService(this)">🍲 Food</button>
+      <button class="service-tab" onclick="selectService(this)">✂️ Grooming</button>
+      <button class="service-tab" onclick="selectService(this)">🏠 Boarding</button>
+      <button class="service-tab" onclick="selectService(this)">💉 Vaccination</button>
+      <button class="service-tab" onclick="selectService(this)">🚐 Pet Taxi</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Pet name</label>
+        <input type="text" id="petName" placeholder="e.g. Bruno">
+        <span class="field-error" id="err-petName">Please enter your pet's name.</span>
+      </div>
+      <div class="form-group">
+        <label>Breed</label>
+        <select id="breed">
+          <option value="">Select breed</option>
+          <option>Labrador Retriever</option>
+          <option>Indian Breed (Desi)</option>
+          <option>German Shepherd</option>
+          <option>Beagle</option>
+          <option>Siberian Husky</option>
+          <option>Rottweiler</option>
+          <option>Shih Tzu</option>
+          <option>Dobermann</option>
+          <option>American Bully</option>
+          <option>Pomeranian</option>
+          <option>Persian Cat</option>
+          <option>Other</option>
+        </select>
+        <span class="field-error" id="err-breed">Please select your pet's breed.</span>
+      </div>
+      <div class="form-group">
+        <label>Pet's age</label>
+        <select id="petAge">
+          <option value="">Select age</option>
+          <option>Under 6 months</option>
+          <option>6–12 months</option>
+          <option>1–3 years</option>
+          <option>3–7 years</option>
+          <option>7+ years</option>
+        </select>
+        <span class="field-error" id="err-petAge">Please select your pet's age.</span>
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="gender">
+          <option value="">Select gender</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+        <span class="field-error" id="err-gender">Please select your pet's gender.</span>
+      </div>
+      <div class="form-group full">
+        <label>Your address</label>
+        <input type="text" id="address" placeholder="Flat / Tower / Apartment, Area, City">
+        <span class="field-error" id="err-address">Please enter your address.</span>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="bookDate">
+        <span class="field-error" id="err-bookDate">Please select a date.</span>
+      </div>
+      <div class="form-group">
+        <label>Time slot</label>
+        <select id="timeSlot">
+          <option value="">Select time slot</option>
+          <option>6:00 AM – 6:30 AM</option>
+          <option>6:30 AM – 7:30 AM</option>
+          <option>7:30 AM – 8:00 AM</option>
+          <option>8:30 AM – 9:00 AM</option>
+          <option>5:30 PM – 6:00 PM</option>
+          <option>6:30 PM – 7:00 PM</option>
+          <option>7:30 PM – 8:00 PM</option>
+          <option>8:30 PM – 9:00 PM</option>
+          <option>9:00 PM – 9:30 PM</option>
+        </select>
+        <span class="field-error" id="err-timeSlot">Please select a time slot.</span>
+      </div>
+      <div class="form-group">
+        <label>Phone number</label>
+        <input type="tel" id="phone" placeholder="+91 98765 43210">
+        <span class="field-error" id="err-phone">Please enter a valid 10-digit phone number.</span>
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="email" placeholder="you@example.com">
+        <span class="field-error" id="err-email">Please enter a valid email address.</span>
+      </div>
+      <div class="form-group">
+        <label>Payment</label>
+        <select id="payment">
+          <option value="">Select payment method</option>
+          <option>UPI (PhonePe / GPay)</option>
+          <option>Cash on delivery</option>
+          <option>Debit / Credit Card</option>
+          <option>Urban Paws Wallet</option>
+        </select>
+        <span class="field-error" id="err-payment">Please select a payment method.</span>
+      </div>
+      <div class="form-group full">
+        <label>Special instructions <span style="font-size:0.8rem;color:#888;">(optional)</span></label>
+        <textarea id="instructions" rows="2" placeholder="e.g. Bruno gets anxious around loud sounds..."></textarea>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="form-group full" style="margin-top:0.5rem;">
+        <label style="font-size:1rem; font-weight:700; color:var(--paw-amber);">Additional Health Info <span style="font-weight:400;font-size:0.85rem;color:#888;">(helps us care better)</span></label>
+      </div>
+      <div class="form-group full">
+        <label>Does your pet have any known allergies? <span style="font-size:0.8rem;color:#888;">(food, environment, medication)</span></label>
+        <select id="allergies">
+          <option value="">Please select</option>
+          <option>No known allergies</option>
+          <option>Yes, food allergies</option>
+          <option>Yes, environmental allergies</option>
+          <option>Yes, medication allergies</option>
+          <option>Not sure</option>
+        </select>
+        <span class="field-error" id="err-allergies">Please let us know about any allergies.</span>
+      </div>
+      <div class="form-group full">
+        <label>Is your pet showing any limping or difficulty walking?</label>
+        <select id="limping">
+          <option value="">Please select</option>
+          <option>No, moving perfectly fine</option>
+          <option>Slight limping (mild)</option>
+          <option>Yes, noticeable limping</option>
+          <option>Not sure</option>
+        </select>
+        <span class="field-error" id="err-limping">Please let us know about any limping.</span>
+      </div>
+      <div class="form-group full">
+        <label>Has your pet had any surgery in the last 30 days?</label>
+        <select id="recentSurgery">
+          <option value="">Please select</option>
+          <option>No recent surgery</option>
+          <option>Yes, within the last 30 days</option>
+          <option>Yes, more than 30 days ago</option>
+        </select>
+        <span class="field-error" id="err-recentSurgery">Please let us know about any recent surgery.</span>
+      </div>
+      <div class="form-group full">
+        <label>Is your pet eating regularly? <span style="font-size:0.8rem;color:#888;">(and had food within the last 6 hours?)</span></label>
+        <select id="eatingHabits">
+          <option value="">Please select</option>
+          <option>Yes, eating well and had food within 6 hours</option>
+          <option>Yes, eating well but not within 6 hours</option>
+          <option>Eating less than usual</option>
+          <option>Not eating at all</option>
+          <option>Not sure</option>
+        </select>
+        <span class="field-error" id="err-eatingHabits">Please let us know about your pet's eating habits.</span>
+      </div>
+      <div class="form-group full">
+        <label>Is your pet vaccinated?</label>
+        <select id="vaccinated">
+          <option value="">Please select</option>
+          <option>Yes, fully vaccinated</option>
+          <option>Partially vaccinated</option>
+          <option>Not vaccinated</option>
+          <option>Not sure</option>
+        </select>
+        <span class="field-error" id="err-vaccinated">Please let us know your pet's vaccination status.</span>
+      </div>
+      <div class="form-group full">
+        <label>How would you describe your pet's temperament?</label>
+        <select id="temperament">
+          <option value="">Please select</option>
+          <option>Very friendly — loves everyone</option>
+          <option>Friendly but takes time to warm up</option>
+          <option>Reactive to strangers</option>
+          <option>Aggressive with strangers</option>
+          <option>Aggressive with other dogs</option>
+          <option>Unpredictable — varies by mood</option>
+        </select>
+        <span class="field-error" id="err-temperament">Please let us know your pet's temperament.</span>
+      </div>
+      <div class="form-group full">
+        <label>Any other health issues or concerns we should know about? <span style="font-size:0.8rem;color:#888;">(optional)</span></label>
+        <textarea id="otherIssues" rows="2" placeholder="e.g. Bruno has a heart condition, gets tired quickly on long walks..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitMainBooking()">
+      Confirm Booking →
+    </button>
+  </div>
+</section>
+
+
+<!--- ===========================
+ TESTIMONIALS    
 <section style="background:#fff;">
   <div class="section-label">What pet parents say</div>
   <h2 class="section-title">Trusted by 1000+ families</h2>
@@ -1402,10 +1668,10 @@
     </div>
   </div>
 </section>
-   -->
+=========================== -->
 
 
-<!-- APP DOWNLOAD -->
+<!--=========================== APP DOWNLOAD ===========================-->
 <section class="app-section">
   <div>
     <div class="section-label">Get the app</div>
@@ -1461,6 +1727,97 @@
   </div>
 </section>
 
+<!-- FAQ -->
+<section id="faq" style="background:#fff;">
+  <div class="section-label">Got questions?</div>
+  <h2 class="section-title">Frequently asked questions</h2>
+  <p class="section-sub">Everything you need to know before your first booking.</p>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is my dog safe with Urban Paws?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Absolutely. Every Urban Paws executive goes through a background verification, in-person training, and a pet-handling assessment before their first booking. During walks, you receive real-time location updates and photos so you always know your pet is in safe hands.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Do you handle aggressive or reactive dogs?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>We do take on dogs with temperament challenges, but we ask you to mention this in the "Special instructions" field when booking. Our team will review the case and match your pet with an executive who has experience handling reactive or aggressive dogs. Safety for both the pet and the handler is our top priority.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Are your walkers and executives verified and trained?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Yes — all Urban Paws executives are ID-verified, police-verified, and trained in basic animal first aid and pet behaviour. We do not onboard freelancers without a proper vetting process. You can see your assigned executive's profile before the service starts.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Which areas do you currently cover?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>We are currently operational in select neighbourhoods across Bengaluru, with rapid expansion underway. Enter your address in the booking form and we'll confirm availability in your area. Can't find coverage near you? Drop us a message — we're adding new zones every week.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What payment methods do you accept?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>We accept UPI (PhonePe, Google Pay, Paytm), Debit / Credit Cards, and Cash on Delivery. You can also load your Urban Paws Wallet for faster checkout on future bookings. All online payments are fully secured.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How do I track my pet's walk in real time?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Once a walk begins, you receive live location updates and photo check-ins directly from the executive. You'll know exactly where your pet is and how the walk is going — no need to wonder or worry.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I cancel or reschedule a booking?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Yes. You can cancel or reschedule up to 2 hours before the scheduled service at no charge. Cancellations made within 2 hours of the service may incur a small convenience fee. Simply reply to your booking confirmation email or contact us directly and we'll sort it out.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What happens if my pet gets hurt during the service?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>We take this very seriously. All our executives are trained in basic pet first aid. In the rare event of an incident, the executive will contact you immediately, and we will coordinate with the nearest vet if required. Urban Paws takes full responsibility for any injury that occurs during the service.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -1473,7 +1830,7 @@
       <ul>
         <li><a href="#services">Pet Walking</a></li>
         <li><a href="#food">Pet Food</a></li>
-        <li><a href="#services">Grooming</a></li>
+        <li><a href="#services">Grooming at your home</a></li>
         <li><a href="#services">Boarding</a></li>
         <li><a href="#services">Vaccination</a></li>
         <li><a href="#services">Pet Taxi</a></li>
@@ -1624,18 +1981,55 @@
       phone:        document.getElementById('phone').value.trim(),
       email:        document.getElementById('email').value.trim(),
       payment:      document.getElementById('payment').value,
-      instructions: document.getElementById('instructions').value.trim()
+      instructions: document.getElementById('instructions').value.trim(),
+      allergies:    document.getElementById('allergies').value,
+      limping:      document.getElementById('limping').value,
+      recentSurgery: document.getElementById('recentSurgery').value,
+      eatingHabits: document.getElementById('eatingHabits').value,
+      vaccinated:   document.getElementById('vaccinated').value,
+      temperament:  document.getElementById('temperament').value,
+      otherIssues:  document.getElementById('otherIssues').value.trim()
     };
 
-    // Basic validation
-    if (!data.petName || !data.phone || !data.email) {
-      showToast('⚠️ Please enter your pet name, phone number and email address.');
+    // Per-field validation — shows red message under each empty/invalid field
+    const rules = [
+      { id: 'petName',      err: 'err-petName',      check: v => v.trim() !== '' },
+      { id: 'breed',        err: 'err-breed',        check: v => v !== '' },
+      { id: 'petAge',       err: 'err-petAge',       check: v => v !== '' },
+      { id: 'gender',       err: 'err-gender',       check: v => v !== '' },
+      { id: 'address',      err: 'err-address',      check: v => v.trim() !== '' },
+      { id: 'bookDate',     err: 'err-bookDate',     check: v => v !== '' },
+      { id: 'timeSlot',     err: 'err-timeSlot',     check: v => v !== '' },
+      { id: 'phone',        err: 'err-phone',        check: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
+      { id: 'email',        err: 'err-email',        check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+      { id: 'payment',      err: 'err-payment',      check: v => v !== '' },
+      { id: 'allergies',    err: 'err-allergies',    check: v => v !== '' },
+      { id: 'limping',      err: 'err-limping',      check: v => v !== '' },
+      { id: 'recentSurgery',err: 'err-recentSurgery',check: v => v !== '' },
+      { id: 'eatingHabits', err: 'err-eatingHabits', check: v => v !== '' },
+      { id: 'vaccinated',   err: 'err-vaccinated',   check: v => v !== '' },
+      { id: 'temperament',  err: 'err-temperament',  check: v => v !== '' },
+    ];
+    let hasError = false;
+    rules.forEach(rule => {
+      const el = document.getElementById(rule.id);
+      const errEl = document.getElementById(rule.err);
+      const valid = rule.check(el.value);
+      el.classList.toggle('invalid', !valid);
+      errEl.classList.toggle('visible', !valid);
+      if (!valid) hasError = true;
+    });
+    if (hasError) {
+      // Scroll to the first invalid field
+      const firstInvalid = document.querySelector('.form-group .invalid');
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      showToast('⚠️ Please enter a valid email address.');
-      return;
-    }
+    // Clear any previous error states on success
+    rules.forEach(rule => {
+      document.getElementById(rule.id).classList.remove('invalid');
+      document.getElementById(rule.err).classList.remove('visible');
+    });
 
     // Guard: endpoint not configured yet
     if (SHEET_ENDPOINT.indexOf('PASTE_YOUR') === 0) {
@@ -1662,6 +2056,105 @@
         });
       })
       .catch(() => showToast('❌ Something went wrong. Please try again.'));
+  }
+
+  // ====== Burger menu ======
+  function toggleBurger() {
+    const menu = document.getElementById('burgerMenu');
+    menu.classList.toggle('open');
+    // Close mobile search if open
+    document.getElementById('mobSearchBar').classList.remove('open');
+  }
+  function closeBurger() {
+    document.getElementById('burgerMenu').classList.remove('open');
+  }
+
+  function toggleMobSearch() {
+    const bar = document.getElementById('mobSearchBar');
+    bar.classList.toggle('open');
+    if (bar.classList.contains('open')) {
+      setTimeout(() => document.getElementById('mobSearchInput').focus(), 50);
+    }
+    // Close burger if open
+    document.getElementById('burgerMenu').classList.remove('open');
+  }
+
+  // Close menus on outside click
+  document.addEventListener('click', function(e) {
+    const burger = document.getElementById('burgerMenu');
+    const burgerBtn = document.getElementById('burgerBtn');
+    const mobBar = document.getElementById('mobSearchBar');
+    if (!burger.contains(e.target) && !burgerBtn.contains(e.target)) burger.classList.remove('open');
+    if (!mobBar.contains(e.target)) mobBar.classList.remove('open');
+  });
+
+  // ====== Search ======
+  const SEARCH_INDEX = [
+    // Services
+    { icon: '🦮', title: 'Pet Walking', desc: 'Daily walks by verified executives', href: '#services', tags: ['walk', 'walking', 'dog walk', 'daily walk', 'morning walk'] },
+    { icon: '🍲', title: 'Pet Food Delivery', desc: 'Fresh home-cooked meals delivered daily', href: '#food', tags: ['food', 'feeding', 'meal', 'delivery', 'diet', 'nutrition', 'chicken', 'rice'] },
+    { icon: '✂️', title: 'Grooming', desc: 'Bath, trim, nail clipping & more', href: '#services', tags: ['grooming', 'bath', 'trim', 'haircut', 'nail', 'spa', 'clean'] },
+    { icon: '🏠', title: 'Boarding', desc: 'Safe overnight stays for your pet', href: '#services', tags: ['boarding', 'overnight', 'stay', 'hotel', 'daycare', 'hostel'] },
+    { icon: '💉', title: 'Vaccination', desc: 'On-time vaccination reminders & visits', href: '#services', tags: ['vaccination', 'vaccine', 'injection', 'shot', 'rabies', 'health'] },
+    { icon: '🚐', title: 'Pet Taxi', desc: 'Safe vet & airport transfers', href: '#services', tags: ['taxi', 'transport', 'cab', 'ride', 'travel', 'vet visit', 'airport'] },
+    { icon: '🛡️', title: 'Pet Insurance', desc: 'Coverage for medical emergencies', href: '#services', tags: ['insurance', 'medical', 'emergency', 'cover', 'claim'] },
+    { icon: '🏡', title: 'Pet Sitting', desc: 'In-home pet sitting while you\'re away', href: '#services', tags: ['sitting', 'sitter', 'babysit', 'home', 'away', 'travel'] },
+    // Pricing
+    { icon: '💳', title: 'Starter Plan – Free', desc: 'Pay per use, no subscription', href: '#pricing', tags: ['price', 'pricing', 'cost', 'fee', 'starter', 'free', 'pay per use', 'cheap'] },
+    { icon: '⭐', title: 'Paws+ Plan – ₹999/mo', desc: 'Daily walks + priority support', href: '#pricing', tags: ['price', 'pricing', 'subscription', 'monthly', 'paws plus', '999'] },
+    { icon: '👑', title: 'Elite Plan – ₹2499/mo', desc: 'Everything + grooming + insurance', href: '#pricing', tags: ['price', 'pricing', 'elite', 'premium', 'best', '2499', 'grooming plan'] },
+    // Booking
+    { icon: '📅', title: 'Book a Service', desc: 'Quick booking in under 2 minutes', href: '#booking', tags: ['book', 'booking', 'schedule', 'appointment', 'reserve', 'hire'] },
+    // FAQ
+    { icon: '❓', title: 'Is my dog safe?', desc: 'All executives are background verified', href: '#faq', tags: ['safe', 'safety', 'trust', 'secure', 'verified', 'background'] },
+    { icon: '❓', title: 'Aggressive dogs', desc: 'We handle reactive & aggressive dogs', href: '#faq', tags: ['aggressive', 'reactive', 'bite', 'dangerous', 'temperament'] },
+    { icon: '❓', title: 'Areas covered', desc: 'Currently serving select areas in Bengaluru', href: '#faq', tags: ['area', 'location', 'bengaluru', 'bangalore', 'where', 'coverage', 'zone', 'city'] },
+    { icon: '❓', title: 'Payment methods', desc: 'UPI, Cards, Cash on delivery accepted', href: '#faq', tags: ['payment', 'upi', 'gpay', 'cash', 'card', 'pay', 'phonepay'] },
+    { icon: '❓', title: 'Cancel or reschedule', desc: 'Free cancellation up to 2 hours before', href: '#faq', tags: ['cancel', 'reschedule', 'refund', 'change', 'postpone'] },
+    { icon: '❓', title: 'Live tracking', desc: 'Real-time GPS location during walks', href: '#faq', tags: ['track', 'tracking', 'gps', 'location', 'live', 'photo', 'update'] },
+    { icon: '❓', title: 'Walker verification', desc: 'ID-verified, police-verified, trained staff', href: '#faq', tags: ['verified', 'trained', 'police', 'background', 'trust', 'who'] },
+    { icon: '❓', title: 'Pet gets hurt', desc: 'We take full responsibility for any incident', href: '#faq', tags: ['hurt', 'injury', 'accident', 'sick', 'emergency', 'vet', 'responsibility'] },
+  ];
+
+  function runSearch(query) {
+    // Works for both desktop (#searchDropdown) and mobile (#mobSearchDropdown)
+    const isMob = document.getElementById('mobSearchBar').classList.contains('open');
+    const dropdown = document.getElementById(isMob ? 'mobSearchDropdown' : 'searchDropdown');
+    query = query.trim().toLowerCase();
+    if (!query) { dropdown.classList.remove('open'); return; }
+
+    const results = SEARCH_INDEX.filter(item =>
+      item.title.toLowerCase().includes(query) ||
+      item.desc.toLowerCase().includes(query) ||
+      item.tags.some(t => t.includes(query))
+    ).slice(0, 6);
+
+    if (!results.length) {
+      dropdown.innerHTML = '<div class="search-no-result">No results for "' + query + '"</div>';
+    } else {
+      dropdown.innerHTML = results.map(r =>
+        '<a class="search-result" href="' + r.href + '" onclick="closeSearch()">' +
+          '<span class="search-result-icon">' + r.icon + '</span>' +
+          '<span class="search-result-text"><strong>' + r.title + '</strong><span>' + r.desc + '</span></span>' +
+        '</a>'
+      ).join('');
+    }
+    dropdown.classList.add('open');
+  }
+
+  function closeSearch() {
+    document.getElementById('searchDropdown').classList.remove('open');
+    document.getElementById('mobSearchDropdown').classList.remove('open');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('mobSearchInput').value = '';
+    document.getElementById('mobSearchBar').classList.remove('open');
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
   }
 
   function addToCart(item) {
