@@ -810,7 +810,7 @@
 
   /* RESPONSIVE */
   @media (max-width: 1024px) {
-    nav { padding: 0 1.5rem; }
+    nav { padding: 1 1.5rem; }
     .nav-links { display: none; }
     .hero { grid-template-columns: 1fr; padding: 3rem 2rem; text-align: center; min-height: auto; }
     .hero-visual { justify-content: center; margin-top: 3rem; }
@@ -1191,7 +1191,7 @@
     <div class="form-grid">
       <div class="form-group">
         <label>Pet name</label>
-        <input type="text" id="petName" placeholder="e.g. Bruno">
+        <input type="text" id="petName" placeholder="e.g. Bruno" required>
       </div>
       <div class="form-group">
         <label>Breed</label>
@@ -1234,7 +1234,7 @@
       </div>
       <div class="form-group">
         <label>Date</label>
-        <input type="date" id="bookDate">
+        <input type="date" id="bookDate" required>
       </div>
       <div class="form-group">
         <label>Time slot</label>
@@ -1254,7 +1254,7 @@
       </div>
       <div class="form-group">
         <label>Phone number</label>
-        <input type="tel" id="phone" placeholder="+91 98765 43210">
+        <input type="tel" id="phone" placeholder="+91 98765 43210" required>
       </div>
       <div class="form-group">
         <label>Email address</label>
@@ -1610,6 +1610,8 @@
 
   function submitMainBooking() {
     const activeTab = document.querySelector('#serviceTabs .service-tab.active');
+    // The guaranteed-unique, sequential Booking ID (e.g. #WK10001) is generated
+    // server-side by the Google Apps Script and returned in the response below.
     const data = {
       service:      activeTab ? activeTab.textContent.trim() : '',
       petName:      document.getElementById('petName').value.trim(),
@@ -1647,8 +1649,13 @@
 
     showToast('⏳ Submitting your booking...');
     fetch(SHEET_ENDPOINT, { method: 'POST', body: fd })
-      .then(() => {
-        showToast('🐾 Booking confirmed! Your details have been saved.');
+      .then(res => res.json())
+      .then(res => {
+        if (res && res.bookingId) {
+          showToast('🐾 Booking confirmed! Your Booking ID is #' + res.bookingId + ' — please save it for reference.');
+        } else {
+          showToast('🐾 Booking confirmed! Your details have been saved.');
+        }
         // Reset fields
         ['petName','address','phone','email','instructions'].forEach(id => {
           document.getElementById(id).value = '';

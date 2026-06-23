@@ -27,6 +27,46 @@ var NOTIFY_EMAIL = 'urbanpawsbooking@gmail.com';
 var FROM_EMAIL = 'hello@urbanpaws.app';
 var FROM_NAME  = 'Urban Paws';
 
+// ====== Booking ID settings ======
+// Each service category gets its own 2-letter code. Anything that doesn't match
+// falls back to 'UP' (Urban Paws).
+var CATEGORY_CODES = {
+  'Walk':        'WK',
+  'Food':        'FD',
+  'Grooming':    'GR',
+  'Boarding':    'BD',
+  'Vaccination': 'VC',
+  'Pet Taxi':    'PT',
+  'Taxi':        'PT'
+};
+
+// Counters start here, so the FIRST booking in a category is <code>10001
+// (e.g. WK10001), matching the 5-digit "#UP10245" style.
+var BOOKING_ID_START = 10000;
+
+// Returns a guaranteed-unique, sequential booking ID for the given service,
+// e.g. "WK10001", "WK10002", "GR10001". Uses a script lock so two bookings
+// arriving at the same time can never get the same number.
+function getNextBookingId(service) {
+  service = service || '';
+  var code = 'UP';
+  for (var k in CATEGORY_CODES) {
+    if (service.indexOf(k) !== -1) { code = CATEGORY_CODES[k]; break; }
+  }
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000); // wait up to 30s for any in-flight booking to finish
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var key = 'bookingCounter_' + code;
+    var next = parseInt(props.getProperty(key) || String(BOOKING_ID_START), 10) + 1;
+    props.setProperty(key, String(next));
+    return code + next;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
@@ -34,14 +74,21 @@ function doPost(e) {
     // Add a header row once, if the sheet is empty
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
-        'Timestamp', 'Service', 'Pet Name', 'Breed', 'Pet Age', 'Gender',
+        'Timestamp', 'Booking ID', 'Service', 'Pet Name', 'Breed', 'Pet Age', 'Gender',
         'Address', 'Date', 'Time Slot', 'Phone', 'Email', 'Payment', 'Instructions'
       ]);
     }
 
     var p = (e && e.parameter) || {};
+
+    // Generate the guaranteed-unique, sequential booking ID and expose it to the
+    // email helpers via the same payload object.
+    var bookingId = getNextBookingId(p.service);
+    p.bookingId = bookingId;
+
     sheet.appendRow([
       new Date(),
+      bookingId,
       p.service      || '',
       p.petName      || '',
       p.breed        || '',
@@ -63,7 +110,7 @@ function doPost(e) {
     sendCustomerConfirmation(p);
 
     return ContentService
-      .createTextOutput(JSON.stringify({ result: 'success' }))
+      .createTextOutput(JSON.stringify({ result: 'success', bookingId: bookingId }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
     return ContentService
@@ -76,8 +123,8 @@ function sendEmailNotification(p) {
   if (!NOTIFY_EMAIL) return; // disabled
   p = p || {};               // guard: never crash on a missing payload
 
-  var subject = '🐾 New Urban Paws Booking — ' + (p.service || 'Booking') +
-                ' for ' + (p.petName || 'a pet');
+  var subject = '🐾 New Urban Paws Booking #' + (p.bookingId || '') + ' — ' +
+                (p.service || 'Booking') + ' for ' + (p.petName || 'a pet');
 
   // Remaining email quota (recipients left today). Read before sending.
   var quotaLeft = MailApp.getRemainingDailyQuota();
@@ -88,6 +135,7 @@ function sendEmailNotification(p) {
     '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#222">' +
       '<h2 style="margin:0 0 12px">🐾 New Urban Paws Booking!</h2>' +
       '<table cellpadding="6" style="border-collapse:collapse">' +
+        row('🆔 Booking ID', '#' + (p.bookingId || '-')) +
         row('🛎 Service',  p.service) +
         row('🐶 Pet',      (p.petName || '-') + ' (' + (p.breed || '-') + ')') +
         row('🎂 Age',      p.petAge) +
@@ -106,6 +154,7 @@ function sendEmailNotification(p) {
   // Plain-text fallback for clients that don't render HTML.
   var plain = [
     'New Urban Paws Booking!',
+    'Booking ID: #'  + (p.bookingId || '-'),
     'Service: '      + (p.service || '-'),
     'Pet: '          + (p.petName || '-') + ' (' + (p.breed || '-') + ')',
     'Age: '          + (p.petAge || '-') + '  Gender: ' + (p.gender || '-'),
@@ -149,7 +198,10 @@ function sendCustomerConfirmation(p) {
       '<h2 style="margin:0 0 12px">🐾 Booking confirmed!</h2>' +
       '<p style="margin:0 0 14px">Hi' + (p.petName ? ' (' + p.petName + "'s parent)" : '') +
         ', thanks for booking with Urban Paws. Here are your details:</p>' +
+      '<p style="margin:0 0 14px;font-size:16px"><strong>Your Booking ID: #' +
+        (p.bookingId || '-') + '</strong> — please keep this for reference.</p>' +
       '<table cellpadding="6" style="border-collapse:collapse">' +
+        row('🆔 Booking ID', '#' + (p.bookingId || '-')) +
         row('🛎 Service',  p.service) +
         row('🐶 Pet',      (p.petName || '-') + ' (' + (p.breed || '-') + ')') +
         row('📍 Address',  p.address) +
@@ -167,6 +219,7 @@ function sendCustomerConfirmation(p) {
   var plain = [
     'Booking confirmed!',
     'Thanks for booking with Urban Paws. Here are your details:',
+    'Booking ID: #' + (p.bookingId || '-') + ' (please keep this for reference)',
     'Service: '  + (p.service || '-'),
     'Pet: '      + (p.petName || '-') + ' (' + (p.breed || '-') + ')',
     'Address: '  + (p.address || '-'),
