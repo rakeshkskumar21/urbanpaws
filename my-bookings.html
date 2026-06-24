@@ -3,271 +3,626 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Bookings | Urban Paws</title>
+<title>Urban Paws — My Account</title>
 <meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --paw: #E8531A;
-    --text: #1a1a1a;
-    --muted: #6b7280;
-    --surface: #f9f9f7;
-    --border: #e5e7eb;
-    --radius: 12px;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Syne', system-ui, -apple-system, sans-serif; color: var(--text); background: var(--surface); min-height: 100vh; }
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --paw: #E8531A; --paw2: #c94112; --paw-soft: #FDE4C8; --paw-faint: #fff7f2;
+  --night: #0F0F0F; --cream: #FEF3E8; --surface: #F6F5F2; --white: #ffffff;
+  --muted: #6B7280; --border: #E8E0D8; --border2: #EDE8E2;
+  --green: #16a34a; --green-soft: #DCFCE7; --green-text: #166534;
+  --yellow-soft: #FEF9C3; --yellow-text: #854D0E;
+  --blue-soft: #DBEAFE; --blue-text: #1E40AF;
+  --red-soft: #FEE2E2; --red-text: #991B1B;
+  --sidebar-w: 240px; --topbar-h: 60px;
+}
+html, body { height: 100%; }
+body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(--night); }
 
-  /* NAV */
-  nav {
-    background: #fff;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.1rem; text-decoration: none; color: var(--text); }
-  .logo-paw { font-size: 1.3rem; }
-  .nav-back { font-size: 0.85rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 4px; }
-  .nav-back:hover { color: var(--paw); }
+/* ───── AUTH GATE ───── */
+#authGate {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #fff7f2 0%, var(--cream) 100%);
+}
+.gate-card {
+  background: #fff; border-radius: 24px; padding: 2.5rem 2rem;
+  max-width: 360px; width: 100%; box-shadow: 0 12px 48px rgba(232,83,26,.1); text-align: center;
+}
+.gate-logo { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--paw); }
+.gate-sub  { color: var(--muted); font-size: .85rem; margin: .4rem 0 2rem; }
+.gate-btn  {
+  display: block; width: 100%; padding: 13px;
+  background: var(--paw); color: #fff; border: none; border-radius: 100px;
+  font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none;
+  font-family: inherit; transition: background .2s;
+}
+.gate-btn:hover { background: var(--paw2); }
 
-  /* MAIN */
-  main { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-  h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.25rem; }
-  .page-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+/* ───── APP SHELL ───── */
+#app { display: none; height: 100vh; }
 
-  /* AUTH GATE */
-  .auth-gate {
-    background: #fff;
-    border-radius: var(--radius);
-    padding: 2.5rem;
-    text-align: center;
-    border: 1px solid var(--border);
-  }
-  .auth-gate h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-  .auth-gate p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
-  .btn-paw {
-    display: inline-block;
-    background: var(--paw);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-decoration: none;
-    font-family: inherit;
-  }
-  .btn-paw:hover { background: #d4461a; }
+/* SIDEBAR */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+  background: var(--night); display: flex; flex-direction: column;
+  z-index: 100; transition: transform .25s ease;
+}
+.sb-brand {
+  padding: 1.4rem 1.5rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,.08);
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+  color: var(--paw); display: flex; align-items: center; gap: 8px;
+}
+.sb-user {
+  padding: 1rem 1.5rem; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sb-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--paw);
+  color: #fff; font-size: .8rem; font-weight: 700; font-family: 'Syne', sans-serif;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sb-user-name { font-size: .85rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user-plan { font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 1px; }
 
-  /* BOOKING CARDS */
-  .bookings-list { display: flex; flex-direction: column; gap: 1rem; }
-  .booking-card {
-    background: #fff;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 1.25rem 1.5rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.5rem 1rem;
-    align-items: start;
-  }
-  .booking-id { font-size: 0.78rem; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
-  .booking-service { font-weight: 700; font-size: 1rem; }
-  .booking-pet { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
-  .booking-meta { font-size: 0.82rem; color: var(--muted); margin-top: 6px; display: flex; flex-wrap: wrap; gap: 8px; }
-  .booking-meta span { display: flex; align-items: center; gap: 4px; }
-  .status-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    white-space: nowrap;
-    text-transform: capitalize;
-  }
-  .status-pending   { background: #fef3c7; color: #92400e; }
-  .status-confirmed { background: #dbeafe; color: #1e40af; }
-  .status-completed { background: #dcfce7; color: #166534; }
-  .status-cancelled { background: #fee2e2; color: #991b1b; }
+.sb-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+.sb-nav a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 1.5rem; font-size: .875rem; font-weight: 600;
+  color: rgba(255,255,255,.5); text-decoration: none;
+  transition: all .15s; cursor: pointer;
+  border: none; background: none; width: 100%; font-family: inherit;
+}
+.sb-nav a:hover { color: #fff; background: rgba(255,255,255,.06); }
+.sb-nav a.active { color: #fff; background: rgba(232,83,26,.22); border-left: 3px solid var(--paw); padding-left: calc(1.5rem - 3px); }
+.sb-section { font-size: .65rem; font-weight: 700; color: rgba(255,255,255,.22); padding: 1rem 1.5rem .4rem; letter-spacing: .08em; text-transform: uppercase; }
+.sb-icon { font-size: 1rem; width: 20px; text-align: center; }
 
-  .empty-state {
-    background: #fff;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    padding: 3rem 2rem;
-    text-align: center;
-  }
-  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
-  .empty-state h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-  .empty-state p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.sb-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,.08); }
+.sb-logout {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 9px 0; font-size: .85rem; font-weight: 600;
+  color: rgba(255,255,255,.4); border: none; background: none;
+  cursor: pointer; font-family: inherit; transition: color .15s;
+}
+.sb-logout:hover { color: #fc8181; }
 
-  .loading { text-align: center; padding: 3rem; color: var(--muted); }
+/* MOBILE TOP BAR */
+.topbar {
+  display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
+  background: #fff; border-bottom: 1px solid var(--border);
+  align-items: center; justify-content: space-between; padding: 0 1rem; z-index: 90;
+}
+.tb-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--paw); }
+.tb-hamburger {
+  width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px;
+  background: none; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; flex-direction: column; gap: 4px; padding: 8px;
+}
+.tb-hamburger span { width: 18px; height: 2px; background: var(--night); display: block; border-radius: 2px; }
+.sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 95; }
+.sb-overlay.open { display: block; }
 
-  /* REALTIME PILL */
-  .rt-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.75rem;
-    color: #16a34a;
-    background: #dcfce7;
-    border-radius: 20px;
-    padding: 3px 10px;
-    margin-bottom: 1.25rem;
-  }
-  .rt-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+/* MAIN */
+.main-wrap { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+.page { padding: 2rem; flex: 1; max-width: 1100px; }
 
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    background: #1a1a1a;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    z-index: 9999;
-    transition: transform 0.3s;
-    white-space: nowrap;
-    max-width: 90vw;
-    white-space: normal;
-    text-align: center;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { background: #16a34a; }
+/* PAGE HEADER */
+.page-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: .3rem; }
+.page-sub { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-bottom: 1.75rem; }
+.rt-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: rtp 1.8s ease-in-out infinite; display: inline-block; }
+@keyframes rtp { 0%,100%{opacity:1} 50%{opacity:.25} }
 
-  @media (max-width: 480px) {
-    .booking-card { grid-template-columns: 1fr; }
-    .status-badge { justify-self: start; }
-  }
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--white); border-radius: 16px; padding: 1.2rem 1.4rem; border: 1px solid var(--border2); }
+.stat-label { font-size: .72rem; color: var(--muted); font-weight: 700; margin-bottom: .4rem; text-transform: uppercase; letter-spacing: .05em; }
+.stat-value { font-size: 2rem; font-weight: 800; color: var(--night); font-family: 'Syne', sans-serif; line-height: 1; }
+.stat-card.accent .stat-value { color: var(--paw); }
+
+/* QUICK ACTIONS */
+.quick-actions { display: flex; gap: .75rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.qa-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 20px; border-radius: 100px; font-size: .85rem; font-weight: 700;
+  cursor: pointer; text-decoration: none; font-family: inherit; border: none; transition: all .15s;
+}
+.qa-primary { background: var(--paw); color: #fff; }
+.qa-primary:hover { background: var(--paw2); }
+.qa-ghost { background: var(--white); color: var(--night); border: 1.5px solid var(--border); }
+.qa-ghost:hover { border-color: var(--paw); color: var(--paw); }
+
+/* SECTION HEADER */
+.section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.section-title { font-weight: 700; font-size: .95rem; }
+.section-count { font-size: .8rem; color: var(--muted); }
+
+/* RECENT ROWS */
+.recent-bkgs { display: flex; flex-direction: column; gap: .6rem; }
+.recent-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--white); border: 1px solid var(--border2); border-radius: 12px; padding: .85rem 1rem;
+}
+.recent-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--paw-soft); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.recent-info { flex: 1; min-width: 0; }
+.recent-svc { font-size: .88rem; font-weight: 700; }
+.recent-meta { font-size: .75rem; color: var(--muted); margin-top: 1px; }
+
+/* BADGES */
+.badge { display: inline-block; padding: 4px 11px; border-radius: 100px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+.badge-pending   { background: var(--yellow-soft); color: var(--yellow-text); }
+.badge-confirmed { background: var(--green-soft);  color: var(--green-text); }
+.badge-completed { background: var(--blue-soft);   color: var(--blue-text); }
+.badge-cancelled { background: var(--red-soft);    color: var(--red-text); }
+
+/* FILTERS */
+.filters { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+.filter-select, .filter-input {
+  padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: .83rem; font-family: inherit; outline: none; background: var(--white); color: var(--night); transition: border-color .15s;
+}
+.filter-select:focus, .filter-input:focus { border-color: var(--paw); }
+.filter-input { min-width: 180px; }
+
+/* BOOKING CARDS */
+.bookings-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 1rem; }
+.booking-card {
+  background: var(--white); border-radius: 16px; border: 1px solid var(--border2);
+  padding: 1.2rem; display: flex; flex-direction: column; gap: .75rem;
+  transition: box-shadow .2s, transform .15s;
+}
+.booking-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.07); transform: translateY(-1px); }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.card-svc { display: flex; align-items: center; gap: 10px; }
+.card-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--paw-soft); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.card-svc-name { font-weight: 700; font-size: .92rem; }
+.card-booking-id { font-size: .72rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
+.card-divider { border: none; border-top: 1px solid var(--border2); }
+.card-details { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .75rem; }
+.card-detail-label { font-size: .68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+.card-detail-val { font-size: .82rem; font-weight: 600; }
+.card-detail.full { grid-column: 1/-1; }
+
+/* PROFILE */
+.profile-shell { display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem; align-items: start; }
+.profile-id-card { background: var(--white); border: 1px solid var(--border2); border-radius: 16px; padding: 1.75rem; text-align: center; }
+.profile-avatar {
+  width: 80px; height: 80px; border-radius: 50%; background: var(--paw); color: #fff;
+  font-size: 1.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem; font-family: 'Syne', sans-serif;
+}
+.profile-fullname { font-size: 1.1rem; font-weight: 800; margin-bottom: 3px; }
+.profile-email { font-size: .78rem; color: var(--muted); word-break: break-all; margin-bottom: 1rem; }
+.plan-chip { display: inline-block; padding: 5px 14px; border-radius: 100px; font-size: .75rem; font-weight: 700; margin-bottom: .75rem; }
+.plan-starter { background: #F3F4F6; color: #374151; }
+.plan-paws    { background: #FDE68A; color: #78350F; }
+.plan-elite   { background: var(--paw-soft); color: #7c2d12; }
+.profile-since { font-size: .75rem; color: var(--muted); }
+
+.profile-form-card { background: var(--white); border: 1px solid var(--border2); border-radius: 16px; padding: 1.75rem; }
+.pf-form-title { font-weight: 700; font-size: .95rem; margin-bottom: 1.2rem; }
+.pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.pf-group { display: flex; flex-direction: column; gap: 4px; }
+.pf-group.full { grid-column: 1/-1; }
+.pf-group label { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.pf-group input, .pf-group select, .pf-group textarea {
+  padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s;
+  background: var(--white); color: var(--night);
+}
+.pf-group input:focus, .pf-group select:focus, .pf-group textarea:focus { border-color: var(--paw); }
+.pf-group input:disabled { background: #f8f8f6; color: var(--muted); cursor: not-allowed; }
+.pf-group textarea { resize: vertical; min-height: 80px; }
+.plan-options { display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem; }
+.plan-option { border: 2px solid var(--border); border-radius: 12px; padding: .85rem; cursor: pointer; text-align: center; transition: all .15s; }
+.plan-option:hover { border-color: var(--paw); }
+.plan-option.selected { border-color: var(--paw); background: var(--paw-faint); }
+.plan-option input[type=radio] { display: none; }
+.plan-opt-icon { font-size: 1.25rem; margin-bottom: 4px; }
+.plan-opt-name { font-weight: 700; font-size: .85rem; }
+.plan-opt-price { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+.save-btn {
+  margin-top: 1.2rem; padding: 11px 28px;
+  background: var(--paw); color: #fff; border: none; border-radius: 100px;
+  font-size: .9rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s;
+}
+.save-btn:hover { background: var(--paw2); }
+.save-btn:disabled { opacity: .6; cursor: not-allowed; }
+.save-ok { font-size: .82rem; color: var(--green); margin-top: .6rem; display: none; font-weight: 600; }
+.save-ok.show { display: block; }
+
+/* EMPTY / LOADING */
+.empty-state { background: var(--white); border-radius: 16px; border: 1px solid var(--border2); padding: 3rem 2rem; text-align: center; }
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-state h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
+.empty-state p { color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+.loading-msg { text-align: center; padding: 2.5rem; color: var(--muted); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(120px);
+  background: var(--night); color: #fff; padding: 12px 20px; border-radius: 10px;
+  font-size: .88rem; font-weight: 600; z-index: 9999; transition: transform .3s;
+  text-align: center; max-width: 90vw; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--green); }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .profile-shell { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+  .sidebar.open { transform: translateX(0); }
+  .topbar { display: flex; }
+  .main-wrap { margin-left: 0; padding-top: var(--topbar-h); }
+  .page { padding: 1.25rem 1rem; }
+  .plan-options { grid-template-columns: 1fr; }
+  .pf-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 540px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .bookings-grid { grid-template-columns: 1fr; }
+  .quick-actions { flex-direction: column; }
+  .qa-btn { justify-content: center; }
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="logo"><span class="logo-paw">🐾</span> Urban Paws</a>
-  <a href="index.html" class="nav-back">← Back to home</a>
-</nav>
-
-<main>
-  <h1>My Bookings</h1>
-  <p class="page-sub">All your Urban Paws bookings in one place.</p>
-
-  <!-- Auth gate (shown when logged out) -->
-  <div class="auth-gate" id="authGate" style="display:none">
-    <div style="font-size:2.5rem; margin-bottom:1rem;">🔐</div>
-    <h2>Log in to view your bookings</h2>
-    <p>You need to be logged in to see your booking history and get live status updates.</p>
-    <a href="index.html" class="btn-paw">Go to Home & Login</a>
+<!-- AUTH GATE -->
+<div id="authGate">
+  <div class="gate-card">
+    <div class="gate-logo">🐾 Urban Paws</div>
+    <div class="gate-sub">Sign in to access your account</div>
+    <a href="index.html" class="gate-btn">Go to Home &amp; Login →</a>
   </div>
+</div>
 
-  <!-- Bookings view (shown when logged in) -->
-  <div id="bookingsView" style="display:none">
-    <div class="rt-pill"><div class="rt-dot"></div>Live status updates on</div>
-    <div id="bookingsList" class="bookings-list">
-      <div class="loading">Loading your bookings…</div>
+<!-- APP -->
+<div id="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">🐾 Urban Paws</div>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">?</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Loading…</div>
+        <div class="sb-user-plan" id="sbPlan">Starter Plan</div>
+      </div>
     </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Overview</div>
+      <a onclick="showPage('dashboard')" id="nav-dashboard" class="active"><span class="sb-icon">🏠</span> Dashboard</a>
+      <div class="sb-section">Services</div>
+      <a onclick="showPage('bookings')" id="nav-bookings"><span class="sb-icon">📋</span> My Bookings</a>
+      <a href="index.html?book=1" id="nav-book"><span class="sb-icon">➕</span> Book a Service</a>
+      <div class="sb-section">Account</div>
+      <a onclick="showPage('profile')" id="nav-profile"><span class="sb-icon">👤</span> My Profile</a>
+    </nav>
+    <div class="sb-footer">
+      <button class="sb-logout" onclick="signOut()"><span class="sb-icon">🚪</span> Log out</button>
+    </div>
+  </aside>
+
+  <div class="topbar">
+    <div class="tb-logo">🐾 Urban Paws</div>
+    <button class="tb-hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
   </div>
-</main>
+  <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
+  <div class="main-wrap">
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-title" id="welcomeMsg">Welcome back 👋</div>
+      <div class="page-sub"><span class="rt-dot"></span> Live updates enabled — status changes appear instantly</div>
+
+      <div class="stats-grid">
+        <div class="stat-card accent"><div class="stat-label">Total Bookings</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Upcoming</div><div class="stat-value" id="statUpcoming">—</div></div>
+        <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">—</div></div>
+        <div class="stat-card"><div class="stat-label">Cancelled</div><div class="stat-value" id="statCancelled">—</div></div>
+      </div>
+
+      <div class="quick-actions">
+        <a href="index.html?book=1" class="qa-btn qa-primary">➕ Book a Service</a>
+        <button class="qa-btn qa-ghost" onclick="showPage('bookings')">📋 View All Bookings</button>
+        <button class="qa-btn qa-ghost" onclick="showPage('profile')">👤 Edit Profile</button>
+      </div>
+
+      <div class="section-hdr">
+        <div class="section-title">Recent Bookings</div>
+        <button class="qa-btn qa-ghost" style="padding:6px 14px;font-size:.78rem" onclick="showPage('bookings')">View all →</button>
+      </div>
+      <div id="recentList"><div class="loading-msg">Loading…</div></div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div class="page" id="page-bookings" style="display:none">
+      <div class="page-title">My Bookings</div>
+      <div class="page-sub">All your service bookings in one place</div>
+      <div class="filters">
+        <select class="filter-select" id="fStatus" onchange="applyBkFilter()">
+          <option value="">All Status</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="confirmed">✅ Confirmed</option>
+          <option value="completed">🎉 Completed</option>
+          <option value="cancelled">❌ Cancelled</option>
+        </select>
+        <input class="filter-input" id="fSearch" placeholder="Search service, pet…" oninput="applyBkFilter()">
+      </div>
+      <div class="section-hdr">
+        <div class="section-title">All Bookings</div>
+        <div class="section-count" id="bkCount"></div>
+      </div>
+      <div id="bookingsList"><div class="loading-msg">Loading your bookings…</div></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="page-profile" style="display:none">
+      <div class="page-title">My Profile</div>
+      <div class="page-sub">Manage your personal details and plan</div>
+      <div class="profile-shell">
+        <div class="profile-id-card">
+          <div class="profile-avatar" id="pfAvatarBig">?</div>
+          <div class="profile-fullname" id="pfNameBig">—</div>
+          <div class="profile-email" id="pfEmailSmall">—</div>
+          <div id="pfPlanChip" class="plan-chip plan-starter">⭐ Starter</div>
+          <div class="profile-since">Member since <span id="pfSince">—</span></div>
+        </div>
+        <div class="profile-form-card">
+          <div class="pf-form-title">Edit Profile Details</div>
+          <div class="pf-grid">
+            <div class="pf-group"><label>Full Name</label><input type="text" id="pfName" placeholder="Your full name"></div>
+            <div class="pf-group"><label>Email Address</label><input type="email" id="pfEmail" disabled></div>
+            <div class="pf-group"><label>Phone Number</label><input type="tel" id="pfPhone" placeholder="+91 XXXXX XXXXX"></div>
+            <div class="pf-group full"><label>Address</label><textarea id="pfAddress" placeholder="Apartment, area, city, PIN code"></textarea></div>
+            <div class="pf-group full">
+              <label>Your Plan</label>
+              <div class="plan-options">
+                <label class="plan-option selected" id="planStarter" onclick="selectPlan('starter')">
+                  <input type="radio" name="plan" value="starter" checked>
+                  <div class="plan-opt-icon">🐾</div><div class="plan-opt-name">Starter</div><div class="plan-opt-price">Free</div>
+                </label>
+                <label class="plan-option" id="planPaws" onclick="selectPlan('paws')">
+                  <input type="radio" name="plan" value="paws">
+                  <div class="plan-opt-icon">⭐</div><div class="plan-opt-name">Paws+</div><div class="plan-opt-price">₹999 / month</div>
+                </label>
+                <label class="plan-option" id="planElite" onclick="selectPlan('elite')">
+                  <input type="radio" name="plan" value="elite">
+                  <div class="plan-opt-icon">👑</div><div class="plan-opt-name">Elite</div><div class="plan-opt-price">₹2,499 / month</div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <button class="save-btn" id="saveBtn" onclick="saveProfile()">Save Changes →</button>
+          <div class="save-ok" id="saveOk">✅ Profile updated successfully!</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const { createClient } = supabase;
-  const db = createClient(
-    'https://uyawcevbvxlhfbovntxh.supabase.co',
-    'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5'
-  );
+const { createClient } = supabase;
+const db = createClient('https://uyawcevbvxlhfbovntxh.supabase.co', 'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5');
 
-  let realtimeChannel = null;
+let currentUser = null, allBookings = [], realtimeChannel = null;
 
-  const STATUS_LABELS = { pending: '⏳ Pending', confirmed: '✅ Confirmed', completed: '🎉 Completed', cancelled: '❌ Cancelled' };
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
 
-  function statusBadge(status) {
-    return `<span class="status-badge status-${status || 'pending'}">${STATUS_LABELS[status] || status}</span>`;
-  }
-
-  function renderCard(b) {
-    return `
-      <div class="booking-card" id="card-${b.id}">
-        <div>
-          <div class="booking-id">#${b.booking_id || b.id}</div>
-          <div class="booking-service">${b.service || '—'}</div>
-          <div class="booking-pet">🐾 ${b.pet_name || '—'} · ${b.breed || '—'}</div>
-          <div class="booking-meta">
-            <span>📅 ${b.booking_date || '—'}</span>
-            <span>⏰ ${b.time_slot || '—'}</span>
-            <span>📞 ${b.phone || '—'}</span>
-          </div>
-        </div>
-        <div id="status-${b.id}">${statusBadge(b.status)}</div>
-      </div>`;
-  }
-
-  function showToast(msg, type) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className = 'toast show' + (type ? ' ' + type : '');
-    setTimeout(() => el.className = 'toast', 3500);
-  }
-
-  async function loadBookings(email) {
-    const list = document.getElementById('bookingsList');
-    const { data, error } = await db.from('bookings').select('*').eq('email', email).order('created_at', { ascending: false });
-    if (error) { list.innerHTML = '<div class="loading">Could not load bookings. Please try again.</div>'; return; }
-    if (!data || data.length === 0) {
-      list.innerHTML = `<div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <h3>No bookings yet</h3>
-        <p>You haven't made any bookings with this account yet.</p>
-        <a href="index.html#booking" class="btn-paw">Book a Service →</a>
-      </div>`;
-      return;
-    }
-    list.innerHTML = data.map(renderCard).join('');
-  }
-
-  function subscribeRealtime(email) {
-    if (realtimeChannel) db.removeChannel(realtimeChannel);
-    realtimeChannel = db.channel('my-bookings-' + email)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'bookings', filter: 'email=eq.' + email }, payload => {
-        const b = payload.new;
-        const statusEl = document.getElementById('status-' + b.id);
-        if (statusEl) statusEl.innerHTML = statusBadge(b.status);
-        showToast('🐾 Booking #' + b.booking_id + ' is now ' + b.status + '!', 'success');
-        if (Notification.permission === 'granted') {
-          new Notification('Urban Paws Update', { body: 'Booking #' + b.booking_id + ' (' + b.service + ') is now ' + b.status + '.' });
-        }
-      })
-      .subscribe();
-    if (Notification.permission === 'default') Notification.requestPermission();
-  }
-
-  db.auth.onAuthStateChange((_event, session) => {
-    const authGate = document.getElementById('authGate');
-    const bookingsView = document.getElementById('bookingsView');
-    if (session && session.user) {
-      authGate.style.display = 'none';
-      bookingsView.style.display = 'block';
-      loadBookings(session.user.email);
-      subscribeRealtime(session.user.email);
-    } else {
-      authGate.style.display = 'block';
-      bookingsView.style.display = 'none';
-      if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
-    }
+const PAGES = ['dashboard','bookings','profile'];
+function showPage(id) {
+  PAGES.forEach(p => {
+    document.getElementById('page-'+p).style.display = p===id ? '' : 'none';
+    const nav = document.getElementById('nav-'+p);
+    if (nav) nav.classList.toggle('active', p===id);
   });
+  closeSidebar();
+  if (id==='bookings' && allBookings.length) applyBkFilter();
+}
+
+const SVC = { walk:'🦮', food:'🍲', feed:'🍲', groom:'✂️', board:'🏠', vacc:'💉', taxi:'🚐' };
+function svcIcon(s) {
+  if (!s) return '🐾';
+  const sl = s.toLowerCase();
+  for (const [k,v] of Object.entries(SVC)) if (sl.includes(k)) return v;
+  return '🐾';
+}
+const BADGE_LBL = { pending:'⏳ Pending', confirmed:'✅ Confirmed', completed:'🎉 Completed', cancelled:'❌ Cancelled' };
+function badgeHtml(st) { return `<span class="badge badge-${st||'pending'}">${BADGE_LBL[st]||st}</span>`; }
+
+function renderCard(b) {
+  return `<div class="booking-card" id="card-${b.id}">
+    <div class="card-top">
+      <div class="card-svc">
+        <div class="card-icon">${svcIcon(b.service)}</div>
+        <div><div class="card-svc-name">${b.service||'—'}</div><div class="card-booking-id">#${b.booking_id||b.id}</div></div>
+      </div>
+      <div id="badge-${b.id}">${badgeHtml(b.status)}</div>
+    </div>
+    <hr class="card-divider">
+    <div class="card-details">
+      <div><div class="card-detail-label">Pet</div><div class="card-detail-val">${b.pet_name||'—'} <span style="color:var(--muted);font-weight:400">(${b.breed||'—'})</span></div></div>
+      <div><div class="card-detail-label">Date</div><div class="card-detail-val">📅 ${b.booking_date||'—'}</div></div>
+      <div><div class="card-detail-label">Time Slot</div><div class="card-detail-val">⏰ ${b.time_slot||'—'}</div></div>
+      <div><div class="card-detail-label">Payment</div><div class="card-detail-val">💳 ${b.payment||'—'}</div></div>
+      <div class="card-detail full"><div class="card-detail-label">Address</div><div class="card-detail-val">📍 ${b.address||'—'}</div></div>
+    </div>
+  </div>`;
+}
+
+function updateStats(bk) {
+  document.getElementById('statTotal').textContent     = bk.length;
+  document.getElementById('statUpcoming').textContent  = bk.filter(b=>b.status==='pending'||b.status==='confirmed').length;
+  document.getElementById('statCompleted').textContent = bk.filter(b=>b.status==='completed').length;
+  document.getElementById('statCancelled').textContent = bk.filter(b=>b.status==='cancelled').length;
+}
+
+function renderRecent(bk) {
+  const recent = bk.slice(0,4);
+  const el = document.getElementById('recentList');
+  if (!recent.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>No bookings yet</h3><p>Ready to book your first pet service?</p><a href="index.html?book=1" style="display:inline-block;background:var(--paw);color:#fff;border-radius:100px;padding:10px 24px;font-size:.9rem;font-weight:700;text-decoration:none">Book a Service →</a></div>`;
+    return;
+  }
+  el.innerHTML = '<div class="recent-bkgs">' + recent.map(b => `
+    <div class="recent-row">
+      <div class="recent-icon">${svcIcon(b.service)}</div>
+      <div class="recent-info">
+        <div class="recent-svc">${b.service||'—'} <span style="font-weight:400;color:var(--muted);font-size:.8rem">· #${b.booking_id||b.id}</span></div>
+        <div class="recent-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
+      </div>
+      <div id="badge-r-${b.id}">${badgeHtml(b.status)}</div>
+    </div>`).join('') + '</div>';
+}
+
+function applyBkFilter() {
+  const status = document.getElementById('fStatus').value;
+  const search = document.getElementById('fSearch').value.toLowerCase();
+  const filtered = allBookings.filter(b => {
+    if (status && b.status!==status) return false;
+    if (search && !(
+      (b.service||'').toLowerCase().includes(search) ||
+      (b.pet_name||'').toLowerCase().includes(search) ||
+      (b.booking_id||'').toLowerCase().includes(search)
+    )) return false;
+    return true;
+  });
+  document.getElementById('bkCount').textContent = filtered.length + ' booking' + (filtered.length!==1?'s':'');
+  const list = document.getElementById('bookingsList');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No bookings match</h3><p>Try clearing your filters.</p></div>`;
+    return;
+  }
+  list.innerHTML = '<div class="bookings-grid">' + filtered.map(renderCard).join('') + '</div>';
+}
+
+async function loadBookings(email) {
+  const { data, error } = await db.from('bookings').select('*').eq('email', email).order('created_at', { ascending: false });
+  if (error) { document.getElementById('bookingsList').innerHTML = '<div class="loading-msg">Could not load bookings.</div>'; return; }
+  allBookings = data || [];
+  updateStats(allBookings);
+  renderRecent(allBookings);
+  applyBkFilter();
+}
+
+function subscribeRealtime(email) {
+  if (realtimeChannel) db.removeChannel(realtimeChannel);
+  realtimeChannel = db.channel('app-bk-' + email)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'bookings', filter: 'email=eq.' + email }, payload => {
+      const b = payload.new;
+      ['badge-'+b.id,'badge-r-'+b.id].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=badgeHtml(b.status); });
+      const idx = allBookings.findIndex(x=>x.id===b.id);
+      if (idx!==-1) { allBookings[idx]={...allBookings[idx],...b}; updateStats(allBookings); }
+      showToast('🐾 Booking #'+b.booking_id+' is now '+b.status+'!', 'success');
+      if (Notification.permission==='granted') new Notification('Urban Paws', { body: 'Booking #'+b.booking_id+' ('+b.service+') → '+b.status });
+    }).subscribe();
+  if (Notification.permission==='default') Notification.requestPermission();
+}
+
+function initials(name) { return (name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
+
+async function loadProfile(user) {
+  const { data: p } = await db.from('profiles').select('*').eq('id', user.id).single();
+  const meta = user.user_metadata || {};
+  const name = (p&&p.full_name) || meta.full_name || meta.name || user.email;
+  const plan = (p&&p.plan) || 'starter';
+  const since = p&&p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  document.getElementById('sbAvatar').textContent  = initials(name);
+  document.getElementById('sbName').textContent    = name.split(' ')[0];
+  document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',paws:'Paws+ Plan',elite:'Elite Plan'}[plan]||'Starter Plan';
+  document.getElementById('welcomeMsg').textContent = 'Welcome back, '+name.split(' ')[0]+' 👋';
+  document.getElementById('pfAvatarBig').textContent  = initials(name);
+  document.getElementById('pfNameBig').textContent    = name;
+  document.getElementById('pfEmailSmall').textContent = user.email;
+  document.getElementById('pfSince').textContent      = since;
+  setPlanChip(plan);
+  document.getElementById('pfName').value    = name;
+  document.getElementById('pfEmail').value   = user.email;
+  document.getElementById('pfPhone').value   = (p&&p.phone)||'';
+  document.getElementById('pfAddress').value = (p&&p.address)||'';
+  selectPlan(plan);
+}
+
+function setPlanChip(plan) {
+  const m = {starter:['⭐ Starter','plan-starter'],paws:['🌟 Paws+','plan-paws'],elite:['👑 Elite','plan-elite']};
+  const [text,cls] = m[plan]||m.starter;
+  const el = document.getElementById('pfPlanChip');
+  el.textContent = text; el.className = 'plan-chip '+cls;
+}
+
+function selectPlan(plan) {
+  ['starter','paws','elite'].forEach(p => {
+    const key = 'plan'+p.charAt(0).toUpperCase()+p.slice(1);
+    const el = document.getElementById(key);
+    if (!el) return;
+    el.classList.toggle('selected', p===plan);
+    el.querySelector('input').checked = (p===plan);
+  });
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const plan = document.querySelector('input[name="plan"]:checked')?.value || 'starter';
+  const full_name = document.getElementById('pfName').value.trim();
+  const { error } = await db.from('profiles').upsert({ id: currentUser.id, email: currentUser.email, full_name, phone: document.getElementById('pfPhone').value.trim(), address: document.getElementById('pfAddress').value.trim(), plan });
+  btn.disabled = false; btn.textContent = 'Save Changes →';
+  if (error) { showToast('❌ '+error.message); return; }
+  setPlanChip(plan);
+  document.getElementById('pfNameBig').textContent = full_name;
+  document.getElementById('sbAvatar').textContent  = initials(full_name);
+  document.getElementById('sbName').textContent    = full_name.split(' ')[0];
+  document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',paws:'Paws+ Plan',elite:'Elite Plan'}[plan]||'Starter Plan';
+  document.getElementById('welcomeMsg').textContent = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
+  const ok = document.getElementById('saveOk'); ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),3000);
+  showToast('✅ Profile saved!', 'success');
+}
+
+function initApp(user) {
+  currentUser = user;
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadProfile(user);
+  loadBookings(user.email);
+  subscribeRealtime(user.email);
+}
+
+function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }
+
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show'+(type?' '+type:'');
+  setTimeout(()=>el.className='toast', 3500);
+}
+
+db.auth.onAuthStateChange((_event, session) => {
+  const user = session?.user ?? null;
+  if (user) initApp(user);
+  else {
+    document.getElementById('authGate').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
+  }
+});
 </script>
 </body>
 </html>

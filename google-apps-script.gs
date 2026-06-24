@@ -298,39 +298,156 @@ function sendStatusUpdateEmail(p) {
   var to = (p.email || '').trim();
   if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return;
 
-  var statusLabels = {
-    'confirmed':  '✅ Confirmed',
-    'completed':  '🎉 Completed',
-    'cancelled':  '❌ Cancelled',
-    'pending':    '⏳ Pending'
+  var statusConfig = {
+    'confirmed': {
+      emoji: '✅',
+      label: 'Confirmed',
+      color: '#16a34a',
+      bgColor: '#DCFCE7',
+      headline: 'Your booking is confirmed!',
+      message: 'Great news! Your booking has been confirmed. Our team will be with you as scheduled. You\'ll receive a reminder before the appointment.'
+    },
+    'completed': {
+      emoji: '🎉',
+      label: 'Completed',
+      color: '#2563eb',
+      bgColor: '#DBEAFE',
+      headline: 'Service completed!',
+      message: 'Your service has been completed. We hope your pet had a wonderful experience with Urban Paws! We\'d love to hear your feedback — just reply to this email.'
+    },
+    'cancelled': {
+      emoji: '❌',
+      label: 'Cancelled',
+      color: '#dc2626',
+      bgColor: '#FEE2E2',
+      headline: 'Booking cancelled',
+      message: 'Your booking has been cancelled. If this was unexpected or if you have any questions, please reply to this email and we\'ll help you out right away.'
+    },
+    'pending': {
+      emoji: '⏳',
+      label: 'Pending Review',
+      color: '#ca8a04',
+      bgColor: '#FEF9C3',
+      headline: 'Booking pending review',
+      message: 'Your booking is currently being reviewed by our team. We\'ll update you as soon as it\'s confirmed.'
+    }
   };
-  var label = statusLabels[p.status] || p.status || 'Updated';
-  var subject = '🐾 Your Urban Paws booking #' + (p.bookingId || '') + ' is ' + (p.status || 'updated');
+
+  var cfg = statusConfig[p.status] || {
+    emoji: '📋', label: p.status || 'Updated', color: '#374151', bgColor: '#F3F4F6',
+    headline: 'Booking status updated',
+    message: 'Your booking status has been updated to: ' + (p.status || 'unknown') + '.'
+  };
+
+  var subject = cfg.emoji + ' Your Urban Paws booking #' + (p.bookingId || '') + ' — ' + cfg.label;
+  var petDetail = (p.petName || '-') + (p.breed ? ' (' + p.breed + ')' : '');
 
   var htmlBody =
-    '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#222">' +
-      '<h2 style="margin:0 0 12px">🐾 Booking Status Update</h2>' +
-      '<p>Hi' + (p.petName ? ' (' + p.petName + "'s parent)" : '') + ',</p>' +
-      '<p style="margin:12px 0">Your booking <strong>#' + (p.bookingId || '-') + '</strong> for <strong>' + (p.service || '-') + '</strong> has been updated:</p>' +
-      '<p style="font-size:1.2rem;font-weight:bold;margin:16px 0">' + label + '</p>' +
-      (p.status === 'confirmed'  ? '<p>Great news! Your booking is confirmed. Our team will be with you as scheduled.</p>' : '') +
-      (p.status === 'completed'  ? '<p>Your service is complete. Hope your pet had a great time with Urban Paws! 🐾</p>' : '') +
-      (p.status === 'cancelled'  ? '<p>Your booking has been cancelled. If you have any questions, please reply to this email.</p>' : '') +
-      '<p style="margin-top:20px;color:#888">— The Urban Paws team</p>' +
+    '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#222;max-width:580px;margin:0 auto">' +
+
+    // Header bar
+    '<div style="background:#E8531A;padding:20px 28px;border-radius:12px 12px 0 0">' +
+      '<div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">🐾 Urban Paws</div>' +
+    '</div>' +
+
+    // Status banner
+    '<div style="background:' + cfg.bgColor + ';padding:20px 28px;border-bottom:1px solid #e8e0d8">' +
+      '<div style="font-size:28px;margin-bottom:6px">' + cfg.emoji + '</div>' +
+      '<div style="font-size:1.15rem;font-weight:700;color:' + cfg.color + '">' + cfg.headline + '</div>' +
+      '<div style="font-size:.85rem;color:#555;margin-top:4px">Booking <strong>#' + (p.bookingId || '-') + '</strong> · Status: <strong style="color:' + cfg.color + '">' + cfg.label + '</strong></div>' +
+    '</div>' +
+
+    // Message body
+    '<div style="background:#fff;padding:20px 28px">' +
+      '<p style="margin:0 0 14px">Hi <strong>' + (p.petName ? p.petName + '\'s parent' : 'there') + '</strong>,</p>' +
+      '<p style="margin:0 0 20px">' + cfg.message + '</p>' +
+
+      // Booking details table
+      '<div style="background:#f9f8f6;border:1px solid #e8e0d8;border-radius:10px;padding:16px;margin-bottom:20px">' +
+        '<div style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:12px">Booking Details</div>' +
+        '<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse">' +
+          statusRow('🆔 Booking ID',   '#' + (p.bookingId || '-')) +
+          statusRow('🛎 Service',      p.service) +
+          statusRow('📅 Date',         p.date) +
+          statusRow('⏰ Time Slot',    p.timeSlot) +
+          '<tr><td colspan="2" style="padding:6px 0"><hr style="border:none;border-top:1px solid #e8e0d8;margin:2px 0"></td></tr>' +
+          statusRow('🐾 Pet Name',     petDetail) +
+          (p.petAge    ? statusRow('🎂 Age',       p.petAge)    : '') +
+          (p.gender    ? statusRow('⚧ Gender',     p.gender)    : '') +
+          '<tr><td colspan="2" style="padding:6px 0"><hr style="border:none;border-top:1px solid #e8e0d8;margin:2px 0"></td></tr>' +
+          statusRow('📍 Address',      p.address) +
+          statusRow('📞 Phone',        p.phone) +
+          statusRow('💳 Payment',      p.payment) +
+          (p.instructions ? statusRow('📝 Notes', p.instructions) : '') +
+        '</table>' +
+      '</div>' +
+
+      // Health info (only show if any present)
+      (p.allergies || p.limping || p.recentSurgery || p.eatingHabits || p.vaccinated || p.temperament || p.otherIssues ?
+        '<div style="background:#fff7f2;border:1px solid #fde4c8;border-radius:10px;padding:16px;margin-bottom:20px">' +
+          '<div style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#E8531A;margin-bottom:12px">🏥 Health Notes on File</div>' +
+          '<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse">' +
+            (p.allergies     ? statusRow('🤧 Allergies',      p.allergies)     : '') +
+            (p.limping       ? statusRow('🦵 Limping',        p.limping)       : '') +
+            (p.recentSurgery ? statusRow('🏥 Recent Surgery', p.recentSurgery) : '') +
+            (p.eatingHabits  ? statusRow('🍽 Eating Habits',  p.eatingHabits)  : '') +
+            (p.vaccinated    ? statusRow('💉 Vaccinated',     p.vaccinated)    : '') +
+            (p.temperament   ? statusRow('🐶 Temperament',    p.temperament)   : '') +
+            (p.otherIssues   ? statusRow('⚠️ Other Issues',   p.otherIssues)   : '') +
+          '</table>' +
+        '</div>'
+      : '') +
+
+      '<p style="margin:0 0 6px;font-size:13px;color:#888">Questions? Just reply to this email.</p>' +
+      '<p style="margin:0;font-size:14px;color:#888">— The Urban Paws team 🐾</p>' +
+    '</div>' +
+
+    // Footer
+    '<div style="background:#f3f2ef;padding:12px 28px;border-radius:0 0 12px 12px;text-align:center">' +
+      '<p style="font-size:11px;color:#aaa;margin:0">Urban Paws · Bengaluru Pet Services · urbanpaws.app</p>' +
+    '</div>' +
+
     '</div>';
 
   var plain = [
-    'Booking Status Update',
-    'Booking #' + (p.bookingId || '-') + ' for ' + (p.service || '-') + ' is now: ' + (p.status || '-'),
+    cfg.emoji + ' ' + cfg.headline,
+    '',
+    'Hi ' + (p.petName ? p.petName + "'s parent" : 'there') + ',',
+    cfg.message,
+    '',
+    '— Booking Details —',
+    'Booking ID: #'  + (p.bookingId || '-'),
+    'Service: '      + (p.service   || '-'),
+    'Date: '         + (p.date      || '-'),
+    'Time Slot: '    + (p.timeSlot  || '-'),
+    'Pet: '          + petDetail,
+    p.petAge   ? 'Age: '     + p.petAge   : '',
+    p.gender   ? 'Gender: '  + p.gender   : '',
+    'Address: '      + (p.address  || '-'),
+    'Phone: '        + (p.phone    || '-'),
+    'Payment: '      + (p.payment  || '-'),
+    p.instructions ? 'Notes: ' + p.instructions : '',
+    '',
+    'Status: ' + cfg.label,
     '',
     '— The Urban Paws team'
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 
   try {
     MailApp.sendEmail({ to: to, subject: subject, body: plain, htmlBody: htmlBody, from: FROM_EMAIL, name: FROM_NAME, replyTo: FROM_EMAIL });
+    console.log('Status update email sent to ' + to + ' for booking #' + p.bookingId + ' (' + p.status + ')');
   } catch (err) {
     console.error('Status email failed: ' + err);
   }
+}
+
+// Helper for status email table rows
+function statusRow(label, value) {
+  if (!value || value === '-') return '';
+  return '<tr style="vertical-align:top">' +
+    '<td style="font-weight:600;white-space:nowrap;padding:4px 12px 4px 0;font-size:13px;color:#555;width:140px">' + label + '</td>' +
+    '<td style="padding:4px 0;font-size:14px;color:#222">' + value + '</td>' +
+  '</tr>';
 }
 
 // Run this once from the editor to test your email setup.

@@ -2541,12 +2541,16 @@
     if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('visible'); return; }
     const btn = document.querySelector('#paneSignUp .auth-submit');
     btn.disabled = true; btn.textContent = 'Creating account…';
-    db.auth.signUp({ email, password, options: { data: { full_name: name } } }).then(({ error }) => {
+    db.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: window.location.origin + '/index.html' } }).then(async ({ data, error }) => {
       btn.disabled = false; btn.textContent = 'Create Account →';
       if (error) { errEl.textContent = error.message; errEl.classList.add('visible'); }
       else {
+        // Upsert profile as fallback in case trigger hasn't run
+        if (data?.user?.id) {
+          await db.from('profiles').upsert({ id: data.user.id, email, full_name: name }, { onConflict: 'id', ignoreDuplicates: true });
+        }
         errEl.style.color = '#16a34a';
-        errEl.textContent = '✅ Account created! Please check your email to confirm.';
+        errEl.textContent = '✅ Account created! You can now log in.';
         errEl.classList.add('visible');
       }
     });
@@ -2606,9 +2610,15 @@
     if (Notification.permission === 'default') Notification.requestPermission();
   }
 
-  // Listen for login/logout changes
+  // Listen for login/logout changes — redirect logged-in users to the app
   db.auth.onAuthStateChange((_event, session) => {
-    updateAuthUI(session ? session.user : null);
+    const user = session ? session.user : null;
+    const params = new URLSearchParams(window.location.search);
+    if (user && !params.has('book')) {
+      window.location.replace('my-bookings.html');
+      return;
+    }
+    updateAuthUI(user);
   });
 
   // Close user dropdown when clicking outside it

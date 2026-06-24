@@ -145,6 +145,29 @@
   .empty { text-align: center; padding: 3rem; color: var(--muted); }
   .loading { text-align: center; padding: 2rem; color: var(--muted); }
 
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex; gap: 0; background: #fff;
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 4px; margin-bottom: 1.75rem; width: fit-content;
+  }
+  .tab-btn {
+    padding: 8px 22px; border: none; background: none;
+    border-radius: 9px; font-size: 0.88rem; font-weight: 600;
+    cursor: pointer; color: var(--muted); font-family: inherit;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn.active { background: var(--paw); color: #fff; }
+
+  /* ── USERS TABLE ── */
+  .plan-chip {
+    display: inline-block; padding: 2px 9px; border-radius: 100px;
+    font-size: 0.7rem; font-weight: 700;
+  }
+  .plan-starter { background: #F3F4F6; color: #374151; }
+  .plan-paws    { background: #FDE68A; color: #78350F; }
+  .plan-elite   { background: #FDE4C8; color: #7c2d12; }
+
   @media (max-width: 768px) {
     .stats-grid { grid-template-columns: 1fr 1fr; }
     main { padding: 1rem; }
@@ -180,6 +203,14 @@
   </header>
 
   <main>
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
+      <button class="tab-btn" id="tabUsers" onclick="switchAdminTab('users')">👥 Users</button>
+    </div>
+
+    <!-- BOOKINGS TAB -->
+    <div id="bookingsTab">
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card highlight">
@@ -251,6 +282,69 @@
         </table>
       </div>
     </div>
+    </div><!-- /bookingsTab -->
+
+    <!-- USERS TAB -->
+    <div id="usersTab" style="display:none">
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card highlight">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="uStatTotal">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Starter Plan</div>
+          <div class="stat-value" id="uStatStarter">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Paws+ Plan</div>
+          <div class="stat-value" id="uStatPaws">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Elite Plan</div>
+          <div class="stat-value" id="uStatElite">—</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <span class="filter-label">Filter:</span>
+        <select id="uFilterPlan" onchange="applyUserFilters()">
+          <option value="">All Plans</option>
+          <option value="starter">Starter</option>
+          <option value="paws">Paws+</option>
+          <option value="elite">Elite</option>
+        </select>
+        <input type="text" id="uFilterSearch" placeholder="Search name / email…" oninput="applyUserFilters()" style="min-width:200px;" />
+        <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">Signed-Up Users</div>
+          <div class="table-count" id="uTableCount"></div>
+        </div>
+        <div class="table-scroll">
+          <table style="min-width:780px">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Plan</th>
+                <th>Address</th>
+                <th>Password</th>
+                <th>Joined</th>
+                <th>Bookings</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody">
+              <tr><td colspan="9" class="loading">Loading users…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /usersTab -->
+
   </main>
 </div>
 
@@ -408,16 +502,113 @@
       // Send status-change email to customer via Google Apps Script
       if (booking.email) {
         const fd = new FormData();
-        fd.append('action',    'statusUpdate');
-        fd.append('bookingId', booking.booking_id || '');
-        fd.append('service',   booking.service    || '');
-        fd.append('petName',   booking.pet_name   || '');
-        fd.append('email',     booking.email);
-        fd.append('status',    status);
+        fd.append('action',        'statusUpdate');
+        fd.append('status',        status);
+        fd.append('bookingId',     booking.booking_id   || '');
+        fd.append('service',       booking.service      || '');
+        fd.append('petName',       booking.pet_name     || '');
+        fd.append('breed',         booking.breed        || '');
+        fd.append('petAge',        booking.pet_age      || '');
+        fd.append('gender',        booking.gender       || '');
+        fd.append('address',       booking.address      || '');
+        fd.append('date',          booking.booking_date || '');
+        fd.append('timeSlot',      booking.time_slot    || '');
+        fd.append('phone',         booking.phone        || '');
+        fd.append('email',         booking.email);
+        fd.append('payment',       booking.payment      || '');
+        fd.append('instructions',  booking.instructions || '');
+        fd.append('allergies',     booking.allergies    || '');
+        fd.append('limping',       booking.limping      || '');
+        fd.append('recentSurgery', booking.recent_surgery || '');
+        fd.append('eatingHabits',  booking.eating_habits  || '');
+        fd.append('vaccinated',    booking.vaccinated   || '');
+        fd.append('temperament',   booking.temperament  || '');
+        fd.append('otherIssues',   booking.other_issues || '');
         fetch(SHEET_ENDPOINT, { method: 'POST', body: fd }).catch(() => {});
       }
     }
     updateStats();
+  }
+
+  // ── Admin tab switching ──
+  function switchAdminTab(tab) {
+    document.getElementById('tabBookings').classList.toggle('active', tab==='bookings');
+    document.getElementById('tabUsers').classList.toggle('active', tab==='users');
+    document.getElementById('bookingsTab').style.display = tab==='bookings' ? '' : 'none';
+    document.getElementById('usersTab').style.display   = tab==='users'    ? '' : 'none';
+    if (tab==='users' && !window._usersLoaded) loadUsers();
+  }
+
+  // ── Users ──
+  let allUsers = [];
+
+  async function loadUsers() {
+    window._usersLoaded = true;
+    document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="loading">Loading users…</td></tr>';
+    // Load profiles + booking counts in parallel
+    const [profilesRes, bookingsRes] = await Promise.all([
+      db.from('profiles').select('*').order('created_at', { ascending: false }),
+      db.from('bookings').select('email')
+    ]);
+    if (profilesRes.error) {
+      document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="empty">Error: ' + profilesRes.error.message + '</td></tr>';
+      return;
+    }
+    // Count bookings per email
+    const bookingCount = {};
+    (bookingsRes.data || []).forEach(b => {
+      if (b.email) bookingCount[b.email] = (bookingCount[b.email] || 0) + 1;
+    });
+    allUsers = (profilesRes.data || []).map(u => ({ ...u, booking_count: bookingCount[u.email] || 0 }));
+    updateUserStats();
+    applyUserFilters();
+  }
+
+  function updateUserStats() {
+    document.getElementById('uStatTotal').textContent   = allUsers.length;
+    document.getElementById('uStatStarter').textContent = allUsers.filter(u => !u.plan || u.plan==='starter').length;
+    document.getElementById('uStatPaws').textContent    = allUsers.filter(u => u.plan==='paws').length;
+    document.getElementById('uStatElite').textContent   = allUsers.filter(u => u.plan==='elite').length;
+  }
+
+  function applyUserFilters() {
+    const plan   = document.getElementById('uFilterPlan').value;
+    const search = document.getElementById('uFilterSearch').value.toLowerCase();
+    const filtered = allUsers.filter(u => {
+      if (plan && (u.plan || 'starter') !== plan) return false;
+      if (search && !(
+        (u.full_name || '').toLowerCase().includes(search) ||
+        (u.email     || '').toLowerCase().includes(search) ||
+        (u.phone     || '').toLowerCase().includes(search)
+      )) return false;
+      return true;
+    });
+    document.getElementById('uTableCount').textContent = filtered.length + ' user' + (filtered.length!==1?'s':'');
+    renderUsersTable(filtered);
+  }
+
+  function renderUsersTable(users) {
+    if (!users.length) {
+      document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="empty">No users found.</td></tr>';
+      return;
+    }
+    const planLabel = { starter:'⭐ Starter', paws:'🌟 Paws+', elite:'👑 Elite' };
+    const planCls   = { starter:'plan-starter', paws:'plan-paws', elite:'plan-elite' };
+    document.getElementById('usersBody').innerHTML = users.map((u, i) => {
+      const plan  = u.plan || 'starter';
+      const since = u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+      return `<tr>
+        <td style="color:var(--muted);font-size:0.78rem">${i+1}</td>
+        <td><strong>${u.full_name || '—'}</strong></td>
+        <td style="font-size:0.82rem">${u.email || '—'}</td>
+        <td style="font-size:0.82rem">${u.phone || '<span style="color:#ccc">—</span>'}</td>
+        <td><span class="plan-chip ${planCls[plan]}">${planLabel[plan]}</span></td>
+        <td style="max-width:160px;word-break:break-word;font-size:0.78rem">${u.address || '<span style="color:#ccc">—</span>'}</td>
+        <td><span style="font-size:0.78rem;color:var(--muted)">🔒 Secured</span></td>
+        <td style="font-size:0.78rem;white-space:nowrap">${since}</td>
+        <td style="text-align:center"><strong>${u.booking_count}</strong></td>
+      </tr>`;
+    }).join('');
   }
 </script>
 </body>
