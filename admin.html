@@ -396,12 +396,27 @@
     return flags.join('');
   }
 
+  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
+
   // ── Update status ──
   async function updateStatus(id, status) {
     const { error } = await db.from('bookings').update({ status }).eq('id', id);
     if (error) { alert('Failed to update status: ' + error.message); return; }
     const booking = allBookings.find(b => String(b.id) === String(id));
-    if (booking) booking.status = status;
+    if (booking) {
+      booking.status = status;
+      // Send status-change email to customer via Google Apps Script
+      if (booking.email) {
+        const fd = new FormData();
+        fd.append('action',    'statusUpdate');
+        fd.append('bookingId', booking.booking_id || '');
+        fd.append('service',   booking.service    || '');
+        fd.append('petName',   booking.pet_name   || '');
+        fd.append('email',     booking.email);
+        fd.append('status',    status);
+        fetch(SHEET_ENDPOINT, { method: 'POST', body: fd }).catch(() => {});
+      }
+    }
     updateStats();
   }
 </script>
