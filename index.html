@@ -564,7 +564,7 @@
   .nav-search {
     position: relative;
     display: flex; align-items: center;
-    background: rgba(0,0,0,0.07);
+    background: #fff;
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 100px;
     padding: 6px 14px;
@@ -656,6 +656,18 @@
     transition: all var(--transition);
     font-family: 'Inter', sans-serif;
   }
+  .walk-dur-opt {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px; border: 2px solid #d0c8c0;
+    border-radius: 100px; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+    background: #fff; color: #1a1a1a;
+  }
+  .walk-dur-opt input[type=radio] { display: none; }
+  .walk-dur-opt:hover { border-color: var(--paw); color: var(--paw); background: #fff; }
+  .walk-dur-opt.selected { border-color: var(--paw); background: var(--paw); color: #fff; }
+  .walk-dur-opt.selected strong { color: #fff; }
+
   .service-tab.active,
   .service-tab:hover {
     background: var(--paw); border-color: var(--paw);
@@ -1190,6 +1202,7 @@
   }
   .auth-google:hover { background: var(--surface); }
 </style>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 <!--===========================   ===========================   ===========================   ===========================   ===========================   =========================== -->
@@ -1666,6 +1679,20 @@
       <button class="service-tab" onclick="selectService(this)">🚐 Pet Taxi</button>
     </div>
 
+    <!-- Walk duration — only shown when Walk is selected -->
+    <div id="walkDurationGroup" style="margin: 1rem 0 0.25rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <label style="font-size:0.82rem;font-weight:700;color:var(--muted);width:100%;margin-bottom:0.25rem;">Walk duration <span class="req">*</span></label>
+      <label id="wdOpt15" class="walk-dur-opt selected" onclick="selectWalkDur(this,'15','8900')">
+        <input type="radio" name="walkDur" value="15" checked> 15 min &nbsp;<strong>₹89</strong>
+      </label>
+      <label id="wdOpt30" class="walk-dur-opt" onclick="selectWalkDur(this,'30','14900')">
+        <input type="radio" name="walkDur" value="30"> 30 min &nbsp;<strong>₹149</strong>
+      </label>
+      <label id="wdOpt45" class="walk-dur-opt" onclick="selectWalkDur(this,'45','19900')">
+        <input type="radio" name="walkDur" value="45"> 45 min &nbsp;<strong>₹199</strong>
+      </label>
+    </div>
+
     <div class="form-grid">
       <div class="form-group">
         <label>Pet name <span class="req">*</span></label>
@@ -1752,9 +1779,10 @@
         <label>Payment <span class="req">*</span></label>
         <select id="payment">
           <option value="">Select payment method</option>
-          <option>UPI (PhonePe / GPay)</option>
-          <option>Cash on delivery</option>
-          <option>Debit / Credit Card</option>
+          <option value="UPI">💳 UPI (PhonePe / GPay / Paytm)</option>
+          <option value="Card">💳 Debit / Credit Card</option>
+          <option value="Netbanking">🏦 Net Banking</option>
+          <option value="Cash">🏠 Cash on Delivery</option>
           <option>Urban Paws Wallet</option>
         </select>
         <span class="field-error" id="err-payment">Please select a payment method.</span>
@@ -2202,6 +2230,8 @@
   function selectService(el) {
     document.querySelectorAll('.service-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
+    const isWalk = el.textContent.toLowerCase().includes('walk');
+    document.getElementById('walkDurationGroup').style.display = isWalk ? 'flex' : 'none';
   }
 
   function openBooking(service) {
@@ -2250,10 +2280,48 @@
     'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5'
   );
 
+  // ── Razorpay config ──
+  const RZP_KEY = 'rzp_live_T5XRSkWC2aoLPU';
+
+  // Service prices in paise (INR × 100) — from Pricing & Plans section
+  const SERVICE_PRICES = {
+    'food':        2800,    // ₹28
+    'grooming':    47800,   // ₹478
+    'boarding':    47800,   // ₹478/night
+    'vaccination': 29900,   // ₹299
+    'taxi':        28900,   // ₹289
+  };
+  // Walk prices are duration-based; stored separately
+  const WALK_PRICES = { '15': 8900, '30': 14900, '45': 19900 };  // ₹89 / ₹149 / ₹199
+
+  // Currently selected walk price (default 15 min = ₹89)
+  let _walkPricePaise = 8900;
+  let _walkDuration   = '15';
+
+  function selectWalkDur(el, mins, paise) {
+    document.querySelectorAll('.walk-dur-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+    _walkDuration   = mins;
+    _walkPricePaise = parseInt(paise, 10);
+  }
+
+  function getServicePrice(serviceName) {
+    const s = (serviceName || '').toLowerCase();
+    if (s.includes('walk')) return _walkPricePaise;
+    for (const [key, price] of Object.entries(SERVICE_PRICES)) {
+      if (s.includes(key)) return price;
+    }
+    return 29900;
+  }
+
   function submitMainBooking() {
     const activeTab = document.querySelector('#serviceTabs .service-tab.active');
+    const isWalk = activeTab && activeTab.textContent.toLowerCase().includes('walk');
     const data = {
-      service:        activeTab ? activeTab.textContent.trim() : '',
+      service: isWalk
+        ? (activeTab.textContent.trim() + ' – ' + _walkDuration + ' min')
+        : (activeTab ? activeTab.textContent.trim() : ''),
       pet_name:       document.getElementById('petName').value.trim(),
       breed:          document.getElementById('breed').value,
       pet_age:        document.getElementById('petAge').value,
@@ -2312,28 +2380,90 @@
       document.getElementById(rule.err).classList.remove('visible');
     });
 
-    showToast('⏳ Submitting your booking...');
+    // Cash on delivery → skip payment, save directly
+    if (data.payment === 'Cash') {
+      saveBooking(data);
+      return;
+    }
+
+    // Online payment → open Razorpay checkout
+    const amountPaise = getServicePrice(data.service);
+    const amountINR   = (amountPaise / 100).toFixed(0);
+
+    const btn = document.getElementById('confirmBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Opening payment...';
+
+    const rzpOptions = {
+      key:         RZP_KEY,
+      amount:      amountPaise,
+      currency:    'INR',
+      name:        'Urban Paws',
+      description: data.service + ' for ' + data.pet_name,
+      image:       'https://urbanpaws.app/favicon.png',
+      prefill: {
+        name:    data.pet_name + "'s parent",
+        email:   data.email,
+        contact: data.phone.replace(/\D/g,'').slice(-10)
+      },
+      notes: {
+        service:      data.service,
+        pet_name:     data.pet_name,
+        booking_date: data.booking_date
+      },
+      theme: { color: '#E8531A' },
+      handler: function(response) {
+        const payRef = response.razorpay_payment_id;
+        saveBooking({ ...data, payment: data.payment + ' | Pay ID: ' + payRef });
+      },
+      modal: {
+        ondismiss: function() {
+          btn.disabled = false;
+          btn.textContent = 'Confirm Booking →';
+          showToast('Payment cancelled — booking not placed.', 'error');
+        }
+      }
+    };
+
+    try {
+      const rzp = new Razorpay(rzpOptions);
+      rzp.on('payment.failed', function(resp) {
+        btn.disabled = false;
+        btn.textContent = 'Confirm Booking →';
+        showToast('❌ Payment failed: ' + resp.error.description, 'error');
+      });
+      rzp.open();
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Confirm Booking →';
+      showToast('❌ Could not open payment. Try again.', 'error');
+    }
+  }
+
+  function saveBooking(data) {
+    const btn = document.getElementById('confirmBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Saving booking...';
 
     db.from('bookings').insert(data).select().then(({ data: rows, error }) => {
+      btn.disabled = false;
       if (error) {
-        console.error('Supabase error:', error);
+        btn.textContent = 'Confirm Booking →';
         showToast('❌ Something went wrong. Please try again.', 'error');
         return;
       }
       const booking = rows && rows[0];
       const bookingId = booking ? booking.booking_id : '';
-      showToast('🐾 Booking confirmed! Your Booking ID is #' + bookingId + ' — please save it.', 'success');
+      showToast('🐾 Booking confirmed! ID: #' + bookingId + ' — check your email.', 'success');
 
-      // Change button to submitted state, reset after 20s
-      const btn = document.getElementById('confirmBtn');
-      btn.textContent = '✅ Booking Submitted!';
+      btn.textContent = '✅ Booking Confirmed!';
       btn.classList.add('btn-submitted');
       setTimeout(() => {
         btn.textContent = 'Confirm Booking →';
         btn.classList.remove('btn-submitted');
       }, 20000);
 
-      // Also send to Google Sheets as backup (field names mapped to what the script expects)
+      // Google Sheets backup + email via Apps Script
       const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
       const fd = new FormData();
       fd.append('bookingId',    bookingId);
