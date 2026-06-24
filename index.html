@@ -630,6 +630,8 @@
   .faq-item.open .faq-a { display: block; }
   .faq-a p { margin: 0; color: #555; line-height: 1.7; font-size: 0.95rem; }
 
+  .req { color: #ff5c5c; margin-left: 2px; }
+
   .field-error {
     font-size: 0.78rem;
     color: #ff5c5c;
@@ -938,7 +940,15 @@
     max-width: 320px;
   }
   .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { background: #16a34a; }
+  .toast.error   { background: #dc2626; }
   .toast-paw { font-size: 1.1rem; margin-right: 0.5rem; }
+
+  .btn-submitted {
+    background: #16a34a !important;
+    cursor: default !important;
+    pointer-events: none;
+  }
 
   /* RESPONSIVE */
   @media (max-width: 1024px) {
@@ -1449,12 +1459,12 @@
 
     <div class="form-grid">
       <div class="form-group">
-        <label>Pet name</label>
+        <label>Pet name <span class="req">*</span></label>
         <input type="text" id="petName" placeholder="e.g. Bruno">
         <span class="field-error" id="err-petName">Please enter your pet's name.</span>
       </div>
       <div class="form-group">
-        <label>Breed</label>
+        <label>Breed <span class="req">*</span></label>
         <select id="breed">
           <option value="">Select breed</option>
           <option>Labrador Retriever</option>
@@ -1473,7 +1483,7 @@
         <span class="field-error" id="err-breed">Please select your pet's breed.</span>
       </div>
       <div class="form-group">
-        <label>Pet's age</label>
+        <label>Pet's age <span class="req">*</span></label>
         <select id="petAge">
           <option value="">Select age</option>
           <option>Under 6 months</option>
@@ -1485,7 +1495,7 @@
         <span class="field-error" id="err-petAge">Please select your pet's age.</span>
       </div>
       <div class="form-group">
-        <label>Gender</label>
+        <label>Gender <span class="req">*</span></label>
         <select id="gender">
           <option value="">Select gender</option>
           <option>Male</option>
@@ -1494,17 +1504,17 @@
         <span class="field-error" id="err-gender">Please select your pet's gender.</span>
       </div>
       <div class="form-group full">
-        <label>Your address</label>
+        <label>Your address <span class="req">*</span></label>
         <input type="text" id="address" placeholder="Flat / Tower / Apartment, Area, City">
         <span class="field-error" id="err-address">Please enter your address.</span>
       </div>
       <div class="form-group">
-        <label>Date</label>
+        <label>Date <span class="req">*</span></label>
         <input type="date" id="bookDate">
         <span class="field-error" id="err-bookDate">Please select a date.</span>
       </div>
       <div class="form-group">
-        <label>Time slot</label>
+        <label>Time slot <span class="req">*</span></label>
         <select id="timeSlot">
           <option value="">Select time slot</option>
           <option>6:00 AM – 6:30 AM</option>
@@ -1520,17 +1530,17 @@
         <span class="field-error" id="err-timeSlot">Please select a time slot.</span>
       </div>
       <div class="form-group">
-        <label>Phone number</label>
+        <label>Phone number <span class="req">*</span></label>
         <input type="tel" id="phone" placeholder="+91 98765 43210">
         <span class="field-error" id="err-phone">Please enter a valid 10-digit phone number.</span>
       </div>
       <div class="form-group">
-        <label>Email address</label>
+        <label>Email address <span class="req">*</span></label>
         <input type="email" id="email" placeholder="you@example.com">
         <span class="field-error" id="err-email">Please enter a valid email address.</span>
       </div>
       <div class="form-group">
-        <label>Payment</label>
+        <label>Payment <span class="req">*</span></label>
         <select id="payment">
           <option value="">Select payment method</option>
           <option>UPI (PhonePe / GPay)</option>
@@ -1550,7 +1560,7 @@
         <label style="font-size:1rem; font-weight:700; color:var(--paw-amber);">Additional Health Info <span style="font-weight:400;font-size:0.85rem;color:#888;">(helps us care better)</span></label>
       </div>
       <div class="form-group full">
-        <label>Does your pet have any known allergies? <span style="font-size:0.8rem;color:#888;">(food, environment, medication)</span></label>
+        <label>Does your pet have any known allergies? <span class="req">*</span> <span style="font-size:0.8rem;color:#888;">(food, environment, medication)</span></label>
         <select id="allergies">
           <option value="">Please select</option>
           <option>No known allergies</option>
@@ -1562,7 +1572,7 @@
         <span class="field-error" id="err-allergies">Please let us know about any allergies.</span>
       </div>
       <div class="form-group full">
-        <label>Is your pet showing any limping or difficulty walking?</label>
+        <label>Is your pet showing any limping or difficulty walking? <span class="req">*</span></label>
         <select id="limping">
           <option value="">Please select</option>
           <option>No, moving perfectly fine</option>
@@ -1573,7 +1583,7 @@
         <span class="field-error" id="err-limping">Please let us know about any limping.</span>
       </div>
       <div class="form-group full">
-        <label>Has your pet had any surgery in the last 30 days?</label>
+        <label>Has your pet had any surgery in the last 30 days? <span class="req">*</span></label>
         <select id="recentSurgery">
           <option value="">Please select</option>
           <option>No recent surgery</option>
@@ -1583,7 +1593,7 @@
         <span class="field-error" id="err-recentSurgery">Please let us know about any recent surgery.</span>
       </div>
       <div class="form-group full">
-        <label>Is your pet eating regularly? <span style="font-size:0.8rem;color:#888;">(and had food within the last 6 hours?)</span></label>
+        <label>Is your pet eating regularly? <span class="req">*</span> <span style="font-size:0.8rem;color:#888;">(and had food within the last 6 hours?)</span></label>
         <select id="eatingHabits">
           <option value="">Please select</option>
           <option>Yes, eating well and had food within 6 hours</option>
@@ -1595,7 +1605,7 @@
         <span class="field-error" id="err-eatingHabits">Please let us know about your pet's eating habits.</span>
       </div>
       <div class="form-group full">
-        <label>Is your pet vaccinated?</label>
+        <label>Is your pet vaccinated? <span class="req">*</span></label>
         <select id="vaccinated">
           <option value="">Please select</option>
           <option>Yes, fully vaccinated</option>
@@ -1606,7 +1616,7 @@
         <span class="field-error" id="err-vaccinated">Please let us know your pet's vaccination status.</span>
       </div>
       <div class="form-group full">
-        <label>How would you describe your pet's temperament?</label>
+        <label>How would you describe your pet's temperament? <span class="req">*</span></label>
         <select id="temperament">
           <option value="">Please select</option>
           <option>Very friendly — loves everyone</option>
@@ -1624,15 +1634,13 @@
       </div>
     </div>
 
-    <button class="btn-primary" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitMainBooking()">
+    <button class="btn-primary" id="confirmBtn" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitMainBooking()">
       Confirm Booking →
     </button>
   </div>
 </section>
 
-
-<!--- ===========================
- TESTIMONIALS    
+<!--- =========================== TESTIMONIALS    
 <section style="background:#fff;">
   <div class="section-label">What pet parents say</div>
   <h2 class="section-title">Trusted by 1000+ families</h2>
@@ -1675,7 +1683,6 @@
   </div>
 </section>
 =========================== -->
-
 
 <!--=========================== APP DOWNLOAD ===========================-->
 <section class="app-section">
@@ -1733,7 +1740,7 @@
   </div>
 </section>
 
-<!-- FAQ -->
+<!--=========================== FAQ ===========================-->
 <section id="faq" style="background:#fff;">
   <div class="section-label">Got questions?</div>
   <h2 class="section-title">Frequently asked questions</h2>
@@ -1824,7 +1831,7 @@
   </div>
 </section>
 
-<!-- FOOTER -->
+<!--=========================== FOOTER ===========================-->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand footer-col">
@@ -1873,7 +1880,7 @@
   </div>
 </footer>
 
-<!-- MODAL -->
+<!--=========================== MODAL ===========================-->
 <div class="modal-overlay" id="bookingModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
@@ -1910,12 +1917,16 @@
   </div>
 </div>
 
-<!-- TOAST -->
+<!--=========================== TOAST ===========================-->
 <div class="toast" id="toast">
   <span class="toast-paw">🐾</span>
   <span id="toastMsg">Booking confirmed!</span>
 </div>
 
+
+<!--=========================== scripts ===========================-->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // Set today's date as default
   const dateInput = document.getElementById('bookDate');
@@ -1969,52 +1980,55 @@
   // ====== Google Sheets integration for the "Book in under 2 minutes" form ======
   // 1. Deploy the Apps Script (see instructions) as a Web App.
   // 2. Paste the Web App URL between the quotes below.
-  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
+  // ====== Supabase client ======
+  const { createClient } = supabase;
+  const db = createClient(
+    'https://uyawcevbvxlhfbovntxh.supabase.co',
+    'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5'
+  );
 
   function submitMainBooking() {
     const activeTab = document.querySelector('#serviceTabs .service-tab.active');
-    // The guaranteed-unique, sequential Booking ID (e.g. #WK10001) is generated
-    // server-side by the Google Apps Script and returned in the response below.
     const data = {
-      service:      activeTab ? activeTab.textContent.trim() : '',
-      petName:      document.getElementById('petName').value.trim(),
-      breed:        document.getElementById('breed').value,
-      petAge:       document.getElementById('petAge').value,
-      gender:       document.getElementById('gender').value,
-      address:      document.getElementById('address').value.trim(),
-      date:         document.getElementById('bookDate').value,
-      timeSlot:     document.getElementById('timeSlot').value,
-      phone:        document.getElementById('phone').value.trim(),
-      email:        document.getElementById('email').value.trim(),
-      payment:      document.getElementById('payment').value,
-      instructions: document.getElementById('instructions').value.trim(),
-      allergies:    document.getElementById('allergies').value,
-      limping:      document.getElementById('limping').value,
-      recentSurgery: document.getElementById('recentSurgery').value,
-      eatingHabits: document.getElementById('eatingHabits').value,
-      vaccinated:   document.getElementById('vaccinated').value,
-      temperament:  document.getElementById('temperament').value,
-      otherIssues:  document.getElementById('otherIssues').value.trim()
+      service:        activeTab ? activeTab.textContent.trim() : '',
+      pet_name:       document.getElementById('petName').value.trim(),
+      breed:          document.getElementById('breed').value,
+      pet_age:        document.getElementById('petAge').value,
+      gender:         document.getElementById('gender').value,
+      address:        document.getElementById('address').value.trim(),
+      booking_date:   document.getElementById('bookDate').value,
+      time_slot:      document.getElementById('timeSlot').value,
+      phone:          document.getElementById('phone').value.trim(),
+      email:          document.getElementById('email').value.trim(),
+      payment:        document.getElementById('payment').value,
+      instructions:   document.getElementById('instructions').value.trim(),
+      allergies:      document.getElementById('allergies').value,
+      limping:        document.getElementById('limping').value,
+      recent_surgery: document.getElementById('recentSurgery').value,
+      eating_habits:  document.getElementById('eatingHabits').value,
+      vaccinated:     document.getElementById('vaccinated').value,
+      temperament:    document.getElementById('temperament').value,
+      other_issues:   document.getElementById('otherIssues').value.trim()
     };
 
-    // Per-field validation — shows red message under each empty/invalid field
+    // Per-field validation
     const rules = [
-      { id: 'petName',      err: 'err-petName',      check: v => v.trim() !== '' },
-      { id: 'breed',        err: 'err-breed',        check: v => v !== '' },
-      { id: 'petAge',       err: 'err-petAge',       check: v => v !== '' },
-      { id: 'gender',       err: 'err-gender',       check: v => v !== '' },
-      { id: 'address',      err: 'err-address',      check: v => v.trim() !== '' },
-      { id: 'bookDate',     err: 'err-bookDate',     check: v => v !== '' },
-      { id: 'timeSlot',     err: 'err-timeSlot',     check: v => v !== '' },
-      { id: 'phone',        err: 'err-phone',        check: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
-      { id: 'email',        err: 'err-email',        check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
-      { id: 'payment',      err: 'err-payment',      check: v => v !== '' },
-      { id: 'allergies',    err: 'err-allergies',    check: v => v !== '' },
-      { id: 'limping',      err: 'err-limping',      check: v => v !== '' },
-      { id: 'recentSurgery',err: 'err-recentSurgery',check: v => v !== '' },
-      { id: 'eatingHabits', err: 'err-eatingHabits', check: v => v !== '' },
-      { id: 'vaccinated',   err: 'err-vaccinated',   check: v => v !== '' },
-      { id: 'temperament',  err: 'err-temperament',  check: v => v !== '' },
+      { id: 'petName',       err: 'err-petName',       check: v => v.trim() !== '' },
+      { id: 'breed',         err: 'err-breed',         check: v => v !== '' },
+      { id: 'petAge',        err: 'err-petAge',        check: v => v !== '' },
+      { id: 'gender',        err: 'err-gender',        check: v => v !== '' },
+      { id: 'address',       err: 'err-address',       check: v => v.trim() !== '' },
+      { id: 'bookDate',      err: 'err-bookDate',      check: v => v !== '' },
+      { id: 'timeSlot',      err: 'err-timeSlot',      check: v => v !== '' },
+      { id: 'phone',         err: 'err-phone',         check: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
+      { id: 'email',         err: 'err-email',         check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+      { id: 'payment',       err: 'err-payment',       check: v => v !== '' },
+      { id: 'allergies',     err: 'err-allergies',     check: v => v !== '' },
+      { id: 'limping',       err: 'err-limping',       check: v => v !== '' },
+      { id: 'recentSurgery', err: 'err-recentSurgery', check: v => v !== '' },
+      { id: 'eatingHabits',  err: 'err-eatingHabits',  check: v => v !== '' },
+      { id: 'vaccinated',    err: 'err-vaccinated',    check: v => v !== '' },
+      { id: 'temperament',   err: 'err-temperament',   check: v => v !== '' },
     ];
     let hasError = false;
     rules.forEach(rule => {
@@ -2026,42 +2040,70 @@
       if (!valid) hasError = true;
     });
     if (hasError) {
-      // Scroll to the first invalid field
       const firstInvalid = document.querySelector('.form-group .invalid');
       if (firstInvalid) firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    // Clear any previous error states on success
     rules.forEach(rule => {
       document.getElementById(rule.id).classList.remove('invalid');
       document.getElementById(rule.err).classList.remove('visible');
     });
 
-    // Guard: endpoint not configured yet
-    if (SHEET_ENDPOINT.indexOf('PASTE_YOUR') === 0) {
-      showToast('⚙️ Form not connected yet — add your Google Sheet URL in the code.');
-      console.warn('Booking data (would be sent to sheet):', data);
-      return;
-    }
-
-    const fd = new FormData();
-    Object.keys(data).forEach(k => fd.append(k, data[k]));
-
     showToast('⏳ Submitting your booking...');
-    fetch(SHEET_ENDPOINT, { method: 'POST', body: fd })
-      .then(res => res.json())
-      .then(res => {
-        if (res && res.bookingId) {
-          showToast('🐾 Booking confirmed! Your Booking ID is #' + res.bookingId + ' — please save it for reference.');
-        } else {
-          showToast('🐾 Booking confirmed! Your details have been saved.');
-        }
-        // Reset fields
-        ['petName','address','phone','email','instructions'].forEach(id => {
-          document.getElementById(id).value = '';
-        });
-      })
-      .catch(() => showToast('❌ Something went wrong. Please try again.'));
+
+    db.from('bookings').insert(data).select().then(({ data: rows, error }) => {
+      if (error) {
+        console.error('Supabase error:', error);
+        showToast('❌ Something went wrong. Please try again.', 'error');
+        return;
+      }
+      const booking = rows && rows[0];
+      const bookingId = booking ? booking.booking_id : '';
+      showToast('🐾 Booking confirmed! Your Booking ID is #' + bookingId + ' — please save it.', 'success');
+
+      // Change button to submitted state, reset after 20s
+      const btn = document.getElementById('confirmBtn');
+      btn.textContent = '✅ Booking Submitted!';
+      btn.classList.add('btn-submitted');
+      setTimeout(() => {
+        btn.textContent = 'Confirm Booking →';
+        btn.classList.remove('btn-submitted');
+      }, 20000);
+
+      // Also send to Google Sheets as backup (field names mapped to what the script expects)
+      const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
+      const fd = new FormData();
+      fd.append('bookingId',    bookingId);
+      fd.append('service',      data.service);
+      fd.append('petName',      data.pet_name);
+      fd.append('breed',        data.breed);
+      fd.append('petAge',       data.pet_age);
+      fd.append('gender',       data.gender);
+      fd.append('address',      data.address);
+      fd.append('date',         data.booking_date);
+      fd.append('timeSlot',     data.time_slot);
+      fd.append('phone',        data.phone);
+      fd.append('email',        data.email);
+      fd.append('payment',      data.payment);
+      fd.append('instructions', data.instructions);
+      fd.append('allergies',    data.allergies);
+      fd.append('limping',      data.limping);
+      fd.append('recentSurgery',data.recent_surgery);
+      fd.append('eatingHabits', data.eating_habits);
+      fd.append('vaccinated',   data.vaccinated);
+      fd.append('temperament',  data.temperament);
+      fd.append('otherIssues',  data.other_issues);
+      fetch(SHEET_ENDPOINT, { method: 'POST', body: fd }).catch(() => {});
+
+      // Reset form
+      ['petName','address','phone','email','instructions','otherIssues'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      ['breed','petAge','gender','timeSlot','payment','allergies','limping',
+       'recentSurgery','eatingHabits','vaccinated','temperament'].forEach(id => {
+        document.getElementById(id).selectedIndex = 0;
+      });
+    });
   }
 
   // ====== Burger menu ======
@@ -2167,12 +2209,16 @@
   }
 
   let toastTimer;
-  function showToast(msg) {
+  function showToast(msg, type) {
     const toast = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
+    toast.classList.remove('success', 'error');
+    if (type) toast.classList.add(type);
     toast.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show', 'success', 'error');
+    }, 3500);
   }
 
   // Smooth scroll
