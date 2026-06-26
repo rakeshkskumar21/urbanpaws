@@ -1,0 +1,6 @@
+node_modules/
+*.zip
+.DS_Store
+fix-database.js
+supabase-config.js
+urban-paws-app/
