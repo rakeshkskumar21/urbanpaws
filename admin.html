@@ -314,7 +314,7 @@
           <option value="paws">Paws+</option>
           <option value="elite">Elite</option>
         </select>
-        <input type="text" id="uFilterSearch" placeholder="Search name / email…" oninput="applyUserFilters()" style="min-width:200px;" />
+        <input type="text" id="uFilterSearch" placeholder="Search name / email…" oninput="applyUserFilters()" autocomplete="off" style="min-width:200px;" />
         <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
       </div>
 
@@ -547,7 +547,10 @@
     document.getElementById('tabUsers').classList.toggle('active', tab==='users');
     document.getElementById('bookingsTab').style.display = tab==='bookings' ? '' : 'none';
     document.getElementById('usersTab').style.display   = tab==='users'    ? '' : 'none';
-    if (tab==='users' && !window._usersLoaded) loadUsers();
+    if (tab==='users') {
+      document.getElementById('uFilterSearch').value = '';
+      if (!window._usersLoaded) loadUsers();
+    }
   }
 
   // ── Users ──
