@@ -15,7 +15,8 @@
 <meta name="author" content="Urban Paws">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://urbanpaws.app/">
-<meta name="theme-color" content="#E8531A">
+<meta name="theme-color" content="#1A1C52">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231A1C52'/%3E%3Cellipse cx='16' cy='22' rx='6' ry='7' fill='%236C6FD4' transform='rotate(-12 16 22)'/%3E%3Cellipse cx='28' cy='14' rx='5.5' ry='6.5' fill='%236C6FD4'/%3E%3Cellipse cx='40' cy='14' rx='5.5' ry='6.5' fill='%236C6FD4'/%3E%3Cellipse cx='52' cy='22' rx='6' ry='7' fill='%236C6FD4' transform='rotate(12 52 22)'/%3E%3Cpath d='M10 34 C10 24 58 24 58 34 C58 48 51 58 34 58 C17 58 10 48 10 34Z' fill='%236C6FD4'/%3E%3C/svg%3E">
 
 <!-- Geo targeting -->
 <meta name="geo.region" content="IN-KA">
@@ -156,20 +157,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paw: #E8531A;
-    --paw-deep: #B8400F;
-    --paw-soft: #FDF0EB;
-    --paw-amber: #F5A623;
-    --night: #0F0D0B;
-    --bark: #2C1F14;
-    --moss: #1A3A2A;
-    --sage: #2D5A3D;
-    --cream: #FDFAF7;
-    --warm-gray: #8A7F75;
-    --border: rgba(0,0,0,0.08);
+    --paw: #6C6FD4;
+    --paw-deep: #5254B8;
+    --paw-soft: #EDEEFA;
+    --paw-amber: #9193E8;
+    --night: #1A1C52;
+    --bark: #252870;
+    --moss: #2D3080;
+    --sage: #4547A0;
+    --cream: #F6F6FD;
+    --warm-gray: #8888B0;
+    --border: rgba(108,111,212,0.14);
     --card-bg: #FFFFFF;
-    --text: #1A1410;
-    --muted: #6B5E54;
+    --text: #1A1A40;
+    --muted: #7878A8;
     --radius: 16px;
     --radius-sm: 8px;
     --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
@@ -190,7 +191,7 @@
   /* NAV */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(252, 225, 198, 0.95);
+    background: rgba(246, 246, 253, 0.96);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     padding: 0 2rem;
@@ -200,12 +201,14 @@
 
   .logo {
     font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: 1.4rem;
-    color: var(--paw);
-    display: flex; align-items: center; gap: 8px;
-    text-decoration: none;
+    font-weight: 800; font-size: 1rem;
+    color: var(--night);
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; letter-spacing: 0.01em;
   }
-  .logo-paw { font-size: 1.6rem; }
+  .logo-mark { display: flex; flex-direction: column; align-items: center; gap: 0; line-height: 1; }
+  .logo-mark .logo-urban { font-size: 0.6rem; letter-spacing: 0.22em; color: var(--night); font-weight: 700; }
+  .logo-mark .logo-paws  { font-size: 0.6rem; letter-spacing: 0.22em; color: var(--night); font-weight: 700; }
 
   .nav-links {
     display: flex; gap: 2rem; list-style: none;
@@ -239,7 +242,7 @@
   .hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(232,83,26,0.06) 0%, transparent 70%);
+    background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(108,111,212,0.08) 0%, transparent 70%);
     pointer-events: none;
   }
 
@@ -253,7 +256,7 @@
 
   .hero h1 {
     font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 800; font-size: clamp(1.8rem, 3vw, 2.8rem);
     line-height: 1.08; letter-spacing: -0.02em;
     color: var(--night);
     margin-bottom: 1.5rem;
@@ -347,9 +350,9 @@
   }
 
   .big-paw {
-    font-size: 8rem;
+    font-size: 5rem;
     line-height: 1;
-    filter: drop-shadow(0 20px 40px rgba(232,83,26,0.2));
+    filter: drop-shadow(0 20px 40px rgba(108,111,212,0.22));
   }
 
   .hero-stats {
@@ -373,7 +376,7 @@
   }
   .section-title {
     font-family: 'Syne', sans-serif;
-    font-weight: 800; font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 800; font-size: clamp(1.4rem, 2.5vw, 2rem);
     line-height: 1.1; color: var(--night);
     margin-bottom: 1rem;
   }
@@ -402,7 +405,7 @@
   .service-card:hover {
     border-color: var(--paw);
     transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(232,83,26,0.1);
+    box-shadow: 0 16px 40px rgba(108,111,212,0.12);
   }
 
   .service-card::before {
@@ -722,7 +725,7 @@
     text-align: center; cursor: pointer;
     transition: all var(--transition);
   }
-  .shop-item:hover { border-color: var(--paw); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(232,83,26,0.08); }
+  .shop-item:hover { border-color: var(--paw); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(108,111,212,0.10); }
   .shop-item-icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
   .shop-item h4 { font-size: 0.9rem; font-weight: 600; color: var(--night); margin-bottom: 0.25rem; }
   .shop-item p { font-size: 0.8rem; color: var(--muted); }
@@ -1221,8 +1224,18 @@
 <!--===========================  NAV =========================== -->
 <nav>
   <a href="#" class="logo">
-    <span class="logo-paw">🐾</span>
-    Urban Paws
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="38" height="38" rx="10" fill="#1A1C52"/>
+      <ellipse cx="9.5" cy="13" rx="3.2" ry="3.8" fill="#6C6FD4" transform="rotate(-12 9.5 13)"/>
+      <ellipse cx="16.5" cy="9" rx="2.9" ry="3.4" fill="#6C6FD4"/>
+      <ellipse cx="23.5" cy="9" rx="2.9" ry="3.4" fill="#6C6FD4"/>
+      <ellipse cx="30.5" cy="13" rx="3.2" ry="3.8" fill="#6C6FD4" transform="rotate(12 30.5 13)"/>
+      <path d="M6 19.5 C6 14 34 14 34 19.5 C34 27 30 33 20 33 C10 33 6 27 6 19.5Z" fill="#6C6FD4"/>
+    </svg>
+    <span class="logo-mark">
+      <span class="logo-urban">URBAN</span>
+      <span class="logo-paws">PAWS</span>
+    </span>
   </a>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
