@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /Users/rakeshks/urbanpaws status)",
+      "Bash(git -C /Users/rakeshks/urbanpaws log --oneline -3)",
+      "Bash(git -C /Users/rakeshks/urbanpaws add index.html)",
+      "Bash(git -C /Users/rakeshks/urbanpaws commit -m ' *)",
+      "Bash(git -C /Users/rakeshks/urbanpaws pull --rebase origin main)",
+      "Bash(git -C /Users/rakeshks/urbanpaws stash)",
+      "Bash(git -C /Users/rakeshks/urbanpaws stash pop)",
+      "Bash(git -C /Users/rakeshks/urbanpaws push origin main)",
+      "Bash(git -C /Users/rakeshks/urbanpaws add admin.html)"
+    ]
+  }
+}
