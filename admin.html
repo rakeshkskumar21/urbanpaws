@@ -252,6 +252,7 @@
       </select>
       <input type="date" id="filterDate" onchange="applyFilters()" />
       <input type="text" id="filterSearch" placeholder="Search name / phone…" oninput="applyFilters()" style="min-width:180px;" />
+      <button onclick="clearFilters()" style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:inherit;cursor:pointer;background:#fff;color:var(--muted);">✕ Clear</button>
     </div>
 
     <!-- Table -->
@@ -390,7 +391,8 @@
     const { data, error } = await db
       .from('bookings')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(10000);
 
     if (error) {
       document.getElementById('bookingsBody').innerHTML =
@@ -413,6 +415,15 @@
       allBookings.filter(b => b.status === 'pending').length;
     document.getElementById('statCompleted').textContent =
       allBookings.filter(b => b.status === 'completed').length;
+  }
+
+  // ── Clear filters ──
+  function clearFilters() {
+    document.getElementById('filterService').value = '';
+    document.getElementById('filterStatus').value  = '';
+    document.getElementById('filterDate').value    = '';
+    document.getElementById('filterSearch').value  = '';
+    applyFilters();
   }
 
   // ── Filters ──
