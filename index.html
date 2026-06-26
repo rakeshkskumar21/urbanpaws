@@ -2673,16 +2673,16 @@
     btn.disabled = true; btn.textContent = 'Creating account…';
     db.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: window.location.origin + '/index.html' } }).then(async ({ data, error }) => {
       btn.disabled = false; btn.textContent = 'Create Account →';
-      if (error) { errEl.textContent = error.message; errEl.classList.add('visible'); }
-      else {
-        // Upsert profile as fallback in case trigger hasn't run
-        if (data?.user?.id) {
-          await db.from('profiles').upsert({ id: data.user.id, email, full_name: name }, { onConflict: 'id', ignoreDuplicates: true });
-        }
-        errEl.style.color = '#16a34a';
-        errEl.textContent = '✅ Account created! You can now log in.';
-        errEl.classList.add('visible');
+      if (error) { errEl.textContent = error.message; errEl.classList.add('visible'); return; }
+      if (data?.user?.id) {
+        await db.from('profiles').upsert(
+          { id: data.user.id, email, full_name: name, plan: 'starter' },
+          { onConflict: 'id' }
+        );
       }
+      errEl.style.color = '#16a34a';
+      errEl.textContent = '✅ Account created! You can now log in.';
+      errEl.classList.add('visible');
     });
   }
 
