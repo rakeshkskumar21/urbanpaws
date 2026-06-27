@@ -1640,9 +1640,12 @@ function initApp(user) {
   loadBookings(user.email);
   subscribeRealtime(user.email);
   const params = new URLSearchParams(location.search);
-  const p = params.get('p'), plan = params.get('plan');
+  const p = params.get('p'), plan = params.get('plan'), svc = params.get('svc');
   if (p === 'onboarding') { showPage('onboarding'); obInit(plan || 'starter'); }
   else if (p) { showPage(p); }
+  if (svc === 'food') {
+    document.querySelectorAll('.bk-tab').forEach(tab => { if (tab.textContent.includes('Food')) bkSelectService(tab); });
+  }
   history.replaceState(null, '', location.pathname);
 }
 

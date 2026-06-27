@@ -1578,7 +1578,7 @@
   <p class="section-sub" style="white-space:nowrap;">Cooked fresh daily in our cloud kitchen. Vet-approved ingredients. Both veg and non-veg options — because we know not every family can cook chicken.</p>
 
   <div class="menu-grid">
-    <div class="menu-card">
+    <div class="menu-card" onclick="openFood()" style="cursor:pointer">
       <div class="menu-card-img">
         🍚🥛
       </div>
@@ -1591,7 +1591,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-card">
+    <div class="menu-card" onclick="openFood()" style="cursor:pointer">
       <div class="menu-card-img">
         🍚🍗
       </div>
@@ -1604,7 +1604,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-card">
+    <div class="menu-card" onclick="openFood()" style="cursor:pointer">
       <div class="menu-card-img">
         🍚🥚
       </div>
@@ -1617,7 +1617,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-card">
+    <div class="menu-card" onclick="openFood()" style="cursor:pointer">
       <div class="menu-card-img">
         🍚🥛
       </div>
@@ -1630,7 +1630,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-card">
+    <div class="menu-card" onclick="openFood()" style="cursor:pointer">
       <div class="menu-card-img">
         🍗🥕
       </div>
@@ -1643,7 +1643,7 @@
         </div>
       </div>
     </div>
-    <div class="menu-card">
+    <div class="menu-card" onclick="openFood()" style="cursor:pointer">
       <div class="menu-card-img">
         🍚🥚
       </div>
@@ -1658,7 +1658,11 @@
     </div>
   </div>
 
-  <div style="margin-top:2rem; padding:1.5rem; background:var(--paw-soft); border-radius:var(--radius); display:flex; align-items:center; gap:1rem;">
+  <div style="margin-top:1.5rem; text-align:center;">
+    <a href="javascript:void(0)" onclick="openFood()" class="btn-primary" style="display:inline-block;">Order Fresh Food →</a>
+  </div>
+
+  <div style="margin-top:1.5rem; padding:1.5rem; background:var(--paw-soft); border-radius:var(--radius); display:flex; align-items:center; gap:1rem;">
     <span style="font-size:2rem;">🛒</span>
     <div>
       <strong>Customizable add-ons available</strong>
@@ -2128,6 +2132,17 @@
         window.location.href = 'my-bookings.html?p=onboarding&plan=' + plan;
       } else {
         sessionStorage.setItem('postLoginPlan', plan);
+        openAuthModal();
+      }
+    });
+  }
+
+  function openFood() {
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = 'my-bookings.html?p=book&svc=food';
+      } else {
+        sessionStorage.setItem('postLoginFood', '1');
         openAuthModal();
       }
     });
@@ -2637,9 +2652,13 @@
     const user = session ? session.user : null;
     if (user) {
       const planIntent = sessionStorage.getItem('postLoginPlan');
+      const foodIntent = sessionStorage.getItem('postLoginFood');
       if (planIntent) {
         sessionStorage.removeItem('postLoginPlan');
         window.location.href = 'my-bookings.html?p=onboarding&plan=' + planIntent;
+      } else if (foodIntent) {
+        sessionStorage.removeItem('postLoginFood');
+        window.location.href = 'my-bookings.html?p=book&svc=food';
       } else if (_pendingBook) {
         _pendingBook = false;
         window.location.href = 'my-bookings.html?p=book';
