@@ -27,6 +27,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, #f5f5ff 0%, var(--paw-soft) 100%);
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 .gate-card {
   background: #fff; border-radius: 24px; padding: 2.5rem 2rem;
   max-width: 360px; width: 100%; box-shadow: 0 12px 48px rgba(232,83,26,.1); text-align: center;
@@ -417,8 +418,16 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 </head>
 <body>
 
+<!-- LOADING SPLASH -->
+<div id="loadingSplash" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f5f5ff 0%,#EDEEFA 100%);">
+  <div style="text-align:center;">
+    <div style="font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;color:#6C6FD4;margin-bottom:1rem;">🐾 Urban Paws</div>
+    <div style="width:36px;height:36px;border:3px solid #EDEEFA;border-top-color:#6C6FD4;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;"></div>
+  </div>
+</div>
+
 <!-- AUTH GATE -->
-<div id="authGate">
+<div id="authGate" style="display:none;">
   <div class="gate-card">
     <div class="gate-logo">🐾 Urban Paws</div>
     <div class="gate-sub">Sign in to access your account</div>
@@ -1799,13 +1808,38 @@ function showToast(msg, type) {
   setTimeout(()=>el.className='toast', 3500);
 }
 
+let _appInited = false;
+
+function showAuthGate() {
+  document.getElementById('loadingSplash').style.display = 'none';
+  document.getElementById('authGate').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
+}
+
+// Check existing session immediately on load (critical for mobile where
+// onAuthStateChange fires with null before restoring the persisted session)
+db.auth.getSession().then(({ data: { session } }) => {
+  if (session && session.user) {
+    _appInited = true;
+    document.getElementById('loadingSplash').style.display = 'none';
+    initApp(session.user);
+  } else if (!_appInited) {
+    showAuthGate();
+  }
+});
+
 db.auth.onAuthStateChange((_event, session) => {
   const user = session?.user ?? null;
-  if (user) initApp(user);
-  else {
-    document.getElementById('authGate').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
-    if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
+  if (user) {
+    if (!_appInited) {
+      _appInited = true;
+      document.getElementById('loadingSplash').style.display = 'none';
+      initApp(user);
+    }
+  } else if (_event === 'SIGNED_OUT') {
+    _appInited = false;
+    showAuthGate();
   }
 });
 </script>
