@@ -240,8 +240,8 @@
   .hero {
     min-height: calc(10vh - 64px);
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 0; align-items: center;
-    padding: 2rem 4rem;
+    gap: 0; align-items: flex-start;
+    padding: 1rem 4rem 2rem;
     position: relative;
     overflow: hidden;
   }
@@ -258,7 +258,7 @@
     background: var(--paw-soft); color: var(--paw-deep);
     border-radius: 100px; padding: 6px 14px;
     font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
-    text-transform: uppercase; margin-bottom: 1.5rem;
+    text-transform: uppercase; margin-bottom: 0.6rem;
   }
 
   .hero h1 {
@@ -896,7 +896,8 @@
     background: #fff;
   }
   .app-col {
-    padding: 4rem 3rem;
+    border-radius: 20px;
+    padding: 3rem 3rem;
     background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%);
     color: #fff;
     display: flex;
@@ -1400,6 +1401,59 @@
 
   </div>
 
+  <!-- App Download column -->
+  <div class="app-col">
+    <div class="section-label" style="color:var(--paw-amber);">Get the app</div>
+    <h2 class="section-title" style="color:#fff;">Always in your pocket <span style="font-size:0.75em; opacity:0.6;">(Coming soon)</span></h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.6);">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
+    <div class="app-badges" style="margin-bottom:2rem;">
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">🍎</span>
+        <div class="app-badge-text">
+          <small>Download on the</small>
+          <strong>App Store</strong>
+        </div>
+      </a>
+      <a href="#" class="app-badge">
+        <span class="app-badge-icon">▶️</span>
+        <div class="app-badge-text">
+          <small>Get it on</small>
+          <strong>Google Play</strong>
+        </div>
+      </a>
+    </div>
+    <div class="app-mockup">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-header">🐾 Urban Paws</div>
+          <div class="phone-body">
+            <p style="font-size:0.65rem; font-weight:600; color:var(--muted); margin:0.5rem 0 0.4rem;">Our Services</p>
+            <div class="phone-service-row">
+              <div class="phone-service-tile"><span>🦮</span><small>Pet Walking</small></div>
+              <div class="phone-service-tile"><span>🍲</span><small>Pet Feeding</small></div>
+            </div>
+            <div class="phone-service-row">
+              <div class="phone-service-tile"><span>✂️</span><small>Grooming</small></div>
+              <div class="phone-service-tile"><span>🏠</span><small>Boarding</small></div>
+            </div>
+            <div class="phone-service-row">
+              <div class="phone-service-tile"><span>💉</span><small>Vaccination</small></div>
+              <div class="phone-service-tile"><span>🚐</span><small>Pet Taxi</small></div>
+            </div>
+            <div class="phone-service-row">
+              <div class="phone-service-tile"><span>🛡️</span><small>Insurance</small></div>
+              <div class="phone-service-tile"><span>🛒</span><small>Shop</small></div>
+            </div>
+          </div>
+          <div style="background:#fff; border-top:1px solid var(--border); padding:0.5rem; display:flex; justify-content:space-around;">
+            <div style="text-align:center; font-size:0.6rem; color:var(--paw);">🏠<br>Home</div>
+            <div style="text-align:center; font-size:0.6rem; color:var(--muted);">🛒<br>Shop</div>
+            <div style="text-align:center; font-size:0.6rem; color:var(--muted);">📞<br>Support</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>   
 </section>
 
 <!--===========================  SERVICES===========================  -->
@@ -2054,59 +2108,7 @@
       </div>
     </div>
 
-    <!-- App Download column -->
-    <div class="app-col">
-      <div class="section-label" style="color:var(--paw-amber);">Get the app</div>
-      <h2 class="section-title" style="color:#fff;">Always in your pocket <span style="font-size:0.75em; opacity:0.6;">(Coming soon)</span></h2>
-      <p class="section-sub" style="color:rgba(255,255,255,0.6);">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
-      <div class="app-badges" style="margin-bottom:2rem;">
-        <a href="#" class="app-badge">
-          <span class="app-badge-icon">🍎</span>
-          <div class="app-badge-text">
-            <small>Download on the</small>
-            <strong>App Store</strong>
-          </div>
-        </a>
-        <a href="#" class="app-badge">
-          <span class="app-badge-icon">▶️</span>
-          <div class="app-badge-text">
-            <small>Get it on</small>
-            <strong>Google Play</strong>
-          </div>
-        </a>
-      </div>
-      <div class="app-mockup">
-        <div class="phone-frame">
-          <div class="phone-screen">
-            <div class="phone-header">🐾 Urban Paws</div>
-            <div class="phone-body">
-              <p style="font-size:0.65rem; font-weight:600; color:var(--muted); margin:0.5rem 0 0.4rem;">Our Services</p>
-              <div class="phone-service-row">
-                <div class="phone-service-tile"><span>🦮</span><small>Pet Walking</small></div>
-                <div class="phone-service-tile"><span>🍲</span><small>Pet Feeding</small></div>
-              </div>
-              <div class="phone-service-row">
-                <div class="phone-service-tile"><span>✂️</span><small>Grooming</small></div>
-                <div class="phone-service-tile"><span>🏠</span><small>Boarding</small></div>
-              </div>
-              <div class="phone-service-row">
-                <div class="phone-service-tile"><span>💉</span><small>Vaccination</small></div>
-                <div class="phone-service-tile"><span>🚐</span><small>Pet Taxi</small></div>
-              </div>
-              <div class="phone-service-row">
-                <div class="phone-service-tile"><span>🛡️</span><small>Insurance</small></div>
-                <div class="phone-service-tile"><span>🛒</span><small>Shop</small></div>
-              </div>
-            </div>
-            <div style="background:#fff; border-top:1px solid var(--border); padding:0.5rem; display:flex; justify-content:space-around;">
-              <div style="text-align:center; font-size:0.6rem; color:var(--paw);">🏠<br>Home</div>
-              <div style="text-align:center; font-size:0.6rem; color:var(--muted);">🛒<br>Shop</div>
-              <div style="text-align:center; font-size:0.6rem; color:var(--muted);">📞<br>Support</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  
 
   </div>
 </section>
