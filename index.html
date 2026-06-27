@@ -884,6 +884,28 @@
   .app-section .section-label { color: var(--paw-amber); }
   .app-section .section-title { color: #fff; }
   .app-section .section-sub { color: rgba(255,255,255,0.6); }
+
+  /* FAQ + APP SIDE BY SIDE */
+  .faq-app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 600px;
+  }
+  .faq-col {
+    padding: 4rem 3rem;
+    background: #fff;
+  }
+  .app-col {
+    padding: 4rem 3rem;
+    background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 1024px) {
+    .faq-app-grid { grid-template-columns: 1fr; }
+    .faq-col, .app-col { padding: 3rem 2rem; }
+  }
   .app-badges { display: flex; gap: 1rem; flex-wrap: wrap; }
   .app-badge {
     background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
@@ -1972,147 +1994,134 @@
 </section>
 =========================== -->
 
-<!--=========================== APP DOWNLOAD ===========================-->
-<section class="app-section">
-  <div>
-    <div class="section-label">Get the app</div>
-    <h2 class="section-title">Always in your pocket (Coming soon..)</h2>
-    <p class="section-sub">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
-    <div class="app-badges">
-      <a href="#" class="app-badge">
-        <span class="app-badge-icon">🍎</span>
-        <div class="app-badge-text">
-          <small>Download on the</small>
-          <strong>App Store</strong>
-        </div>
-      </a>
-      <a href="#" class="app-badge">
-        <span class="app-badge-icon">▶️</span>
-        <div class="app-badge-text">
-          <small>Get it on</small>
-          <strong>Google Play</strong>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div class="app-mockup">
-    <div class="phone-frame">
-      <div class="phone-screen">
-        <div class="phone-header">🐾 Urban Paws</div>
-        <div class="phone-body">
-          <p style="font-size:0.65rem; font-weight:600; color:var(--muted); margin:0.5rem 0 0.4rem;">Our Services</p>
-          <div class="phone-service-row">
-            <div class="phone-service-tile"><span>🦮</span><small>Pet Walking</small></div>
-            <div class="phone-service-tile"><span>🍲</span><small>Pet Feeding</small></div>
-          </div>
-          <div class="phone-service-row">
-            <div class="phone-service-tile"><span>✂️</span><small>Grooming</small></div>
-            <div class="phone-service-tile"><span>🏠</span><small>Boarding</small></div>
-          </div>
-          <div class="phone-service-row">
-            <div class="phone-service-tile"><span>💉</span><small>Vaccination</small></div>
-            <div class="phone-service-tile"><span>🚐</span><small>Pet Taxi</small></div>
-          </div>
-          <div class="phone-service-row">
-            <div class="phone-service-tile"><span>🛡️</span><small>Insurance</small></div>
-            <div class="phone-service-tile"><span>🛒</span><small>Shop</small></div>
+<!--=========================== FAQ + APP SIDE BY SIDE ===========================-->
+<section id="faq" style="padding:0; background:#fff;">
+  <div class="faq-app-grid">
+
+    <!-- FAQ column -->
+    <div class="faq-col">
+      <div class="section-label">Got questions?</div>
+      <h2 class="section-title">Frequently asked questions</h2>
+      <p class="section-sub">Everything you need to know before your first booking.</p>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Is my dog safe with Urban Paws?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>Absolutely. Every Urban Paws executive goes through a background verification, in-person training, and a pet-handling assessment before their first booking. During walks, you receive real-time location updates and photos so you always know your pet is in safe hands.</p>
           </div>
         </div>
-        <div style="background:#fff; border-top:1px solid var(--border); padding:0.5rem; display:flex; justify-content:space-around;">
-          <div style="text-align:center; font-size:0.6rem; color:var(--paw);">🏠<br>Home</div>
-          <div style="text-align:center; font-size:0.6rem; color:var(--muted);">🛒<br>Shop</div>
-          <div style="text-align:center; font-size:0.6rem; color:var(--muted);">📞<br>Support</div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Do you handle aggressive or reactive dogs?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>We do take on dogs with temperament challenges, but we ask you to mention this in the "Special instructions" field when booking. Our team will review the case and match your pet with an executive who has experience handling reactive or aggressive dogs.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Are your walkers and executives verified and trained?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>Yes — all Urban Paws executives are ID-verified, police-verified, and trained in basic animal first aid and pet behaviour. We do not onboard freelancers without a proper vetting process.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Which areas do you currently cover?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>We are currently operational in select neighbourhoods across Bengaluru, with rapid expansion underway. Enter your address in the booking form and we'll confirm availability in your area.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What payment methods do you accept?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>We accept UPI (PhonePe, Google Pay, Paytm), Debit / Credit Cards, and Cash on Delivery. All online payments are fully secured.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            Can I cancel or reschedule a booking?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>Yes. You can cancel or reschedule up to 2 hours before the scheduled service at no charge. Cancellations made within 2 hours may incur a small convenience fee.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">
+            What happens if my pet gets hurt during the service?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-a">
+            <p>All our executives are trained in basic pet first aid. In the rare event of an incident, the executive will contact you immediately and we will coordinate with the nearest vet if required.</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<!--=========================== FAQ ===========================-->
-<section id="faq" style="background:#fff;">
-  <div class="section-label">Got questions?</div>
-  <h2 class="section-title">Frequently asked questions</h2>
-  <p class="section-sub">Everything you need to know before your first booking.</p>
-
-  <div class="faq-list">
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        Is my dog safe with Urban Paws?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>Absolutely. Every Urban Paws executive goes through a background verification, in-person training, and a pet-handling assessment before their first booking. During walks, you receive real-time location updates and photos so you always know your pet is in safe hands.</p>
+    <!-- App Download column -->
+    <div class="app-col">
+      <div class="section-label" style="color:var(--paw-amber);">Get the app</div>
+      <h2 class="section-title" style="color:#fff;">Always in your pocket <span style="font-size:0.75em; opacity:0.6;">(Coming soon)</span></h2>
+      <p class="section-sub" style="color:rgba(255,255,255,0.6);">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
+      <div class="app-badges" style="margin-bottom:2rem;">
+        <a href="#" class="app-badge">
+          <span class="app-badge-icon">🍎</span>
+          <div class="app-badge-text">
+            <small>Download on the</small>
+            <strong>App Store</strong>
+          </div>
+        </a>
+        <a href="#" class="app-badge">
+          <span class="app-badge-icon">▶️</span>
+          <div class="app-badge-text">
+            <small>Get it on</small>
+            <strong>Google Play</strong>
+          </div>
+        </a>
       </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        Do you handle aggressive or reactive dogs?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>We do take on dogs with temperament challenges, but we ask you to mention this in the "Special instructions" field when booking. Our team will review the case and match your pet with an executive who has experience handling reactive or aggressive dogs. Safety for both the pet and the handler is our top priority.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        Are your walkers and executives verified and trained?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>Yes — all Urban Paws executives are ID-verified, police-verified, and trained in basic animal first aid and pet behaviour. We do not onboard freelancers without a proper vetting process. You can see your assigned executive's profile before the service starts.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        Which areas do you currently cover?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>We are currently operational in select neighbourhoods across Bengaluru, with rapid expansion underway. Enter your address in the booking form and we'll confirm availability in your area. Can't find coverage near you? Drop us a message — we're adding new zones every week.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        What payment methods do you accept?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>We accept UPI (PhonePe, Google Pay, Paytm), Debit / Credit Cards, and Cash on Delivery. You can also load your Urban Paws Wallet for faster checkout on future bookings. All online payments are fully secured.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        How do I track my pet's walk in real time?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>Once a walk begins, you receive live location updates and photo check-ins directly from the executive. You'll know exactly where your pet is and how the walk is going — no need to wonder or worry.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        Can I cancel or reschedule a booking?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>Yes. You can cancel or reschedule up to 2 hours before the scheduled service at no charge. Cancellations made within 2 hours of the service may incur a small convenience fee. Simply reply to your booking confirmation email or contact us directly and we'll sort it out.</p>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        What happens if my pet gets hurt during the service?
-        <span class="faq-icon">+</span>
-      </button>
-      <div class="faq-a">
-        <p>We take this very seriously. All our executives are trained in basic pet first aid. In the rare event of an incident, the executive will contact you immediately, and we will coordinate with the nearest vet if required. Urban Paws takes full responsibility for any injury that occurs during the service.</p>
+      <div class="app-mockup">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-header">🐾 Urban Paws</div>
+            <div class="phone-body">
+              <p style="font-size:0.65rem; font-weight:600; color:var(--muted); margin:0.5rem 0 0.4rem;">Our Services</p>
+              <div class="phone-service-row">
+                <div class="phone-service-tile"><span>🦮</span><small>Pet Walking</small></div>
+                <div class="phone-service-tile"><span>🍲</span><small>Pet Feeding</small></div>
+              </div>
+              <div class="phone-service-row">
+                <div class="phone-service-tile"><span>✂️</span><small>Grooming</small></div>
+                <div class="phone-service-tile"><span>🏠</span><small>Boarding</small></div>
+              </div>
+              <div class="phone-service-row">
+                <div class="phone-service-tile"><span>💉</span><small>Vaccination</small></div>
+                <div class="phone-service-tile"><span>🚐</span><small>Pet Taxi</small></div>
+              </div>
+              <div class="phone-service-row">
+                <div class="phone-service-tile"><span>🛡️</span><small>Insurance</small></div>
+                <div class="phone-service-tile"><span>🛒</span><small>Shop</small></div>
+              </div>
+            </div>
+            <div style="background:#fff; border-top:1px solid var(--border); padding:0.5rem; display:flex; justify-content:space-around;">
+              <div style="text-align:center; font-size:0.6rem; color:var(--paw);">🏠<br>Home</div>
+              <div style="text-align:center; font-size:0.6rem; color:var(--muted);">🛒<br>Shop</div>
+              <div style="text-align:center; font-size:0.6rem; color:var(--muted);">📞<br>Support</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
