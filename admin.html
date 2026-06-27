@@ -171,9 +171,10 @@
     display: inline-block; padding: 2px 9px; border-radius: 100px;
     font-size: 0.7rem; font-weight: 700;
   }
-  .plan-starter { background: #F3F4F6; color: #374151; }
-  .plan-paws    { background: #FDE68A; color: #78350F; }
-  .plan-elite   { background: #FDE4C8; color: #7c2d12; }
+  .plan-starter  { background: #F3F4F6; color: #374151; }
+  .plan-casual   { background: #EDEEFA; color: #5254B8; }
+  .plan-standard { background: #DBEAFE; color: #1E40AF; }
+  .plan-carnival { background: #FDE68A; color: #78350F; }
 
   @media (max-width: 768px) {
     .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -331,12 +332,16 @@
           <div class="stat-value" id="uStatStarter">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Paws+ Plan</div>
-          <div class="stat-value" id="uStatPaws">—</div>
+          <div class="stat-label">Casual Plan</div>
+          <div class="stat-value" id="uStatCasual">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Elite Plan</div>
-          <div class="stat-value" id="uStatElite">—</div>
+          <div class="stat-label">Standard Pro</div>
+          <div class="stat-value" id="uStatStandard">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Carnival Plan</div>
+          <div class="stat-value" id="uStatCarnival">—</div>
         </div>
       </div>
 
@@ -345,8 +350,9 @@
         <select id="uFilterPlan" onchange="applyUserFilters()">
           <option value="">All Plans</option>
           <option value="starter">Starter</option>
-          <option value="paws">Paws+</option>
-          <option value="elite">Elite</option>
+          <option value="casual">Casual</option>
+          <option value="standard">Standard Pro</option>
+          <option value="carnival">Carnival</option>
         </select>
         <input type="text" id="uFilterSearch" placeholder="Search name / email…" oninput="applyUserFilters()" autocomplete="off" style="min-width:200px;" />
         <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
@@ -614,9 +620,10 @@
 
   function updateUserStats() {
     document.getElementById('uStatTotal').textContent   = allUsers.length;
-    document.getElementById('uStatStarter').textContent = allUsers.filter(u => !u.plan || u.plan==='starter').length;
-    document.getElementById('uStatPaws').textContent    = allUsers.filter(u => u.plan==='paws').length;
-    document.getElementById('uStatElite').textContent   = allUsers.filter(u => u.plan==='elite').length;
+    document.getElementById('uStatStarter').textContent  = allUsers.filter(u => !u.plan || u.plan==='starter').length;
+    document.getElementById('uStatCasual').textContent   = allUsers.filter(u => u.plan==='casual').length;
+    document.getElementById('uStatStandard').textContent = allUsers.filter(u => u.plan==='standard').length;
+    document.getElementById('uStatCarnival').textContent = allUsers.filter(u => u.plan==='carnival').length;
   }
 
   function applyUserFilters() {
@@ -640,10 +647,10 @@
       document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="empty">No users found.</td></tr>';
       return;
     }
-    const planLabel = { starter:'⭐ Starter', paws:'🌟 Paws+', elite:'👑 Elite' };
-    const planCls   = { starter:'plan-starter', paws:'plan-paws', elite:'plan-elite' };
+    const planLabel = { starter:'⭐ Starter', casual:'🐾 Casual', standard:'🌟 Standard Pro', carnival:'🎊 Carnival' };
+    const planCls   = { starter:'plan-starter', casual:'plan-casual', standard:'plan-standard', carnival:'plan-carnival' };
     document.getElementById('usersBody').innerHTML = users.map((u, i) => {
-      const plan  = u.plan || 'starter';
+      const plan  = (planLabel[u.plan] ? u.plan : null) || 'starter';
       const since = u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
       return `<tr>
         <td style="color:var(--muted);font-size:0.78rem">${i+1}</td>
