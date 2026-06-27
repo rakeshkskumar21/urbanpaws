@@ -519,27 +519,110 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="profile-form-card" style="margin-top:1.5rem">
         <div class="pf-form-title">Fill in your details</div>
         <div class="pf-grid">
-          <div class="pf-group"><label>Full Name *</label><input type="text" id="obName" placeholder="Your full name"></div>
-          <div class="pf-group"><label>Phone Number *</label><input type="tel" id="obPhone" placeholder="+91 XXXXX XXXXX"></div>
-          <div class="pf-group full"><label>Address *</label><textarea id="obAddress" placeholder="Apartment, area, city, PIN code" rows="3"></textarea></div>
+          <div class="pf-group"><label>Full Name <span class="bk-req">*</span></label><input type="text" id="obName" placeholder="Your full name"></div>
+          <div class="pf-group"><label>Phone Number <span class="bk-req">*</span></label><input type="tel" id="obPhone" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="pf-group"><label>Pet Name <span class="bk-req">*</span></label><input type="text" id="obPetName" placeholder="e.g. Bruno"></div>
+          <div class="pf-group"><label>Breed <span class="bk-req">*</span></label>
+            <select id="obBreed" class="pf-select">
+              <option value="">Select breed</option>
+              <option>Labrador Retriever</option>
+              <option>Indian Breed (Desi)</option>
+              <option>German Shepherd</option>
+              <option>Beagle</option>
+              <option>Siberian Husky</option>
+              <option>Rottweiler</option>
+              <option>Shih Tzu</option>
+              <option>Dobermann</option>
+              <option>American Bully</option>
+              <option>Pomeranian</option>
+              <option>Persian Cat</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Pet's Age <span class="bk-req">*</span></label>
+            <select id="obPetAge" class="pf-select">
+              <option value="">Select age</option>
+              <option>Under 6 months</option>
+              <option>6–12 months</option>
+              <option>1–3 years</option>
+              <option>3–7 years</option>
+              <option>7+ years</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Gender <span class="bk-req">*</span></label>
+            <select id="obGender" class="pf-select">
+              <option value="">Select gender</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+          <div class="pf-group full"><label>Address <span class="bk-req">*</span></label><textarea id="obAddress" placeholder="Apartment, area, city, PIN code" rows="2"></textarea></div>
         </div>
       </div>
 
       <div class="profile-form-card" style="margin-top:1rem">
         <div class="pf-form-title">Additional Health Info <small style="font-weight:400;font-size:.78rem;color:var(--muted)">(helps us care better)</small></div>
         <div class="pf-grid">
-          <div class="pf-group"><label>Pet Name</label><input type="text" id="obPetName" placeholder="e.g. Bruno"></div>
-          <div class="pf-group"><label>Pet Type</label>
-            <select id="obPetType" class="pf-select">
-              <option value="">Select type</option>
-              <option value="dog">🐕 Dog</option>
-              <option value="cat">🐈 Cat</option>
-              <option value="other">Other</option>
+          <div class="pf-group"><label>Known allergies? <span class="bk-req">*</span></label>
+            <select id="obAllergies" class="pf-select">
+              <option value="">Please select</option>
+              <option>No known allergies</option>
+              <option>Yes, food allergies</option>
+              <option>Yes, environmental allergies</option>
+              <option>Yes, medication allergies</option>
+              <option>Not sure</option>
             </select>
           </div>
-          <div class="pf-group"><label>Breed</label><input type="text" id="obBreed" placeholder="e.g. Labrador Retriever"></div>
-          <div class="pf-group"><label>Age</label><input type="text" id="obPetAge" placeholder="e.g. 2 years"></div>
-          <div class="pf-group full"><label>Health Notes</label><textarea id="obHealthNotes" placeholder="Any allergies, medications, or special care needs…" rows="3"></textarea></div>
+          <div class="pf-group"><label>Any limping or difficulty walking? <span class="bk-req">*</span></label>
+            <select id="obLimping" class="pf-select">
+              <option value="">Please select</option>
+              <option>No, moving perfectly fine</option>
+              <option>Slight limping (mild)</option>
+              <option>Yes, noticeable limping</option>
+              <option>Not sure</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Surgery in the last 30 days? <span class="bk-req">*</span></label>
+            <select id="obSurgery" class="pf-select">
+              <option value="">Please select</option>
+              <option>No recent surgery</option>
+              <option>Yes, within the last 30 days</option>
+              <option>Yes, more than 30 days ago</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Eating regularly? <span class="bk-req">*</span></label>
+            <select id="obEating" class="pf-select">
+              <option value="">Please select</option>
+              <option>Yes, eating well and had food within 6 hours</option>
+              <option>Yes, eating well but not within 6 hours</option>
+              <option>Eating less than usual</option>
+              <option>Not eating at all</option>
+              <option>Not sure</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Vaccination status? <span class="bk-req">*</span></label>
+            <select id="obVaccinated" class="pf-select">
+              <option value="">Please select</option>
+              <option>Yes, fully vaccinated</option>
+              <option>Partially vaccinated</option>
+              <option>Not vaccinated</option>
+              <option>Not sure</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Pet's temperament? <span class="bk-req">*</span></label>
+            <select id="obTemperament" class="pf-select">
+              <option value="">Please select</option>
+              <option>Very friendly — loves everyone</option>
+              <option>Friendly but takes time to warm up</option>
+              <option>Reactive to strangers</option>
+              <option>Aggressive with strangers</option>
+              <option>Aggressive with other dogs</option>
+              <option>Unpredictable — varies by mood</option>
+            </select>
+          </div>
+          <div class="pf-group full"><label>Any other health concerns? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <textarea id="obOtherIssues" rows="2" placeholder="e.g. Bruno has a heart condition…"></textarea>
+          </div>
         </div>
       </div>
 
@@ -584,17 +667,100 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             </div>
             <div class="pf-grid">
               <div class="pf-group"><label>Pet Name</label><input type="text" id="pfPetName" placeholder="e.g. Bruno" disabled></div>
-              <div class="pf-group"><label>Pet Type</label>
-                <select id="pfPetType" class="pf-select" disabled>
-                  <option value="">Select type</option>
-                  <option value="dog">🐕 Dog</option>
-                  <option value="cat">🐈 Cat</option>
-                  <option value="other">Other</option>
+              <div class="pf-group"><label>Breed</label>
+                <select id="pfBreed" class="pf-select" disabled>
+                  <option value="">Select breed</option>
+                  <option>Labrador Retriever</option>
+                  <option>Indian Breed (Desi)</option>
+                  <option>German Shepherd</option>
+                  <option>Beagle</option>
+                  <option>Siberian Husky</option>
+                  <option>Rottweiler</option>
+                  <option>Shih Tzu</option>
+                  <option>Dobermann</option>
+                  <option>American Bully</option>
+                  <option>Pomeranian</option>
+                  <option>Persian Cat</option>
+                  <option>Other</option>
                 </select>
               </div>
-              <div class="pf-group"><label>Breed</label><input type="text" id="pfBreed" placeholder="e.g. Labrador" disabled></div>
-              <div class="pf-group"><label>Age</label><input type="text" id="pfPetAge" placeholder="e.g. 2 years" disabled></div>
-              <div class="pf-group full"><label>Health Notes</label><textarea id="pfHealthNotes" placeholder="Allergies, medications, special needs…" rows="3" disabled></textarea></div>
+              <div class="pf-group"><label>Age</label>
+                <select id="pfPetAge" class="pf-select" disabled>
+                  <option value="">Select age</option>
+                  <option>Under 6 months</option>
+                  <option>6–12 months</option>
+                  <option>1–3 years</option>
+                  <option>3–7 years</option>
+                  <option>7+ years</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Gender</label>
+                <select id="pfGender" class="pf-select" disabled>
+                  <option value="">Select gender</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Known allergies?</label>
+                <select id="pfAllergies" class="pf-select" disabled>
+                  <option value="">Please select</option>
+                  <option>No known allergies</option>
+                  <option>Yes, food allergies</option>
+                  <option>Yes, environmental allergies</option>
+                  <option>Yes, medication allergies</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Any limping or difficulty walking?</label>
+                <select id="pfLimping" class="pf-select" disabled>
+                  <option value="">Please select</option>
+                  <option>No, moving perfectly fine</option>
+                  <option>Slight limping (mild)</option>
+                  <option>Yes, noticeable limping</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Surgery in the last 30 days?</label>
+                <select id="pfSurgery" class="pf-select" disabled>
+                  <option value="">Please select</option>
+                  <option>No recent surgery</option>
+                  <option>Yes, within the last 30 days</option>
+                  <option>Yes, more than 30 days ago</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Eating regularly?</label>
+                <select id="pfEating" class="pf-select" disabled>
+                  <option value="">Please select</option>
+                  <option>Yes, eating well and had food within 6 hours</option>
+                  <option>Yes, eating well but not within 6 hours</option>
+                  <option>Eating less than usual</option>
+                  <option>Not eating at all</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Vaccination status?</label>
+                <select id="pfVaccinated" class="pf-select" disabled>
+                  <option value="">Please select</option>
+                  <option>Yes, fully vaccinated</option>
+                  <option>Partially vaccinated</option>
+                  <option>Not vaccinated</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Pet's temperament?</label>
+                <select id="pfTemperament" class="pf-select" disabled>
+                  <option value="">Please select</option>
+                  <option>Very friendly — loves everyone</option>
+                  <option>Friendly but takes time to warm up</option>
+                  <option>Reactive to strangers</option>
+                  <option>Aggressive with strangers</option>
+                  <option>Aggressive with other dogs</option>
+                  <option>Unpredictable — varies by mood</option>
+                </select>
+              </div>
+              <div class="pf-group full"><label>Any other health concerns? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+                <textarea id="pfOtherIssues" rows="2" placeholder="e.g. Bruno has a heart condition…" disabled></textarea>
+              </div>
             </div>
             <div id="pfHealthEditActions" style="display:none;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
               <button class="save-btn" onclick="saveHealthInfo()">Save →</button>
@@ -1301,10 +1467,16 @@ function obInit(plan) {
       }
       const h = JSON.parse(localStorage.getItem('urbanpaws_health_'+currentUser.id)||'{}');
       document.getElementById('obPetName').value     = h.pet_name||'';
-      document.getElementById('obPetType').value     = h.pet_type||'';
       document.getElementById('obBreed').value       = h.breed||'';
       document.getElementById('obPetAge').value      = h.pet_age||'';
-      document.getElementById('obHealthNotes').value = h.health_notes||'';
+      document.getElementById('obGender').value      = h.gender||'';
+      document.getElementById('obAllergies').value   = h.allergies||'';
+      document.getElementById('obLimping').value     = h.limping||'';
+      document.getElementById('obSurgery').value     = h.surgery||'';
+      document.getElementById('obEating').value      = h.eating||'';
+      document.getElementById('obVaccinated').value  = h.vaccinated||'';
+      document.getElementById('obTemperament').value = h.temperament||'';
+      document.getElementById('obOtherIssues').value = h.other_issues||'';
     });
   }
 }
@@ -1314,18 +1486,25 @@ async function obSubmit() {
   const full_name = document.getElementById('obName').value.trim();
   const phone     = document.getElementById('obPhone').value.trim();
   const address   = document.getElementById('obAddress').value.trim();
-  if (!full_name || !phone || !address) { showToast('❌ Please fill in your name, phone and address'); return; }
+  const pet_name  = document.getElementById('obPetName').value.trim();
+  if (!full_name || !phone || !address || !pet_name) { showToast('❌ Please fill in all required fields'); return; }
   const btn = document.getElementById('obSubmitBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
   const { error } = await db.from('profiles').upsert({ id:currentUser.id, email:currentUser.email, full_name, phone, address, plan:_obPlan });
   btn.disabled = false; btn.textContent = 'Confirm & Get Started →';
   if (error) { showToast('❌ '+error.message); return; }
   const h = {
-    pet_name: document.getElementById('obPetName').value.trim(),
-    pet_type: document.getElementById('obPetType').value,
-    breed:    document.getElementById('obBreed').value.trim(),
-    pet_age:  document.getElementById('obPetAge').value.trim(),
-    health_notes: document.getElementById('obHealthNotes').value.trim()
+    pet_name,
+    breed:        document.getElementById('obBreed').value,
+    pet_age:      document.getElementById('obPetAge').value,
+    gender:       document.getElementById('obGender').value,
+    allergies:    document.getElementById('obAllergies').value,
+    limping:      document.getElementById('obLimping').value,
+    surgery:      document.getElementById('obSurgery').value,
+    eating:       document.getElementById('obEating').value,
+    vaccinated:   document.getElementById('obVaccinated').value,
+    temperament:  document.getElementById('obTemperament').value,
+    other_issues: document.getElementById('obOtherIssues').value.trim()
   };
   localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
   document.getElementById('pfNameBig').textContent   = full_name;
@@ -1355,12 +1534,12 @@ function renderPricingCTAs(currentPlan) {
     if (!btn) return;
     const r = PLAN_META[key].rank;
     if (r === rank) {
-      if (badge) badge.style.display = '';
+      if (badge) badge.style.display = 'block';
       if (key === 'casual' && popularBadge) popularBadge.style.display = 'none';
       btn.style.display = 'none';
     } else {
       if (badge) badge.style.display = 'none';
-      if (key === 'casual' && popularBadge) popularBadge.style.display = '';
+      if (key === 'casual' && popularBadge) popularBadge.style.display = 'block';
       btn.style.display = '';
       if (r > rank) {
         btn.textContent = 'Upgrade →'; btn.className = 'ex-btn ex-btn-primary'; btn.disabled = false;
@@ -1377,22 +1556,28 @@ function loadHealthInfo() {
   if (!currentUser) return;
   const h = JSON.parse(localStorage.getItem('urbanpaws_health_'+currentUser.id)||'{}');
   document.getElementById('pfPetName').value     = h.pet_name||'';
-  document.getElementById('pfPetType').value     = h.pet_type||'';
   document.getElementById('pfBreed').value       = h.breed||'';
   document.getElementById('pfPetAge').value      = h.pet_age||'';
-  document.getElementById('pfHealthNotes').value = h.health_notes||'';
+  document.getElementById('pfGender').value      = h.gender||'';
+  document.getElementById('pfAllergies').value   = h.allergies||'';
+  document.getElementById('pfLimping').value     = h.limping||'';
+  document.getElementById('pfSurgery').value     = h.surgery||'';
+  document.getElementById('pfEating').value      = h.eating||'';
+  document.getElementById('pfVaccinated').value  = h.vaccinated||'';
+  document.getElementById('pfTemperament').value = h.temperament||'';
+  document.getElementById('pfOtherIssues').value = h.other_issues||'';
 }
 
+const _healthFields = ['pfPetName','pfBreed','pfPetAge','pfGender','pfAllergies','pfLimping','pfSurgery','pfEating','pfVaccinated','pfTemperament','pfOtherIssues'];
+
 function pfEnableHealthEdit() {
-  ['pfPetName','pfBreed','pfPetAge','pfHealthNotes'].forEach(id => document.getElementById(id).disabled = false);
-  document.getElementById('pfPetType').disabled = false;
+  _healthFields.forEach(id => document.getElementById(id).disabled = false);
   document.getElementById('pfHealthEditActions').style.display = 'flex';
   document.getElementById('editHealthBtn').style.display = 'none';
 }
 
 function pfCancelHealthEdit() {
-  ['pfPetName','pfBreed','pfPetAge','pfHealthNotes'].forEach(id => document.getElementById(id).disabled = true);
-  document.getElementById('pfPetType').disabled = true;
+  _healthFields.forEach(id => document.getElementById(id).disabled = true);
   document.getElementById('pfHealthEditActions').style.display = 'none';
   document.getElementById('editHealthBtn').style.display = '';
 }
@@ -1400,11 +1585,17 @@ function pfCancelHealthEdit() {
 function saveHealthInfo() {
   if (!currentUser) return;
   const h = {
-    pet_name: document.getElementById('pfPetName').value.trim(),
-    pet_type: document.getElementById('pfPetType').value,
-    breed:    document.getElementById('pfBreed').value.trim(),
-    pet_age:  document.getElementById('pfPetAge').value.trim(),
-    health_notes: document.getElementById('pfHealthNotes').value.trim()
+    pet_name:     document.getElementById('pfPetName').value.trim(),
+    breed:        document.getElementById('pfBreed').value,
+    pet_age:      document.getElementById('pfPetAge').value,
+    gender:       document.getElementById('pfGender').value,
+    allergies:    document.getElementById('pfAllergies').value,
+    limping:      document.getElementById('pfLimping').value,
+    surgery:      document.getElementById('pfSurgery').value,
+    eating:       document.getElementById('pfEating').value,
+    vaccinated:   document.getElementById('pfVaccinated').value,
+    temperament:  document.getElementById('pfTemperament').value,
+    other_issues: document.getElementById('pfOtherIssues').value.trim()
   };
   localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
   showToast('✅ Pet info saved!', 'success');
