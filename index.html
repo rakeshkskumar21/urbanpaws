@@ -1184,7 +1184,7 @@
     margin-top: 0.25rem;
     font-family: inherit;
   }
-  .auth-submit:hover { background: #d4461a; }
+  .auth-submit:hover { background: var(--paw-deep); }
   .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
   .auth-divider {
     display: flex;
@@ -1220,6 +1220,19 @@
     transition: color 0.15s;
   }
   .pw-toggle:hover { color: var(--paw); }
+
+  /* FREE TRIAL PROMO PILL */
+  .trial-promo {
+    display: inline-block;
+    background: rgba(108,111,212,0.15);
+    border: 1.5px solid rgba(108,111,212,0.35);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    color: #fff;
+    margin: 0.75rem 0 1.25rem;
+  }
+  .trial-promo strong { color: #a5f3a5; }
 </style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
@@ -1335,6 +1348,11 @@
     
     <h1>Pet Walking and <em>Food Delivery</em> App</h1>
     <p class="hero-sub" style="white-space:nowrap;">Experience fast &amp; easy online ordering on the <strong>Urban Paws</strong> app.</p>
+
+    <div class="trial-promo">
+      🎉 Book your first 2 trial walks for <strong>FREE</strong>
+    </div>
+
     <div class="hero-actions">
       <a href="#booking" class="btn-primary">Book a Service ↗</a>
       <a href="#services" class="btn-outline">Explore Services</a>
@@ -1379,7 +1397,7 @@
 
 <!--===========================  SERVICES===========================  -->
 <section id="services">
-  <div class="section-label">What we do</div>
+  <div class="section-label">01 — What we do</div>
   <h2 class="section-title">Every service your pet needs</h2>
   <p class="section-sub" style="white-space:nowrap;">From daily walks to emergency care — one app, one partner, all covered.</p>
 
@@ -1444,7 +1462,7 @@
 
 <!--===========================  FOOD MENU =========================== -->
 <section id="food">
-  <div class="section-label">Pet kitchen</div>
+  <div class="section-label">02 — Pet kitchen</div>
   <h2 class="section-title">Fresh food, zero preservatives</h2>
   <p class="section-sub" style="white-space:nowrap;">Cooked fresh daily in our cloud kitchen. Vet-approved ingredients. Both veg and non-veg options — because we know not every family can cook chicken.</p>
 
@@ -1528,7 +1546,7 @@
 
 <!--===========================  SHOP =========================== -->
 <section id="shop" style="background:#fff;">
-  <div class="section-label">Pet supplies</div>
+  <div class="section-label">03 — Pet supplies</div>
   <h2 class="section-title">Everything your pet needs, delivered</h2>
   <p class="section-sub" style="white-space:nowrap;">Quality grooming products, accessories, and essentials — curated by our vet team and shipped same day.</p>
 
@@ -1585,7 +1603,7 @@
 </section>
 <!--===========================  PRICING =========================== -->
 <section id="pricing">
-  <div class="section-label">Pricing & plans</div>
+  <div class="section-label">04 — Pricing & plans</div>
   <h2 class="section-title">Transparent, no surprises</h2>
   <p class="section-sub" style="white-space:nowrap;">Pay per use, or subscribe for families with multiple pets and daily needs.</p>
 
@@ -1665,7 +1683,7 @@
 </section>
 <!--===========================  HOW IT WORKS =========================== -->
 <section style="background:#fff;">
-  <div class="section-label">How it works</div>
+  <div class="section-label">05 — How it works</div>
   <h2 class="section-title">Ready in 4 easy steps</h2>
   <p class="section-sub">From download to doorstep in under 3 minutes.</p>
   <div class="steps-flow">
@@ -1693,11 +1711,12 @@
 </section>
 <!--=========================== BOOKING ======================== -->
 <section id="booking" class="booking-section">
-  <div class="section-label">Quick booking</div>
+  <div class="section-label">06 — Quick booking</div>
   <h2 class="section-title">Book in under 2 minutes</h2>
   <p class="section-sub" style="white-space:nowrap;">Select your service, fill in your pet's details, and we'll assign a verified executive near you.</p>
 
   <div class="booking-form-card">
+    <label style="display:block; font-size:0.82rem; font-weight:700; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:0.6rem;">Step 1 — Select a service</label>
     <div class="service-tabs" id="serviceTabs">
       <button class="service-tab active" onclick="selectService(this)">🦮 Walk</button>
       <button class="service-tab" onclick="selectService(this)">🍲 Food</button>
@@ -1952,7 +1971,7 @@
 <!--=========================== APP DOWNLOAD ===========================-->
 <section class="app-section">
   <div>
-    <div class="section-label">Get the app</div>
+    <div class="section-label">07 — Get the app</div>
     <h2 class="section-title">Always in your pocket (Coming soon..)</h2>
     <p class="section-sub">Book, track live, chat with your pet executive, and manage your pet's profile — all from the Urban Paws app.</p>
     <div class="app-badges">
@@ -2007,7 +2026,7 @@
 
 <!--=========================== FAQ ===========================-->
 <section id="faq" style="background:#fff;">
-  <div class="section-label">Got questions?</div>
+  <div class="section-label">08 — Got questions?</div>
   <h2 class="section-title">Frequently asked questions</h2>
   <p class="section-sub">Everything you need to know before your first booking.</p>
 
@@ -2462,7 +2481,7 @@
         pet_name:     data.pet_name,
         booking_date: data.booking_date
       },
-      theme: { color: '#E8531A' },
+      theme: { color: '#6C6FD4' },
       handler: function(response) {
         const payRef = response.razorpay_payment_id;
         saveBooking({ ...data, payment: data.payment + ' | Pay ID: ' + payRef });
