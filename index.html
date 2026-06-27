@@ -239,10 +239,64 @@
   /* HERO */
   .hero {
     min-height: calc(10vh - 64px);
-    display: block;
-    padding: 2rem 4rem 2.5rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; align-items: flex-start;
+    padding: 0;
     position: relative;
     overflow: hidden;
+  }
+  .hero-content {
+    padding: 2rem 3rem 2.5rem 4rem;
+  }
+  .hero-services-card {
+    background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%);
+    padding: 2.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+  .hero-services-card .card-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paw-amber);
+    margin-bottom: 0.4rem;
+  }
+  .hero-services-card h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .hero-svc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    flex: 1;
+  }
+  .hero-svc-tile {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+    text-decoration: none;
+  }
+  .hero-svc-tile:hover {
+    background: rgba(255,255,255,0.14);
+    transform: translateY(-2px);
+  }
+  .hero-svc-tile .svc-icon { font-size: 1.8rem; display: block; margin-bottom: 0.4rem; }
+  .hero-svc-tile .svc-name { font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.85); display: block; }
+  .hero-svc-tile .svc-price { font-size: 0.65rem; color: var(--paw-amber); margin-top: 2px; display: block; }
+  .hero-svc-note {
+    margin-top: 1.25rem;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
   }
 
   .hero::before {
@@ -1005,7 +1059,8 @@
     .mob-controls { display: flex; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-content { padding: 2.5rem 2rem 0; text-align: center; }
-    .app-col { padding: 2.5rem 2rem; }
+    .hero-services-card { padding: 2rem; }
+    .hero-svc-grid { grid-template-columns: repeat(3, 1fr); }
     .hero-visual { justify-content: center; margin-top: 3rem; }
     .hero-sub { max-width: 100%; }
     .hero-actions { justify-content: center; }
@@ -1403,6 +1458,44 @@
 
   </div>
 
+  <!-- Right column — services at a glance -->
+  <div class="hero-services-card">
+    <div class="card-title">What we offer</div>
+    <h3>6 services, one app</h3>
+    <div class="hero-svc-grid">
+      <a href="#booking" class="hero-svc-tile" onclick="openBooking('Pet Walking')">
+        <span class="svc-icon">🦮</span>
+        <span class="svc-name">Walk</span>
+        <span class="svc-price">from ₹89</span>
+      </a>
+      <a href="#food" class="hero-svc-tile">
+        <span class="svc-icon">🍲</span>
+        <span class="svc-name">Pet Food</span>
+        <span class="svc-price">from ₹28</span>
+      </a>
+      <a href="#booking" class="hero-svc-tile" onclick="openBooking('Grooming')">
+        <span class="svc-icon">✂️</span>
+        <span class="svc-name">Grooming</span>
+        <span class="svc-price">from ₹478</span>
+      </a>
+      <a href="#booking" class="hero-svc-tile" onclick="openBooking('Boarding')">
+        <span class="svc-icon">🏠</span>
+        <span class="svc-name">Boarding</span>
+        <span class="svc-price">from ₹478</span>
+      </a>
+      <a href="#booking" class="hero-svc-tile" onclick="openBooking('Vaccination')">
+        <span class="svc-icon">💉</span>
+        <span class="svc-name">Vaccination</span>
+        <span class="svc-price">from ₹299</span>
+      </a>
+      <a href="#booking" class="hero-svc-tile" onclick="openBooking('Pet Taxi')">
+        <span class="svc-icon">🚐</span>
+        <span class="svc-name">Pet Taxi</span>
+        <span class="svc-price">from ₹289</span>
+      </a>
+    </div>
+    <p class="hero-svc-note">Tap any service to book instantly →</p>
+  </div>
 
 </section>
 
