@@ -381,6 +381,13 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .bk-service-tabs { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 .bk-tab { padding: 8px 20px; border-radius: 100px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; font-family: inherit; }
 .bk-tab.active, .bk-tab:hover { background: var(--paw); border-color: var(--paw); color: #fff; }
+.bk-food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; margin-bottom: 1.25rem; }
+.bk-food-item { border: 2px solid var(--border); border-radius: 12px; padding: .85rem; cursor: pointer; transition: all .15s; background: var(--white); text-align: center; }
+.bk-food-item:hover { border-color: var(--paw); }
+.bk-food-item.selected { border-color: var(--paw); background: var(--paw-soft); }
+.bk-food-item .bk-food-emoji { font-size: 1.6rem; line-height: 1; margin-bottom: .35rem; }
+.bk-food-item .bk-food-name { font-size: .82rem; font-weight: 700; color: var(--night); margin-bottom: 2px; }
+.bk-food-item .bk-food-price { font-size: .75rem; color: var(--paw2); font-weight: 700; }
 .bk-dur-group { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
 .bk-dur-opt { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border: 2px solid var(--border); border-radius: 100px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; user-select: none; background: var(--white); color: var(--night); }
 .bk-dur-opt input[type=radio] { display: none; }
@@ -1072,6 +1079,18 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           <button class="bk-tab" onclick="bkSelectService(this)">🍲 Food</button>
         </div>
 
+        <div id="bkFoodGroup" style="display:none; margin-bottom:1.25rem;">
+          <span class="bk-step-label">Step 2 — Select a meal <span class="bk-req">*</span></span>
+          <div class="bk-food-grid">
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Curd')"><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Curd</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Chicken')"><div class="bk-food-emoji">🍚🍗</div><div class="bk-food-name">Rice & Chicken</div><div class="bk-food-price">₹80/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Raw Egg')"><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Raw Egg</div><div class="bk-food-price">₹75/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Milk')"><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Milk</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Chicken & Carrots')"><div class="bk-food-emoji">🍗🥕</div><div class="bk-food-name">Chicken & Carrots</div><div class="bk-food-price">₹75/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Boiled Egg')"><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Boiled Egg</div><div class="bk-food-price">₹40/bowl · 🥩 Non-veg</div></div>
+          </div>
+        </div>
+
         <div id="bkDurGroup" style="margin-bottom:1.25rem;">
           <span class="bk-step-label">Step 2 — Select walk duration <span class="bk-req">*</span></span>
           <div class="bk-dur-group">
@@ -1652,14 +1671,21 @@ function initApp(user) {
 function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }
 
 /* ── Book a Service page ── */
-let _bkWalkDur = '15', _bkWalkPaise = 8900;
+let _bkWalkDur = '15', _bkWalkPaise = 8900, _bkSelectedFood = '';
 
 function bkSelectService(el) {
   document.querySelectorAll('.bk-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   const isWalk = el.textContent.toLowerCase().includes('walk');
   document.getElementById('bkDurGroup').style.display = isWalk ? '' : 'none';
-  document.getElementById('bkStep3Label').textContent = isWalk ? 'Step 3 — Fill in the details' : 'Step 2 — Fill in the details';
+  document.getElementById('bkFoodGroup').style.display = isWalk ? 'none' : '';
+  document.getElementById('bkStep3Label').textContent = isWalk ? 'Step 3 — Fill in the details' : 'Step 3 — Fill in the details';
+}
+
+function bkSelectFood(el, name) {
+  document.querySelectorAll('.bk-food-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  _bkSelectedFood = name;
 }
 
 function bkSelectDur(el, mins, paise) {
@@ -1672,9 +1698,10 @@ function bkSelectDur(el, mins, paise) {
 function bkSubmit() {
   const activeTab = document.querySelector('.bk-tab.active');
   const isWalk = activeTab && activeTab.textContent.toLowerCase().includes('walk');
+  if (!isWalk && !_bkSelectedFood) { showToast('❌ Please select a meal'); return; }
   const svc = isWalk
     ? (activeTab.textContent.trim() + ' – ' + _bkWalkDur + ' min')
-    : (activeTab ? activeTab.textContent.trim() : '');
+    : ('🍲 Food – ' + _bkSelectedFood);
 
   const rules = [
     { id:'bkPetName',    err:'bkerr-petName',    check: v => v.trim() !== '' },

@@ -1186,6 +1186,42 @@
   .nav-user-dropdown .logout-btn { color: #dc2626; }
   @media (max-width: 640px) { .nav-auth { display: none; } }
 
+  /* MOBILE: burger left, auth right */
+  .mob-burger-left { display: none; }
+  .mob-auth-pill {
+    display: none; align-items: center; gap: 5px;
+    background: var(--paw); color: #fff; border: none;
+    border-radius: 20px; padding: 5px 13px;
+    font-size: .75rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+  }
+  .mob-av-chip {
+    display: none; position: relative; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--paw); color: #fff;
+    align-items: center; justify-content: center;
+    font-size: .73rem; font-weight: 700;
+  }
+  .mob-av-chip .mob-av-dropdown {
+    display: none; position: absolute; right: 0; top: 38px;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    z-index: 200; min-width: 160px; overflow: hidden;
+  }
+  .mob-av-chip.open .mob-av-dropdown { display: block; }
+  .mob-av-dropdown a, .mob-av-dropdown button {
+    display: block; padding: 11px 16px; width: 100%; text-align: left;
+    font-size: .85rem; color: var(--night); text-decoration: none;
+    background: none; border: none; cursor: pointer; font-family: inherit;
+  }
+  .mob-av-dropdown a:hover, .mob-av-dropdown button:hover { background: var(--surface); }
+  .mob-av-dropdown button { color: #dc2626; }
+  @media (max-width: 1024px) {
+    .mob-burger-left { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: none; border: none; cursor: pointer; border-radius: 50%; color: var(--night); }
+    .mob-burger-left:hover { background: rgba(0,0,0,.07); }
+    .mob-auth-pill { display: flex; }
+    .mob-av-chip { display: flex; }
+  }
+
   /* ===== AUTH MODAL ===== */
   .auth-overlay {
     position: fixed;
@@ -1341,6 +1377,11 @@
 
 <!--===========================  NAV =========================== -->
 <nav>
+  <!-- Burger: left side on mobile -->
+  <button class="mob-burger-left" onclick="toggleBurger()" aria-label="Menu" id="burgerBtn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+
   <a href="#" class="logo">
     <svg width="38" height="38" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="100" height="100" rx="22" fill="#1A1C52"/>
@@ -1383,14 +1424,19 @@
   </div>
 
 
-  <!-- Mobile controls -->
+  <!-- Mobile controls: search + auth (right side) -->
   <div class="mob-controls">
     <button class="mob-icon-btn" id="mobSearchBtn" onclick="toggleMobSearch()" aria-label="Search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
-    <button class="mob-icon-btn" onclick="toggleBurger()" aria-label="Menu" id="burgerBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
+    <button class="mob-auth-pill" id="mobLoginBtn" onclick="openAuthModal()">Sign in</button>
+    <div class="mob-av-chip" id="mobUserChip" style="display:none" onclick="this.classList.toggle('open')" id="mobAvChip">
+      <span id="mobUserAvatar">?</span>
+      <div class="mob-av-dropdown">
+        <a href="my-bookings.html">📋 My Bookings</a>
+        <button onclick="event.stopPropagation(); signOut()">🚪 Logout</button>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -1520,7 +1566,7 @@
       <div class="service-price">Starting From ₹89/walk <span class="service-tag">Most Popular</span></div>
     </div>
 
-    <div class="service-card" onclick="openBooking()">
+    <div class="service-card" onclick="openFood()">
       <div class="service-icon">🍲</div>
       <h3>Fresh Pet Food</h3>
       <p>Freshly cooked meals delivered in 45–55 min. Veg & non-veg options from a cloud kitchen with vet-approved specific ingredients.</p>
@@ -2606,22 +2652,26 @@
     const burgerLogin = document.getElementById('burgerLoginLi');
     const burgerMyBookings = document.getElementById('burgerMyBookingsLi');
     const burgerLogout = document.getElementById('burgerLogoutLi');
+    const mobLoginBtn = document.getElementById('mobLoginBtn');
+    const mobUserChip = document.getElementById('mobUserChip');
     if (user) {
       loginBtn.style.display = 'none';
       userChip.style.display = 'flex';
       burgerLogin.style.display = 'none';
       burgerMyBookings.style.display = '';
       burgerLogout.style.display = '';
+      if (mobLoginBtn) mobLoginBtn.style.display = 'none';
+      if (mobUserChip) mobUserChip.style.display = 'flex';
       const emailInput = document.getElementById('email');
       if (emailInput && !emailInput.value) emailInput.value = user.email || '';
       subscribeToBookingUpdates(user.email);
-      // Fetch latest name from profiles table so edits in my-bookings reflect here
       db.from('profiles').select('full_name').eq('id', user.id).single().then(({ data: p }) => {
         const meta = user.user_metadata || {};
         const name = (p && p.full_name) || meta.full_name || meta.name || user.email || 'User';
         const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
         document.getElementById('navUserAvatar').textContent = initials;
         document.getElementById('navUserName').textContent = name.split(' ')[0];
+        if (document.getElementById('mobUserAvatar')) document.getElementById('mobUserAvatar').textContent = initials;
       });
     } else {
       loginBtn.style.display = '';
@@ -2629,6 +2679,8 @@
       burgerLogin.style.display = '';
       burgerMyBookings.style.display = 'none';
       burgerLogout.style.display = 'none';
+      if (mobLoginBtn) mobLoginBtn.style.display = 'flex';
+      if (mobUserChip) mobUserChip.style.display = 'none';
     }
   }
 
