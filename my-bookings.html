@@ -354,6 +354,39 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   .quick-actions { flex-direction: column; }
   .qa-btn { justify-content: center; }
 }
+
+/* BOOK A SERVICE PAGE */
+.book-form-wrap { max-width: 720px; }
+.bk-form-card { background: var(--white); border: 1px solid var(--border2); border-radius: 20px; padding: 2rem; }
+.bk-step-label { display: block; font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: .6rem; }
+.bk-service-tabs { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.bk-tab { padding: 8px 20px; border-radius: 100px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; font-family: inherit; }
+.bk-tab.active, .bk-tab:hover { background: var(--paw); border-color: var(--paw); color: #fff; }
+.bk-dur-group { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.bk-dur-opt { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border: 2px solid var(--border); border-radius: 100px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; user-select: none; background: var(--white); color: var(--night); }
+.bk-dur-opt input[type=radio] { display: none; }
+.bk-dur-opt:hover { border-color: var(--paw); color: var(--paw); }
+.bk-dur-opt.selected { border-color: var(--paw); background: var(--paw); color: #fff; }
+.bk-dur-opt.selected strong { color: #fff; }
+.bk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; }
+.bk-group { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.bk-group.full { grid-column: 1/-1; }
+.bk-group label { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.bk-group input, .bk-group select, .bk-group textarea { width: 100%; box-sizing: border-box; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 9px; font-size: .88rem; font-family: inherit; outline: none; background: var(--white); color: var(--night); transition: border-color .15s; appearance: none; }
+.bk-group input:focus, .bk-group select:focus, .bk-group textarea:focus { border-color: var(--paw); }
+.bk-group textarea { resize: vertical; min-height: 70px; }
+.bk-req { color: #ef4444; margin-left: 2px; }
+.bk-err { font-size: .75rem; color: #ef4444; margin-top: 2px; display: none; }
+.bk-err.visible { display: block; }
+.bk-group input.invalid, .bk-group select.invalid, .bk-group textarea.invalid { border-color: #ef4444; }
+.bk-health-label { font-size: .88rem; font-weight: 700; color: var(--paw); margin: .75rem 0 .25rem; }
+.bk-submit { margin-top: 1.5rem; width: 100%; padding: 14px; background: var(--paw); color: #fff; border: none; border-radius: 100px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+.bk-submit:hover { background: var(--paw2); }
+.bk-submit:disabled { opacity: .6; cursor: not-allowed; }
+@media (max-width: 540px) {
+  .bk-grid { grid-template-columns: 1fr; }
+  .bk-form-card { padding: 1.25rem; }
+}
 </style>
 </head>
 <body>
@@ -384,7 +417,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <a onclick="showPage('dashboard')" id="nav-dashboard" class="active"><span class="sb-icon">🏠</span> Dashboard</a>
       <div class="sb-section">Services</div>
       <a onclick="showPage('bookings')" id="nav-bookings"><span class="sb-icon">📋</span> My Bookings</a>
-      <a href="index.html?book=1" id="nav-book"><span class="sb-icon">➕</span> Book a Service</a>
+      <a onclick="showPage('book')" id="nav-book"><span class="sb-icon">➕</span> Book a Service</a>
       <div class="sb-section">Account</div>
       <a onclick="showPage('profile')" id="nav-profile"><span class="sb-icon">👤</span> My Profile</a>
       <div class="sb-section">Explore</div>
@@ -420,7 +453,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       </div>
 
       <div class="quick-actions">
-        <a href="index.html?book=1" class="qa-btn qa-primary">➕ Book a Service</a>
+        <button class="qa-btn qa-primary" onclick="showPage('book')">➕ Book a Service</button>
         <button class="qa-btn qa-ghost" onclick="showPage('bookings')">📋 View All Bookings</button>
         <button class="qa-btn qa-ghost" onclick="showPage('profile')">👤 Edit Profile</button>
       </div>
@@ -793,12 +826,217 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       </div>
     </div>
 
+    <!-- BOOK A SERVICE -->
+    <div class="page book-form-wrap" id="page-book" style="display:none">
+      <div class="ex-label">Quick booking</div>
+      <div class="page-title">Book a Service</div>
+      <div class="page-sub">Select your service, fill in your pet's details, and we'll assign a verified executive near you.</div>
+
+      <div class="bk-form-card">
+        <span class="bk-step-label">Step 1 — Select a service</span>
+        <div class="bk-service-tabs" id="bkServiceTabs">
+          <button class="bk-tab active" onclick="bkSelectService(this)">🦮 Walk</button>
+          <button class="bk-tab" onclick="bkSelectService(this)">🍲 Food</button>
+        </div>
+
+        <div id="bkDurGroup" style="margin-bottom:1.25rem;">
+          <span class="bk-step-label">Step 2 — Select walk duration <span class="bk-req">*</span></span>
+          <div class="bk-dur-group">
+            <label class="bk-dur-opt selected" onclick="bkSelectDur(this,'15',8900)"><input type="radio" name="bkDur" value="15" checked> 15 min &nbsp;<strong>₹89</strong></label>
+            <label class="bk-dur-opt" onclick="bkSelectDur(this,'30',14900)"><input type="radio" name="bkDur" value="30"> 30 min &nbsp;<strong>₹149</strong></label>
+            <label class="bk-dur-opt" onclick="bkSelectDur(this,'45',19900)"><input type="radio" name="bkDur" value="45"> 45 min &nbsp;<strong>₹199</strong></label>
+          </div>
+        </div>
+
+        <span class="bk-step-label" id="bkStep3Label">Step 3 — Fill in the details</span>
+
+        <div class="bk-grid" style="margin-top:.6rem;">
+          <div class="bk-group">
+            <label>Pet name <span class="bk-req">*</span></label>
+            <input type="text" id="bkPetName" placeholder="e.g. Bruno">
+            <span class="bk-err" id="bkerr-petName">Please enter your pet's name.</span>
+          </div>
+          <div class="bk-group">
+            <label>Breed <span class="bk-req">*</span></label>
+            <select id="bkBreed">
+              <option value="">Select breed</option>
+              <option>Labrador Retriever</option>
+              <option>Indian Breed (Desi)</option>
+              <option>German Shepherd</option>
+              <option>Beagle</option>
+              <option>Siberian Husky</option>
+              <option>Rottweiler</option>
+              <option>Shih Tzu</option>
+              <option>Dobermann</option>
+              <option>American Bully</option>
+              <option>Pomeranian</option>
+              <option>Persian Cat</option>
+              <option>Other</option>
+            </select>
+            <span class="bk-err" id="bkerr-breed">Please select your pet's breed.</span>
+          </div>
+          <div class="bk-group">
+            <label>Pet's age <span class="bk-req">*</span></label>
+            <select id="bkPetAge">
+              <option value="">Select age</option>
+              <option>Under 6 months</option>
+              <option>6–12 months</option>
+              <option>1–3 years</option>
+              <option>3–7 years</option>
+              <option>7+ years</option>
+            </select>
+            <span class="bk-err" id="bkerr-petAge">Please select your pet's age.</span>
+          </div>
+          <div class="bk-group">
+            <label>Gender <span class="bk-req">*</span></label>
+            <select id="bkGender">
+              <option value="">Select gender</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+            <span class="bk-err" id="bkerr-gender">Please select your pet's gender.</span>
+          </div>
+          <div class="bk-group full">
+            <label>Your address <span class="bk-req">*</span></label>
+            <input type="text" id="bkAddress" placeholder="Flat / Tower / Apartment, Area, City">
+            <span class="bk-err" id="bkerr-address">Please enter your address.</span>
+          </div>
+          <div class="bk-group">
+            <label>Date <span class="bk-req">*</span></label>
+            <input type="date" id="bkDate">
+            <span class="bk-err" id="bkerr-date">Please select a date.</span>
+          </div>
+          <div class="bk-group">
+            <label>Time slot <span class="bk-req">*</span></label>
+            <select id="bkTimeSlot">
+              <option value="">Select time slot</option>
+              <option>6:00 AM – 6:30 AM</option>
+              <option>6:30 AM – 7:30 AM</option>
+              <option>7:30 AM – 8:00 AM</option>
+              <option>8:30 AM – 9:00 AM</option>
+              <option>5:30 PM – 6:00 PM</option>
+              <option>6:30 PM – 7:00 PM</option>
+              <option>7:30 PM – 8:00 PM</option>
+              <option>8:30 PM – 9:00 PM</option>
+              <option>9:00 PM – 9:30 PM</option>
+            </select>
+            <span class="bk-err" id="bkerr-timeSlot">Please select a time slot.</span>
+          </div>
+          <div class="bk-group">
+            <label>Phone number <span class="bk-req">*</span></label>
+            <input type="tel" id="bkPhone" placeholder="+91 98765 43210">
+            <span class="bk-err" id="bkerr-phone">Please enter a valid 10-digit phone number.</span>
+          </div>
+          <div class="bk-group">
+            <label>Email address <span class="bk-req">*</span></label>
+            <input type="email" id="bkEmail" placeholder="you@example.com">
+            <span class="bk-err" id="bkerr-email">Please enter a valid email address.</span>
+          </div>
+          <div class="bk-group">
+            <label>Payment <span class="bk-req">*</span></label>
+            <select id="bkPayment">
+              <option value="">Select payment method</option>
+              <option value="UPI">💳 UPI (PhonePe / GPay / Paytm)</option>
+              <option value="Card">💳 Debit / Credit Card</option>
+              <option value="Netbanking">🏦 Net Banking</option>
+              <option value="Cash">🏠 Cash on Delivery</option>
+            </select>
+            <span class="bk-err" id="bkerr-payment">Please select a payment method.</span>
+          </div>
+          <div class="bk-group full">
+            <label>Special instructions <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <textarea id="bkInstructions" rows="2" placeholder="e.g. Bruno gets anxious around loud sounds…"></textarea>
+          </div>
+
+          <div class="bk-group full">
+            <div class="bk-health-label">Additional Health Info <span style="font-weight:400;font-size:.8rem;color:var(--muted)">(helps us care better)</span></div>
+          </div>
+          <div class="bk-group">
+            <label>Known allergies? <span class="bk-req">*</span></label>
+            <select id="bkAllergies">
+              <option value="">Please select</option>
+              <option>No known allergies</option>
+              <option>Yes, food allergies</option>
+              <option>Yes, environmental allergies</option>
+              <option>Yes, medication allergies</option>
+              <option>Not sure</option>
+            </select>
+            <span class="bk-err" id="bkerr-allergies">Please let us know about any allergies.</span>
+          </div>
+          <div class="bk-group">
+            <label>Any limping or difficulty walking? <span class="bk-req">*</span></label>
+            <select id="bkLimping">
+              <option value="">Please select</option>
+              <option>No, moving perfectly fine</option>
+              <option>Slight limping (mild)</option>
+              <option>Yes, noticeable limping</option>
+              <option>Not sure</option>
+            </select>
+            <span class="bk-err" id="bkerr-limping">Please let us know about any limping.</span>
+          </div>
+          <div class="bk-group">
+            <label>Surgery in the last 30 days? <span class="bk-req">*</span></label>
+            <select id="bkSurgery">
+              <option value="">Please select</option>
+              <option>No recent surgery</option>
+              <option>Yes, within the last 30 days</option>
+              <option>Yes, more than 30 days ago</option>
+            </select>
+            <span class="bk-err" id="bkerr-surgery">Please let us know about any recent surgery.</span>
+          </div>
+          <div class="bk-group">
+            <label>Eating regularly? <span class="bk-req">*</span></label>
+            <select id="bkEating">
+              <option value="">Please select</option>
+              <option>Yes, eating well and had food within 6 hours</option>
+              <option>Yes, eating well but not within 6 hours</option>
+              <option>Eating less than usual</option>
+              <option>Not eating at all</option>
+              <option>Not sure</option>
+            </select>
+            <span class="bk-err" id="bkerr-eating">Please let us know about your pet's eating habits.</span>
+          </div>
+          <div class="bk-group">
+            <label>Vaccination status? <span class="bk-req">*</span></label>
+            <select id="bkVaccinated">
+              <option value="">Please select</option>
+              <option>Yes, fully vaccinated</option>
+              <option>Partially vaccinated</option>
+              <option>Not vaccinated</option>
+              <option>Not sure</option>
+            </select>
+            <span class="bk-err" id="bkerr-vaccinated">Please let us know your pet's vaccination status.</span>
+          </div>
+          <div class="bk-group">
+            <label>Pet's temperament? <span class="bk-req">*</span></label>
+            <select id="bkTemperament">
+              <option value="">Please select</option>
+              <option>Very friendly — loves everyone</option>
+              <option>Friendly but takes time to warm up</option>
+              <option>Reactive to strangers</option>
+              <option>Aggressive with strangers</option>
+              <option>Aggressive with other dogs</option>
+              <option>Unpredictable — varies by mood</option>
+            </select>
+            <span class="bk-err" id="bkerr-temperament">Please let us know your pet's temperament.</span>
+          </div>
+          <div class="bk-group full">
+            <label>Any other health concerns? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+            <textarea id="bkOtherIssues" rows="2" placeholder="e.g. Bruno has a heart condition…"></textarea>
+          </div>
+        </div>
+
+        <button class="bk-submit" id="bkConfirmBtn" onclick="bkSubmit()">Confirm Booking →</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 const { createClient } = supabase;
 const db = createClient('https://uyawcevbvxlhfbovntxh.supabase.co', 'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5');
@@ -814,7 +1052,7 @@ function closeSidebar() {
   document.getElementById('sbOverlay').classList.remove('open');
 }
 
-const PAGES = ['dashboard','bookings','profile','services','food','shop','pricing','faq'];
+const PAGES = ['dashboard','bookings','book','profile','services','food','shop','pricing','faq'];
 function showPage(id) {
   PAGES.forEach(p => {
     document.getElementById('page-'+p).style.display = p===id ? '' : 'none';
@@ -1000,6 +1238,121 @@ function initApp(user) {
 }
 
 function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }
+
+/* ── Book a Service page ── */
+let _bkWalkDur = '15', _bkWalkPaise = 8900;
+
+function bkSelectService(el) {
+  document.querySelectorAll('.bk-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const isWalk = el.textContent.toLowerCase().includes('walk');
+  document.getElementById('bkDurGroup').style.display = isWalk ? '' : 'none';
+  document.getElementById('bkStep3Label').textContent = isWalk ? 'Step 3 — Fill in the details' : 'Step 2 — Fill in the details';
+}
+
+function bkSelectDur(el, mins, paise) {
+  document.querySelectorAll('.bk-dur-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  _bkWalkDur = mins; _bkWalkPaise = paise;
+}
+
+function bkSubmit() {
+  const activeTab = document.querySelector('.bk-tab.active');
+  const isWalk = activeTab && activeTab.textContent.toLowerCase().includes('walk');
+  const svc = isWalk
+    ? (activeTab.textContent.trim() + ' – ' + _bkWalkDur + ' min')
+    : (activeTab ? activeTab.textContent.trim() : '');
+
+  const rules = [
+    { id:'bkPetName',    err:'bkerr-petName',    check: v => v.trim() !== '' },
+    { id:'bkBreed',      err:'bkerr-breed',       check: v => v !== '' },
+    { id:'bkPetAge',     err:'bkerr-petAge',      check: v => v !== '' },
+    { id:'bkGender',     err:'bkerr-gender',      check: v => v !== '' },
+    { id:'bkAddress',    err:'bkerr-address',     check: v => v.trim() !== '' },
+    { id:'bkDate',       err:'bkerr-date',        check: v => v !== '' },
+    { id:'bkTimeSlot',   err:'bkerr-timeSlot',    check: v => v !== '' },
+    { id:'bkPhone',      err:'bkerr-phone',       check: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
+    { id:'bkEmail',      err:'bkerr-email',       check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+    { id:'bkPayment',    err:'bkerr-payment',     check: v => v !== '' },
+    { id:'bkAllergies',  err:'bkerr-allergies',   check: v => v !== '' },
+    { id:'bkLimping',    err:'bkerr-limping',     check: v => v !== '' },
+    { id:'bkSurgery',    err:'bkerr-surgery',     check: v => v !== '' },
+    { id:'bkEating',     err:'bkerr-eating',      check: v => v !== '' },
+    { id:'bkVaccinated', err:'bkerr-vaccinated',  check: v => v !== '' },
+    { id:'bkTemperament',err:'bkerr-temperament', check: v => v !== '' },
+  ];
+  let hasError = false;
+  rules.forEach(r => {
+    const el = document.getElementById(r.id);
+    const errEl = document.getElementById(r.err);
+    const valid = r.check(el.value);
+    el.classList.toggle('invalid', !valid);
+    errEl.classList.toggle('visible', !valid);
+    if (!valid) hasError = true;
+  });
+  if (hasError) {
+    const first = document.querySelector('.bk-group .invalid');
+    if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  rules.forEach(r => {
+    document.getElementById(r.id).classList.remove('invalid');
+    document.getElementById(r.err).classList.remove('visible');
+  });
+
+  const data = {
+    service: svc,
+    pet_name: document.getElementById('bkPetName').value.trim(),
+    breed: document.getElementById('bkBreed').value,
+    pet_age: document.getElementById('bkPetAge').value,
+    gender: document.getElementById('bkGender').value,
+    address: document.getElementById('bkAddress').value.trim(),
+    booking_date: document.getElementById('bkDate').value,
+    time_slot: document.getElementById('bkTimeSlot').value,
+    phone: document.getElementById('bkPhone').value.trim(),
+    email: document.getElementById('bkEmail').value.trim(),
+    payment: document.getElementById('bkPayment').value,
+    instructions: document.getElementById('bkInstructions').value.trim(),
+    allergies: document.getElementById('bkAllergies').value,
+    limping: document.getElementById('bkLimping').value,
+    recent_surgery: document.getElementById('bkSurgery').value,
+    eating_habits: document.getElementById('bkEating').value,
+    vaccinated: document.getElementById('bkVaccinated').value,
+    temperament: document.getElementById('bkTemperament').value,
+    other_issues: document.getElementById('bkOtherIssues').value.trim()
+  };
+
+  const btn = document.getElementById('bkConfirmBtn');
+  if (data.payment === 'Cash') { bkSave(data, btn); return; }
+
+  const amountPaise = isWalk ? _bkWalkPaise : 2800;
+  btn.disabled = true; btn.textContent = '⏳ Opening payment…';
+  const rzp = new Razorpay({
+    key: 'rzp_live_T5XRSkWC2aoLPU',
+    amount: amountPaise, currency: 'INR',
+    name: 'Urban Paws', description: svc + ' for ' + data.pet_name,
+    prefill: { name: data.pet_name + "'s parent", email: data.email, contact: data.phone.replace(/\D/g,'').slice(-10) },
+    theme: { color: '#6C6FD4' },
+    handler: function(resp) { bkSave({ ...data, payment: data.payment + ' | Pay ID: ' + resp.razorpay_payment_id }, btn); },
+    modal: { ondismiss: function() { btn.disabled=false; btn.textContent='Confirm Booking →'; showToast('Payment cancelled.'); } }
+  });
+  rzp.open();
+}
+
+function bkSave(data, btn) {
+  btn.disabled = true; btn.textContent = '⏳ Saving booking…';
+  db.from('bookings').insert(data).select().then(({ data: rows, error }) => {
+    btn.disabled = false;
+    if (error) { btn.textContent = 'Confirm Booking →'; showToast('❌ Something went wrong. Please try again.'); return; }
+    const id = rows && rows[0] ? rows[0].booking_id : '';
+    showToast('🐾 Booking confirmed! ID: #' + id, 'success');
+    btn.textContent = '✅ Booking Confirmed!';
+    setTimeout(() => { btn.textContent = 'Confirm Booking →'; }, 15000);
+    ['bkPetName','bkAddress','bkPhone','bkEmail','bkInstructions','bkOtherIssues'].forEach(i => document.getElementById(i).value = '');
+    ['bkBreed','bkPetAge','bkGender','bkTimeSlot','bkPayment','bkAllergies','bkLimping','bkSurgery','bkEating','bkVaccinated','bkTemperament'].forEach(i => document.getElementById(i).selectedIndex = 0);
+  });
+}
 
 function showToast(msg, type) {
   const el = document.getElementById('toast');
