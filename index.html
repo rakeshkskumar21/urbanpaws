@@ -900,17 +900,19 @@
   }
   .app-col {
     border-radius: 20px;
-    padding: 3rem 3rem;
+    padding: 2rem 3rem;
     background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%);
     color: #fff;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
   @media (max-width: 1024px) {
     .faq-app-grid { grid-template-columns: 1fr; }
     .faq-col, .app-col { padding: 3rem 2rem; }
   }
-  .app-badges { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .app-badges { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
   .app-badge {
     background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
     border-radius: 14px; padding: 12px 20px;
@@ -1380,7 +1382,7 @@
       India's #1 
     </div>
     
-    <h1>Pet <em>Walking</em>  <br>Pet <em>Food Delivery</em> </h1>
+    <h1>Pet <em>Walking</em> &  <br>Pet <em>Food Delivery</em> </h1>
 
     <a href="#booking" class="trial-promo">
       🎉 Book your first 2 trial walks for <strong>FREE</strong>
@@ -1409,8 +1411,8 @@
   <div class="app-col" style="min-height:100%;">
     <div class="section-label" style="color:var(--paw-amber);">Get the app</div>
     <h2 class="section-title" style="color:#fff;">Always in your pocket <span style="font-size:0.75em; opacity:0.6;">(Coming soon)</span></h2>
-    <p class="section-sub" style="color:rgba(255,255,255,0.6);">Experience fast &amp; easy online ordering on the <strong style="color:#fff;">Urban Paws</strong> app.</p>
-    <div class="app-badges" style="margin-bottom:2rem;">
+    <p class="section-sub" style="color:rgba(255,255,255,0.6); margin-bottom:1rem;">Experience fast &amp; easy online ordering on the <strong style="color:#fff;">Urban Paws</strong> app.</p>
+    <div class="app-badges" style="margin-bottom:1.5rem;">
       <a href="#" class="app-badge">
         <span class="app-badge-icon">🍎</span>
         <div class="app-badge-text">
