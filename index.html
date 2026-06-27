@@ -1255,7 +1255,11 @@
     margin: 0.75rem 0 1.25rem;
     letter-spacing: 0.01em;
     box-shadow: 0 4px 16px rgba(108,111,212,0.4);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
   }
+  .trial-promo:hover { background: var(--paw-deep); transform: translateY(-1px); }
   .trial-promo strong { color: #6dffb3; font-weight: 800; }
 </style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -1373,9 +1377,9 @@
     <h1>Pet Walking and <em>Food Delivery</em> App</h1>
     <p class="hero-sub" style="white-space:nowrap;">Experience fast &amp; easy online ordering on the <strong>Urban Paws</strong> app.</p>
 
-    <div class="trial-promo">
+    <a href="#booking" class="trial-promo">
       🎉 Book your first 2 trial walks for <strong>FREE</strong>
-    </div>
+    </a>
 
     <div class="hero-actions">
       <a href="#booking" class="btn-primary">Book a Service ↗</a>
