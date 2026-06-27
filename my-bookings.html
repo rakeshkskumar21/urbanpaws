@@ -323,6 +323,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .pricing-card.featured .plan-feature { color: rgba(255,255,255,.75); border-color: rgba(255,255,255,.1); }
 .pricing-card.featured .plan-feature::before { color: var(--paw); }
 .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--paw); color: #fff; padding: 3px 14px; border-radius: 100px; font-size: .68rem; font-weight: 700; white-space: nowrap; }
+.plan-current-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #1a7f47; color: #fff; padding: 3px 14px; border-radius: 100px; font-size: .68rem; font-weight: 700; white-space: nowrap; display: none; }
 .pricing-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: .95rem; margin-bottom: .35rem; color: var(--night); }
 .plan-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 2rem; color: var(--night); line-height: 1; margin: .7rem 0 .2rem; }
 .plan-price span { font-size: .85rem; font-weight: 400; opacity: .55; }
@@ -557,46 +558,48 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           <div id="pfPlanChip" class="plan-chip plan-starter">⭐ Starter</div>
           <div class="profile-since">Member since <span id="pfSince">—</span></div>
         </div>
-        <div class="profile-form-card">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem;">
-            <div class="pf-form-title" style="margin-bottom:0;">Profile Details</div>
-            <button class="save-btn" id="editBtn" onclick="pfEnableEdit()" style="padding:8px 20px; font-size:.82rem;">✏️ Edit Profile</button>
-          </div>
-          <div class="pf-grid">
-            <div class="pf-group"><label>Full Name</label><input type="text" id="pfName" placeholder="Your full name" disabled></div>
-            <div class="pf-group"><label>Email Address</label><input type="email" id="pfEmail" disabled></div>
-            <div class="pf-group"><label>Phone Number</label><input type="tel" id="pfPhone" placeholder="+91 XXXXX XXXXX" disabled></div>
-            <div class="pf-group full"><label>Address</label><textarea id="pfAddress" placeholder="Apartment, area, city, PIN code" disabled></textarea></div>
-          </div>
-          <div id="pfEditActions" style="display:none; margin-top:1.2rem; display:none; gap:.75rem; flex-wrap:wrap;">
-            <button class="save-btn" id="saveBtn" onclick="saveProfile()">Save Changes →</button>
-            <button class="save-btn" id="cancelBtn" onclick="pfCancelEdit()" style="background:var(--border); color:var(--night);">Cancel</button>
-          </div>
-          <div class="save-ok" id="saveOk">✅ Profile updated successfully!</div>
-        </div>
-
-        <div class="profile-form-card" style="margin-top:1rem">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
-            <div class="pf-form-title" style="margin-bottom:0;">Pet Health Info</div>
-            <button class="save-btn" id="editHealthBtn" onclick="pfEnableHealthEdit()" style="padding:8px 20px;font-size:.82rem;">✏️ Edit</button>
-          </div>
-          <div class="pf-grid">
-            <div class="pf-group"><label>Pet Name</label><input type="text" id="pfPetName" placeholder="e.g. Bruno" disabled></div>
-            <div class="pf-group"><label>Pet Type</label>
-              <select id="pfPetType" class="pf-select" disabled>
-                <option value="">Select type</option>
-                <option value="dog">🐕 Dog</option>
-                <option value="cat">🐈 Cat</option>
-                <option value="other">Other</option>
-              </select>
+        <div>
+          <div class="profile-form-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem;">
+              <div class="pf-form-title" style="margin-bottom:0;">Profile Details</div>
+              <button class="save-btn" id="editBtn" onclick="pfEnableEdit()" style="padding:8px 20px; font-size:.82rem;">✏️ Edit Profile</button>
             </div>
-            <div class="pf-group"><label>Breed</label><input type="text" id="pfBreed" placeholder="e.g. Labrador" disabled></div>
-            <div class="pf-group"><label>Age</label><input type="text" id="pfPetAge" placeholder="e.g. 2 years" disabled></div>
-            <div class="pf-group full"><label>Health Notes</label><textarea id="pfHealthNotes" placeholder="Allergies, medications, special needs…" rows="3" disabled></textarea></div>
+            <div class="pf-grid">
+              <div class="pf-group"><label>Full Name</label><input type="text" id="pfName" placeholder="Your full name" disabled></div>
+              <div class="pf-group"><label>Email Address</label><input type="email" id="pfEmail" disabled></div>
+              <div class="pf-group"><label>Phone Number</label><input type="tel" id="pfPhone" placeholder="+91 XXXXX XXXXX" disabled></div>
+              <div class="pf-group full"><label>Address</label><textarea id="pfAddress" placeholder="Apartment, area, city, PIN code" disabled></textarea></div>
+            </div>
+            <div id="pfEditActions" style="display:none; margin-top:1.2rem; gap:.75rem; flex-wrap:wrap;">
+              <button class="save-btn" id="saveBtn" onclick="saveProfile()">Save Changes →</button>
+              <button class="save-btn" id="cancelBtn" onclick="pfCancelEdit()" style="background:var(--border); color:var(--night);">Cancel</button>
+            </div>
+            <div class="save-ok" id="saveOk">✅ Profile updated successfully!</div>
           </div>
-          <div id="pfHealthEditActions" style="display:none;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
-            <button class="save-btn" onclick="saveHealthInfo()">Save →</button>
-            <button class="save-btn" onclick="pfCancelHealthEdit()" style="background:var(--border);color:var(--night);">Cancel</button>
+
+          <div class="profile-form-card" style="margin-top:1rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+              <div class="pf-form-title" style="margin-bottom:0;">Pet Health Info</div>
+              <button class="save-btn" id="editHealthBtn" onclick="pfEnableHealthEdit()" style="padding:8px 20px;font-size:.82rem;">✏️ Edit</button>
+            </div>
+            <div class="pf-grid">
+              <div class="pf-group"><label>Pet Name</label><input type="text" id="pfPetName" placeholder="e.g. Bruno" disabled></div>
+              <div class="pf-group"><label>Pet Type</label>
+                <select id="pfPetType" class="pf-select" disabled>
+                  <option value="">Select type</option>
+                  <option value="dog">🐕 Dog</option>
+                  <option value="cat">🐈 Cat</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="pf-group"><label>Breed</label><input type="text" id="pfBreed" placeholder="e.g. Labrador" disabled></div>
+              <div class="pf-group"><label>Age</label><input type="text" id="pfPetAge" placeholder="e.g. 2 years" disabled></div>
+              <div class="pf-group full"><label>Health Notes</label><textarea id="pfHealthNotes" placeholder="Allergies, medications, special needs…" rows="3" disabled></textarea></div>
+            </div>
+            <div id="pfHealthEditActions" style="display:none;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+              <button class="save-btn" onclick="saveHealthInfo()">Save →</button>
+              <button class="save-btn" onclick="pfCancelHealthEdit()" style="background:var(--border);color:var(--night);">Cancel</button>
+            </div>
           </div>
         </div>
       </div>
@@ -795,10 +798,12 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <li class="plan-feature">Platform fee ₹1–₹2/order</li>
             <li class="plan-feature">Basic live 🟢 tracking/photos</li>
           </ul>
+          <div class="plan-current-badge" id="planBadge-starter">✓ Your Plan</div>
           <button class="ex-btn ex-btn-outline" id="pricingBtn-starter" onclick="showPage('book')">Get started</button>
         </div>
         <div class="pricing-card featured">
-          <div class="plan-badge">Most popular</div>
+          <div class="plan-badge" id="popularBadge-casual">Most popular</div>
+          <div class="plan-current-badge" id="planBadge-casual">✓ Your Plan</div>
           <h3>Casual</h3>
           <div class="plan-price">₹3,178 <span>/month</span></div>
           <div class="plan-anchor-row"><s class="plan-anchor">₹3,499</s><span class="plan-save">Save 9%</span></div>
@@ -824,9 +829,11 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <li class="plan-feature">10% off on food orders</li>
             <li class="plan-feature">Live 🟢 tracking/photos</li>
           </ul>
+          <div class="plan-current-badge" id="planBadge-standard">✓ Your Plan</div>
           <button class="ex-btn ex-btn-outline" id="pricingBtn-standard" onclick="obInit('standard');showPage('onboarding')">Get started</button>
         </div>
         <div class="pricing-card">
+          <div class="plan-current-badge" id="planBadge-carnival">✓ Your Plan</div>
           <h3>Carnival</h3>
           <div class="plan-price">₹5,889 <span>/month</span></div>
           <div class="plan-anchor-row"><s class="plan-anchor">₹6,999</s><span class="plan-save">Save 16%</span></div>
@@ -1341,19 +1348,27 @@ async function obSubmit() {
 
 function renderPricingCTAs(currentPlan) {
   const rank = (PLAN_META[currentPlan]||PLAN_META.starter).rank;
+  const popularBadge = document.getElementById('popularBadge-casual');
   ['starter','casual','standard','carnival'].forEach(key => {
-    const btn = document.getElementById('pricingBtn-'+key);
+    const btn   = document.getElementById('pricingBtn-'+key);
+    const badge = document.getElementById('planBadge-'+key);
     if (!btn) return;
     const r = PLAN_META[key].rank;
     if (r === rank) {
-      btn.textContent = '✓ Current Plan'; btn.className = 'ex-btn ex-btn-current'; btn.disabled = true;
-      btn.onclick = null;
-    } else if (r > rank) {
-      btn.textContent = 'Upgrade →'; btn.className = 'ex-btn ex-btn-primary'; btn.disabled = false;
-      btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+      if (badge) badge.style.display = '';
+      if (key === 'casual' && popularBadge) popularBadge.style.display = 'none';
+      btn.style.display = 'none';
     } else {
-      btn.textContent = 'Downgrade'; btn.className = 'ex-btn ex-btn-downgrade'; btn.disabled = false;
-      btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+      if (badge) badge.style.display = 'none';
+      if (key === 'casual' && popularBadge) popularBadge.style.display = '';
+      btn.style.display = '';
+      if (r > rank) {
+        btn.textContent = 'Upgrade →'; btn.className = 'ex-btn ex-btn-primary'; btn.disabled = false;
+        btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+      } else {
+        btn.textContent = 'Downgrade'; btn.className = 'ex-btn ex-btn-downgrade'; btn.disabled = false;
+        btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+      }
     }
   });
 }
