@@ -206,9 +206,23 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .profile-fullname { font-size: 1.1rem; font-weight: 800; margin-bottom: 3px; }
 .profile-email { font-size: .78rem; color: var(--muted); word-break: break-all; margin-bottom: 1rem; }
 .plan-chip { display: inline-block; padding: 5px 14px; border-radius: 100px; font-size: .75rem; font-weight: 700; margin-bottom: .75rem; }
-.plan-starter { background: #F3F4F6; color: #374151; }
-.plan-paws    { background: #FDE68A; color: #78350F; }
-.plan-elite   { background: var(--paw-soft); color: #7c2d12; }
+.plan-starter  { background: #F3F4F6; color: #374151; }
+.plan-casual   { background: var(--paw-soft); color: var(--paw2); }
+.plan-standard { background: #DBEAFE; color: #1E40AF; }
+.plan-carnival { background: #FDE68A; color: #78350F; }
+/* onboarding page */
+.ob-plan-banner { display:flex; align-items:center; gap:1rem; background:var(--paw-soft); border:1.5px solid var(--paw); border-radius:16px; padding:1.1rem 1.4rem; margin-top:1.2rem; }
+.ob-plan-icon { font-size:2rem; line-height:1; }
+.ob-plan-name { font-weight:800; font-size:1rem; color:var(--night); }
+.ob-plan-price { font-size:.85rem; color:var(--paw2); font-weight:700; margin-top:2px; }
+/* pricing CTAs */
+.ex-btn-current { background:#e8f9ef!important; color:#1a7f47!important; border:1.5px solid #1a7f47!important; cursor:default!important; opacity:1!important; }
+.ex-btn-downgrade { background:var(--white)!important; color:var(--muted)!important; border:1.5px solid var(--border)!important; }
+/* plan banner in bookings */
+.bk-plan-strip { display:flex; align-items:center; gap:.75rem; background:var(--paw-faint); border:1px solid var(--paw-soft); border-radius:12px; padding:.75rem 1.1rem; margin-bottom:1.25rem; font-size:.85rem; }
+.bk-plan-strip strong { color:var(--paw2); }
+/* pet health info select */
+.pf-select { border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:.88rem; background:#fff; color:var(--night); }
 .profile-since { font-size: .75rem; color: var(--muted); }
 
 .profile-form-card { background: var(--white); border: 1px solid var(--border2); border-radius: 16px; padding: 1.75rem; }
@@ -473,6 +487,10 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
     <div class="page" id="page-bookings" style="display:none">
       <div class="page-title">My Bookings</div>
       <div class="page-sub">All your service bookings in one place</div>
+      <div class="bk-plan-strip" id="bkPlanStrip" style="display:none">
+        <span>📋 Active plan: <strong id="bkPlanName">—</strong></span>
+        <span style="margin-left:auto;cursor:pointer;color:var(--paw);font-weight:700;font-size:.8rem" onclick="showPage('pricing')">Change plan ↗</span>
+      </div>
       <div class="filters">
         <select class="filter-select" id="fStatus" onchange="applyBkFilter()">
           <option value="">All Status</option>
@@ -488,6 +506,43 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <div class="section-count" id="bkCount"></div>
       </div>
       <div id="bookingsList"><div class="loading-msg">Loading your bookings…</div></div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="page" id="page-onboarding" style="display:none">
+      <div class="ex-label">You're almost there 🐾</div>
+      <div class="page-title">Set up your plan</div>
+      <div class="page-sub">Fill in your details to activate your subscription.</div>
+      <div id="ob-plan-banner" class="ob-plan-banner"></div>
+
+      <div class="profile-form-card" style="margin-top:1.5rem">
+        <div class="pf-form-title">Fill in your details</div>
+        <div class="pf-grid">
+          <div class="pf-group"><label>Full Name *</label><input type="text" id="obName" placeholder="Your full name"></div>
+          <div class="pf-group"><label>Phone Number *</label><input type="tel" id="obPhone" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="pf-group full"><label>Address *</label><textarea id="obAddress" placeholder="Apartment, area, city, PIN code" rows="3"></textarea></div>
+        </div>
+      </div>
+
+      <div class="profile-form-card" style="margin-top:1rem">
+        <div class="pf-form-title">Additional Health Info <small style="font-weight:400;font-size:.78rem;color:var(--muted)">(helps us care better)</small></div>
+        <div class="pf-grid">
+          <div class="pf-group"><label>Pet Name</label><input type="text" id="obPetName" placeholder="e.g. Bruno"></div>
+          <div class="pf-group"><label>Pet Type</label>
+            <select id="obPetType" class="pf-select">
+              <option value="">Select type</option>
+              <option value="dog">🐕 Dog</option>
+              <option value="cat">🐈 Cat</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="pf-group"><label>Breed</label><input type="text" id="obBreed" placeholder="e.g. Labrador Retriever"></div>
+          <div class="pf-group"><label>Age</label><input type="text" id="obPetAge" placeholder="e.g. 2 years"></div>
+          <div class="pf-group full"><label>Health Notes</label><textarea id="obHealthNotes" placeholder="Any allergies, medications, or special care needs…" rows="3"></textarea></div>
+        </div>
+      </div>
+
+      <button class="save-btn" id="obSubmitBtn" onclick="obSubmit()" style="margin-top:1.2rem;padding:14px 32px;font-size:.95rem;display:block;">Confirm & Get Started →</button>
     </div>
 
     <!-- PROFILE -->
@@ -518,6 +573,31 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <button class="save-btn" id="cancelBtn" onclick="pfCancelEdit()" style="background:var(--border); color:var(--night);">Cancel</button>
           </div>
           <div class="save-ok" id="saveOk">✅ Profile updated successfully!</div>
+        </div>
+
+        <div class="profile-form-card" style="margin-top:1rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+            <div class="pf-form-title" style="margin-bottom:0;">Pet Health Info</div>
+            <button class="save-btn" id="editHealthBtn" onclick="pfEnableHealthEdit()" style="padding:8px 20px;font-size:.82rem;">✏️ Edit</button>
+          </div>
+          <div class="pf-grid">
+            <div class="pf-group"><label>Pet Name</label><input type="text" id="pfPetName" placeholder="e.g. Bruno" disabled></div>
+            <div class="pf-group"><label>Pet Type</label>
+              <select id="pfPetType" class="pf-select" disabled>
+                <option value="">Select type</option>
+                <option value="dog">🐕 Dog</option>
+                <option value="cat">🐈 Cat</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="pf-group"><label>Breed</label><input type="text" id="pfBreed" placeholder="e.g. Labrador" disabled></div>
+            <div class="pf-group"><label>Age</label><input type="text" id="pfPetAge" placeholder="e.g. 2 years" disabled></div>
+            <div class="pf-group full"><label>Health Notes</label><textarea id="pfHealthNotes" placeholder="Allergies, medications, special needs…" rows="3" disabled></textarea></div>
+          </div>
+          <div id="pfHealthEditActions" style="display:none;gap:.75rem;flex-wrap:wrap;margin-top:1rem;">
+            <button class="save-btn" onclick="saveHealthInfo()">Save →</button>
+            <button class="save-btn" onclick="pfCancelHealthEdit()" style="background:var(--border);color:var(--night);">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
@@ -715,7 +795,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <li class="plan-feature">Platform fee ₹1–₹2/order</li>
             <li class="plan-feature">Basic live 🟢 tracking/photos</li>
           </ul>
-          <button class="ex-btn ex-btn-outline" onclick="showPage('book')">Get started</button>
+          <button class="ex-btn ex-btn-outline" id="pricingBtn-starter" onclick="showPage('book')">Get started</button>
         </div>
         <div class="pricing-card featured">
           <div class="plan-badge">Most popular</div>
@@ -730,7 +810,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <li class="plan-feature">5% off on food orders</li>
             <li class="plan-feature">Live 🟢 tracking/photos</li>
           </ul>
-          <button class="ex-btn ex-btn-primary" onclick="showPage('book')">Get Started</button>
+          <button class="ex-btn ex-btn-primary" id="pricingBtn-casual" onclick="obInit('casual');showPage('onboarding')">Get Started</button>
         </div>
         <div class="pricing-card">
           <h3>Standard Pro</h3>
@@ -744,7 +824,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <li class="plan-feature">10% off on food orders</li>
             <li class="plan-feature">Live 🟢 tracking/photos</li>
           </ul>
-          <button class="ex-btn ex-btn-outline" onclick="showPage('book')">Get started</button>
+          <button class="ex-btn ex-btn-outline" id="pricingBtn-standard" onclick="obInit('standard');showPage('onboarding')">Get started</button>
         </div>
         <div class="pricing-card">
           <h3>Carnival</h3>
@@ -760,7 +840,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <li class="plan-feature">10% off on food orders</li>
             <li class="plan-feature">Live 🟢 tracking/photos</li>
           </ul>
-          <button class="ex-btn ex-btn-outline" onclick="showPage('book')">Get started</button>
+          <button class="ex-btn ex-btn-outline" id="pricingBtn-carnival" onclick="obInit('carnival');showPage('onboarding')">Get started</button>
         </div>
       </div>
     </div>
@@ -1032,7 +1112,7 @@ function closeSidebar() {
   document.getElementById('sbOverlay').classList.remove('open');
 }
 
-const PAGES = ['dashboard','bookings','book','profile','services','food','shop','pricing','faq'];
+const PAGES = ['dashboard','bookings','book','onboarding','profile','services','food','shop','pricing','faq'];
 function showPage(id) {
   PAGES.forEach(p => {
     document.getElementById('page-'+p).style.display = p===id ? '' : 'none';
@@ -1158,7 +1238,7 @@ async function loadProfile(user) {
   const since = p&&p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
   document.getElementById('sbAvatar').textContent  = initials(name);
   document.getElementById('sbName').textContent    = name.split(' ')[0];
-  document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',paws:'Paws+ Plan',elite:'Elite Plan'}[plan]||'Starter Plan';
+  document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||'Starter Plan';
   document.getElementById('welcomeMsg').textContent = 'Welcome back, '+name.split(' ')[0]+' 👋';
   document.getElementById('pfAvatarBig').textContent  = initials(name);
   document.getElementById('pfNameBig').textContent    = name;
@@ -1169,14 +1249,151 @@ async function loadProfile(user) {
   document.getElementById('pfEmail').value   = user.email;
   document.getElementById('pfPhone').value   = (p&&p.phone)||'';
   document.getElementById('pfAddress').value = (p&&p.address)||'';
-  selectPlan(plan);
+  loadHealthInfo();
+  renderPricingCTAs(plan);
+  const bkStrip = document.getElementById('bkPlanStrip');
+  const bkPlanName = document.getElementById('bkPlanName');
+  if (bkStrip && plan !== 'starter') {
+    bkPlanName.textContent = {casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||plan;
+    bkStrip.style.display = '';
+  }
 }
 
 function setPlanChip(plan) {
-  const m = {starter:['⭐ Starter','plan-starter'],paws:['🌟 Paws+','plan-paws'],elite:['👑 Elite','plan-elite']};
+  const m = {
+    starter:  ['⭐ Starter',      'plan-starter'],
+    casual:   ['🐾 Casual',       'plan-casual'],
+    standard: ['🌟 Standard Pro', 'plan-standard'],
+    carnival: ['🎊 Carnival',     'plan-carnival']
+  };
   const [text,cls] = m[plan]||m.starter;
   const el = document.getElementById('pfPlanChip');
   el.textContent = text; el.className = 'plan-chip '+cls;
+}
+
+const PLAN_META = {
+  starter:  { label:'Starter (Pay as you go)', price:'',         icon:'⭐', rank:0 },
+  casual:   { label:'Casual Plan',             price:'₹3,178/mo', icon:'🐾', rank:1 },
+  standard: { label:'Standard Pro',            price:'₹4,489/mo', icon:'🌟', rank:2 },
+  carnival: { label:'Carnival Plan',           price:'₹5,889/mo', icon:'🎊', rank:3 }
+};
+
+let _obPlan = 'starter';
+
+function obInit(plan) {
+  _obPlan = plan || 'starter';
+  const meta = PLAN_META[_obPlan] || PLAN_META.starter;
+  document.getElementById('ob-plan-banner').innerHTML =
+    `<div class="ob-plan-icon">${meta.icon}</div><div><div class="ob-plan-name">${meta.label}</div>${meta.price?`<div class="ob-plan-price">${meta.price}</div>`:''}</div>`;
+  if (currentUser) {
+    db.from('profiles').select('*').eq('id', currentUser.id).single().then(({ data: p }) => {
+      if (p) {
+        document.getElementById('obName').value    = p.full_name || '';
+        document.getElementById('obPhone').value   = p.phone || '';
+        document.getElementById('obAddress').value = p.address || '';
+      }
+      const h = JSON.parse(localStorage.getItem('urbanpaws_health_'+currentUser.id)||'{}');
+      document.getElementById('obPetName').value     = h.pet_name||'';
+      document.getElementById('obPetType').value     = h.pet_type||'';
+      document.getElementById('obBreed').value       = h.breed||'';
+      document.getElementById('obPetAge').value      = h.pet_age||'';
+      document.getElementById('obHealthNotes').value = h.health_notes||'';
+    });
+  }
+}
+
+async function obSubmit() {
+  if (!currentUser) return;
+  const full_name = document.getElementById('obName').value.trim();
+  const phone     = document.getElementById('obPhone').value.trim();
+  const address   = document.getElementById('obAddress').value.trim();
+  if (!full_name || !phone || !address) { showToast('❌ Please fill in your name, phone and address'); return; }
+  const btn = document.getElementById('obSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await db.from('profiles').upsert({ id:currentUser.id, email:currentUser.email, full_name, phone, address, plan:_obPlan });
+  btn.disabled = false; btn.textContent = 'Confirm & Get Started →';
+  if (error) { showToast('❌ '+error.message); return; }
+  const h = {
+    pet_name: document.getElementById('obPetName').value.trim(),
+    pet_type: document.getElementById('obPetType').value,
+    breed:    document.getElementById('obBreed').value.trim(),
+    pet_age:  document.getElementById('obPetAge').value.trim(),
+    health_notes: document.getElementById('obHealthNotes').value.trim()
+  };
+  localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
+  document.getElementById('pfNameBig').textContent   = full_name;
+  document.getElementById('pfAvatarBig').textContent = initials(full_name);
+  document.getElementById('sbAvatar').textContent    = initials(full_name);
+  document.getElementById('sbName').textContent      = full_name.split(' ')[0];
+  document.getElementById('welcomeMsg').textContent  = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
+  document.getElementById('sbPlan').textContent      = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[_obPlan]||'Starter Plan';
+  setPlanChip(_obPlan);
+  loadHealthInfo();
+  renderPricingCTAs(_obPlan);
+  const bkStrip = document.getElementById('bkPlanStrip');
+  if (bkStrip && _obPlan !== 'starter') {
+    document.getElementById('bkPlanName').textContent = PLAN_META[_obPlan].label;
+    bkStrip.style.display = '';
+  }
+  showToast('🎉 Plan activated! Welcome to Urban Paws!', 'success');
+  showPage('dashboard');
+}
+
+function renderPricingCTAs(currentPlan) {
+  const rank = (PLAN_META[currentPlan]||PLAN_META.starter).rank;
+  ['starter','casual','standard','carnival'].forEach(key => {
+    const btn = document.getElementById('pricingBtn-'+key);
+    if (!btn) return;
+    const r = PLAN_META[key].rank;
+    if (r === rank) {
+      btn.textContent = '✓ Current Plan'; btn.className = 'ex-btn ex-btn-current'; btn.disabled = true;
+      btn.onclick = null;
+    } else if (r > rank) {
+      btn.textContent = 'Upgrade →'; btn.className = 'ex-btn ex-btn-primary'; btn.disabled = false;
+      btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+    } else {
+      btn.textContent = 'Downgrade'; btn.className = 'ex-btn ex-btn-downgrade'; btn.disabled = false;
+      btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+    }
+  });
+}
+
+function loadHealthInfo() {
+  if (!currentUser) return;
+  const h = JSON.parse(localStorage.getItem('urbanpaws_health_'+currentUser.id)||'{}');
+  document.getElementById('pfPetName').value     = h.pet_name||'';
+  document.getElementById('pfPetType').value     = h.pet_type||'';
+  document.getElementById('pfBreed').value       = h.breed||'';
+  document.getElementById('pfPetAge').value      = h.pet_age||'';
+  document.getElementById('pfHealthNotes').value = h.health_notes||'';
+}
+
+function pfEnableHealthEdit() {
+  ['pfPetName','pfBreed','pfPetAge','pfHealthNotes'].forEach(id => document.getElementById(id).disabled = false);
+  document.getElementById('pfPetType').disabled = false;
+  document.getElementById('pfHealthEditActions').style.display = 'flex';
+  document.getElementById('editHealthBtn').style.display = 'none';
+}
+
+function pfCancelHealthEdit() {
+  ['pfPetName','pfBreed','pfPetAge','pfHealthNotes'].forEach(id => document.getElementById(id).disabled = true);
+  document.getElementById('pfPetType').disabled = true;
+  document.getElementById('pfHealthEditActions').style.display = 'none';
+  document.getElementById('editHealthBtn').style.display = '';
+}
+
+function saveHealthInfo() {
+  if (!currentUser) return;
+  const h = {
+    pet_name: document.getElementById('pfPetName').value.trim(),
+    pet_type: document.getElementById('pfPetType').value,
+    breed:    document.getElementById('pfBreed').value.trim(),
+    pet_age:  document.getElementById('pfPetAge').value.trim(),
+    health_notes: document.getElementById('pfHealthNotes').value.trim()
+  };
+  localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
+  showToast('✅ Pet info saved!', 'success');
+  pfCancelHealthEdit();
 }
 
 function pfEnableEdit() {
@@ -1216,8 +1433,11 @@ function initApp(user) {
   loadProfile(user);
   loadBookings(user.email);
   subscribeRealtime(user.email);
-  const p = new URLSearchParams(location.search).get('p');
-  if (p) { showPage(p); history.replaceState(null, '', location.pathname); }
+  const params = new URLSearchParams(location.search);
+  const p = params.get('p'), plan = params.get('plan');
+  if (p === 'onboarding') { showPage('onboarding'); obInit(plan || 'starter'); }
+  else if (p) { showPage(p); }
+  history.replaceState(null, '', location.pathname);
 }
 
 function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }

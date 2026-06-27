@@ -1752,7 +1752,7 @@
         <li class="plan-feature">5% off on food orders</li>
         <li class="plan-feature">Live 🟢 tracking/photos</li>
       </ul>
-      <button class="btn-primary" style="width:100%;" onclick="openBooking()">Get Started</button>
+      <button class="btn-primary" style="width:100%;" onclick="openPlan('casual')">Get Started</button>
     </div>
 
     <div class="pricing-card">
@@ -1770,7 +1770,7 @@
 
       </ul>
       
-      <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
+      <button class="btn-outline" style="width:100%;" onclick="openPlan('standard')">Get started</button>
     </div>
     <div>
       <div class="pricing-card">
@@ -1788,7 +1788,7 @@
           <li class="plan-feature">Live 🟢 tracking/photos</li>
 
        </ul>
-       <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
+       <button class="btn-outline" style="width:100%;" onclick="openPlan('carnival')">Get started</button>
 
     </div>
   </div>
@@ -2117,6 +2117,17 @@
         window.location.href = 'my-bookings.html?p=book';
       } else {
         _pendingBook = true;
+        openAuthModal();
+      }
+    });
+  }
+
+  function openPlan(plan) {
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = 'my-bookings.html?p=onboarding&plan=' + plan;
+      } else {
+        sessionStorage.setItem('postLoginPlan', plan);
         openAuthModal();
       }
     });
@@ -2625,7 +2636,11 @@
   db.auth.onAuthStateChange((_event, session) => {
     const user = session ? session.user : null;
     if (user) {
-      if (_pendingBook) {
+      const planIntent = sessionStorage.getItem('postLoginPlan');
+      if (planIntent) {
+        sessionStorage.removeItem('postLoginPlan');
+        window.location.href = 'my-bookings.html?p=onboarding&plan=' + planIntent;
+      } else if (_pendingBook) {
         _pendingBook = false;
         window.location.href = 'my-bookings.html?p=book';
       } else {
