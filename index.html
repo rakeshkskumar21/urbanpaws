@@ -218,7 +218,7 @@
   .logo-mark .logo-paws  { font-size: 0.6rem; letter-spacing: 0.22em; color: var(--night); font-weight: 700; }
 
   .nav-links {
-    display: flex; gap: 2rem; list-style: none;
+    display: flex; gap: 2rem; list-style: none; padding-left: 30px; 
   }
   .nav-links a {
     text-decoration: none; font-size: 0.9rem; font-weight: 500;
@@ -633,11 +633,11 @@
     border-radius: 100px;
     padding: 6px 14px;
     gap: 6px;
-    width: 220px;
-    transition: width 0.3s, box-shadow 0.2s;
+    flex: 1;
+    margin: 0 1.5rem;
+    transition: box-shadow 0.2s;
   }
   .nav-search:focus-within {
-    width: 280px;
     box-shadow: 0 0 0 2px var(--paw);
     background: #fff;
   }
@@ -1081,6 +1081,9 @@
 
   @media (max-width: 640px) {
     .hero h1 { font-size: 2.2rem; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-actions .btn-primary,
+    .hero-actions .btn-outline { text-align: center; width: 100%; box-sizing: border-box; }
     .form-grid { grid-template-columns: 1fr; }
     .pricing-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; }
@@ -1433,14 +1436,10 @@
     <div class="hero-eyebrow">
       🌆 Made for metro pet parents
     </div>
-    <div class="hero-eyebrow">
-      India's #1 
-    </div>
-    
     <h1>Pet <em>Walking</em> &  <br>Pet <em>Food Delivery</em> </h1>
 
     <a href="#booking" class="trial-promo">
-      🎉 Book your first 2 trial walks for <strong>FREE</strong>
+      <span style="font-size:1.7em;">🎉</span> Book your first 2 trial walks for <strong>FREE</strong>
     </a>
 
     <div class="hero-actions">
@@ -1792,34 +1791,6 @@
        </ul>
        <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
 
-    </div>
-  </div>
-</section>
-<!--===========================  HOW IT WORKS =========================== -->
-<section style="background:#fff;">
-  <div class="section-label">How it works</div>
-  <h2 class="section-title">Ready in 4 easy steps</h2>
-  <p class="section-sub">From download to doorstep in under 3 minutes.</p>
-  <div class="steps-flow">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h4>Download the App OR open "Book in under 2 minutes" below</h4>
-      <p>Available on Android. Sign up with your phone number — takes 30 seconds.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h4>Add your pet</h4>
-      <p>Tell us your pet's breed, age, gender, and any special requirements.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h4>Choose a service</h4>
-      <p>Pick walk, food, grooming, boarding or any service and your preferred time slot.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h4>Check in real time</h4>
-      <p>Your assigned pet executive arrives. Get photos & updates.</p>
     </div>
   </div>
 </section>
