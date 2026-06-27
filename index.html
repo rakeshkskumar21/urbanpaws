@@ -249,6 +249,7 @@
     padding: 2rem 3rem 2.5rem 4rem;
   }
   .hero-services-card {
+    border-radius: 20px;
     background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%);
     padding: 2.5rem 2.5rem;
     display: flex;
@@ -751,9 +752,12 @@
   .menu-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
 
   .menu-card-img {
-    height: 120px; background: var(--paw-soft);
+    height: 160px; background: var(--paw-soft);
     display: flex; align-items: center; justify-content: center;
-    font-size: 3rem;
+    font-size: 3rem; overflow: hidden;
+  }
+  .menu-card-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
   }
 
   .menu-card-body { padding: 1rem 1.25rem; }
@@ -1572,7 +1576,9 @@
 
   <div class="menu-grid">
     <div class="menu-card">
-      <div class="menu-card-img">🍚</div>
+      <div class="menu-card-img">
+        <img src="https://images.pexels.com/photos/6740511/pexels-photo-6740511.jpeg?auto=compress&cs=tinysrgb&w=400&h=160&fit=crop" alt="Rice and Curd" onerror="this.parentElement.innerHTML='🍚🥛'">
+      </div>
       <div class="menu-card-body">
         <h4>Rice & Curd</h4>
         <p>Freshly cooked rice with curd. Approx. 300g. No preservatives.</p>
@@ -1583,7 +1589,9 @@
       </div>
     </div>
     <div class="menu-card">
-      <div class="menu-card-img">🍗</div>
+      <div class="menu-card-img">
+        <img src="https://images.pexels.com/photos/352562/pexels-photo-352562.jpeg?auto=compress&cs=tinysrgb&w=400&h=160&fit=crop" alt="Rice and Chicken" onerror="this.parentElement.innerHTML='🍚🍗'">
+      </div>
       <div class="menu-card-body">
         <h4>Rice & Chicken</h4>
         <p>Freshly cooked rice + chicken 100g. Approx. 450g. Turmeric added.</p>
@@ -1594,7 +1602,9 @@
       </div>
     </div>
     <div class="menu-card">
-      <div class="menu-card-img">🥩</div>
+      <div class="menu-card-img">
+        <img src="https://images.pexels.com/photos/6823336/pexels-photo-6823336.jpeg?auto=compress&cs=tinysrgb&w=400&h=160&fit=crop" alt="Rice and Raw Egg" onerror="this.parentElement.innerHTML='🍚🥚'">
+      </div>
       <div class="menu-card-body">
         <h4>Rice & Raw Egg</h4>
         <p>Rice with raw egg. Approx. 400g. Rich in protein.</p>
@@ -1605,7 +1615,9 @@
       </div>
     </div>
     <div class="menu-card">
-      <div class="menu-card-img">🥛</div>
+      <div class="menu-card-img">
+        <img src="https://images.pexels.com/photos/9228613/pexels-photo-9228613.jpeg?auto=compress&cs=tinysrgb&w=400&h=160&fit=crop" alt="Rice and Milk" onerror="this.parentElement.innerHTML='🍚🥛'">
+      </div>
       <div class="menu-card-body">
         <h4>Rice & Milk</h4>
         <p>Freshly cooked rice with full-fat milk. Approx. 300g. Easy digestion.</p>
@@ -1616,7 +1628,9 @@
       </div>
     </div>
     <div class="menu-card">
-      <div class="menu-card-img">🥕</div>
+      <div class="menu-card-img">
+        <img src="https://images.pexels.com/photos/5718025/pexels-photo-5718025.jpeg?auto=compress&cs=tinysrgb&w=400&h=160&fit=crop" alt="Chicken and Carrots" onerror="this.parentElement.innerHTML='🍗🥕'">
+      </div>
       <div class="menu-card-body">
         <h4>Chicken & Carrots</h4>
         <p>Chicken 100g + freshly cooked carrots. Approx. 400g. High fibre.</p>
@@ -1627,7 +1641,9 @@
       </div>
     </div>
     <div class="menu-card">
-      <div class="menu-card-img">🥚</div>
+      <div class="menu-card-img">
+        <img src="https://images.pexels.com/photos/8467686/pexels-photo-8467686.jpeg?auto=compress&cs=tinysrgb&w=400&h=160&fit=crop" alt="Rice and Boiled Egg" onerror="this.parentElement.innerHTML='🍚🥚'">
+      </div>
       <div class="menu-card-body">
         <h4>Rice & Boiled Egg</h4>
         <p>Rice + boiled egg (1). Approx. 400g. Great for puppies.</p>
@@ -1655,53 +1671,47 @@
   <p class="section-sub" style="white-space:nowrap;">Quality grooming products, accessories, and essentials — curated by our vet team and shipped same day.</p>
 
   <div class="shop-grid">
-    <div class="shop-item" onclick="addToCart('Shampoo')">
-      <span class="shop-item-icon">🧴</span>
-      <h4>Pet Shampoo</h4>
-      <p>Hypoallergenic, vet-approved</p>
-      <span class="price">₹349</span>
-    </div>
-    <div class="shop-item" onclick="addToCart('Soap Bar')">
-      <span class="shop-item-icon">🧼</span>
-      <h4>Pet Soap</h4>
-      <p>Oatmeal & aloe vera</p>
-      <span class="price">₹199</span>
-    </div>
-    <div class="shop-item" onclick="addToCart('Grooming Brush')">
-      <span class="shop-item-icon">🪮</span>
-      <h4>Grooming Brush</h4>
-      <p>Dematting & detangling</p>
-      <span class="price">₹449</span>
-    </div>
+    <!-- Active items -->
     <div class="shop-item" onclick="addToCart('Food Bowl Set')">
       <span class="shop-item-icon">🥣</span>
       <h4>Food & Water Bowl</h4>
       <p>Stainless steel, anti-tip</p>
-      <span class="price">₹599</span>
-    </div>
-    <div class="shop-item" onclick="addToCart('Personalized Tag')">
-      <span class="shop-item-icon">🏷️</span>
-      <h4>ID Tag</h4>
-      <p>Laser engraved, custom</p>
-      <span class="price">₹149</span>
     </div>
     <div class="shop-item" onclick="addToCart('Leash')">
       <span class="shop-item-icon">🦮</span>
       <h4>Retractable Leash</h4>
       <p>5m, reflective, padded handle</p>
-      <span class="price">₹799</span>
-    </div>
-    <div class="shop-item" onclick="addToCart('Dog Shoes')">
-      <span class="shop-item-icon">👟</span>
-      <h4>Pet Shoes</h4>
-      <p>Anti-slip, waterproof 4-pack</p>
-      <span class="price">₹699</span>
     </div>
     <div class="shop-item" onclick="addToCart('Paw Balm')">
       <span class="shop-item-icon">🐾</span>
       <h4>Paw Balm</h4>
       <p>Soothes cracked paws</p>
-      <span class="price">₹249</span>
+    </div>
+    <div class="shop-item" onclick="addToCart('Personalized Tag')">
+      <span class="shop-item-icon">🏷️</span>
+      <h4>ID Tag</h4>
+      <p>Laser engraved, custom</p>
+    </div>
+    <!-- Coming soon -->
+    <div class="shop-item" style="opacity:0.45; cursor:default; pointer-events:none;">
+      <span class="shop-item-icon">🧴</span>
+      <h4>Pet Shampoo <small style="font-size:0.7rem; color:var(--muted);">Soon</small></h4>
+      <p>Hypoallergenic, vet-approved</p>
+    </div>
+    <div class="shop-item" style="opacity:0.45; cursor:default; pointer-events:none;">
+      <span class="shop-item-icon">🧼</span>
+      <h4>Pet Soap <small style="font-size:0.7rem; color:var(--muted);">Soon</small></h4>
+      <p>Oatmeal & aloe vera</p>
+    </div>
+    <div class="shop-item" style="opacity:0.45; cursor:default; pointer-events:none;">
+      <span class="shop-item-icon">🪮</span>
+      <h4>Grooming Brush <small style="font-size:0.7rem; color:var(--muted);">Soon</small></h4>
+      <p>Dematting & detangling</p>
+    </div>
+    <div class="shop-item" style="opacity:0.45; cursor:default; pointer-events:none;">
+      <span class="shop-item-icon">👟</span>
+      <h4>Pet Shoes <small style="font-size:0.7rem; color:var(--muted);">Soon</small></h4>
+      <p>Anti-slip, waterproof 4-pack</p>
     </div>
   </div>
 </section>
