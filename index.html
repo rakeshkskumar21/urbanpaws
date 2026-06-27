@@ -1728,7 +1728,7 @@
 
     <!-- Walk duration — only shown when Walk is selected -->
     <div id="walkDurationGroup" style="margin: 1rem 0 0.25rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-      <label style="font-size:0.82rem;font-weight:700;color:var(--muted);width:100%;margin-bottom:0.25rem;">Walk duration <span class="req">*</span></label>
+      <label style="font-size:0.82rem;font-weight:700;color:var(--muted);width:100%;margin-bottom:0.25rem;letter-spacing:0.04em;text-transform:uppercase;">Step 2 — Select walk duration <span class="req">*</span></label>
       <label id="wdOpt15" class="walk-dur-opt selected" onclick="selectWalkDur(this,'15','8900')">
         <input type="radio" name="walkDur" value="15" checked> 15 min &nbsp;<strong>₹89</strong>
       </label>
@@ -1739,6 +1739,8 @@
         <input type="radio" name="walkDur" value="45"> 45 min &nbsp;<strong>₹199</strong>
       </label>
     </div>
+
+    <label id="step3Label" style="display:block; font-size:0.82rem; font-weight:700; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin:1.25rem 0 0.6rem;">Step 3 — Fill in the details</label>
 
     <div class="form-grid">
       <div class="form-group">
@@ -2302,6 +2304,8 @@
     el.classList.add('active');
     const isWalk = el.textContent.toLowerCase().includes('walk');
     document.getElementById('walkDurationGroup').style.display = isWalk ? 'flex' : 'none';
+    const s3 = document.getElementById('step3Label');
+    if (s3) s3.textContent = isWalk ? 'Step 3 — Fill in the details' : 'Step 2 — Fill in the details';
   }
 
   function openBooking(service) {
