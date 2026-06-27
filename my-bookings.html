@@ -1209,6 +1209,8 @@ function initApp(user) {
   loadProfile(user);
   loadBookings(user.email);
   subscribeRealtime(user.email);
+  const p = new URLSearchParams(location.search).get('p');
+  if (p) { showPage(p); history.replaceState(null, '', location.pathname); }
 }
 
 function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }

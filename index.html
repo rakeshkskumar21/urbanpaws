@@ -1355,7 +1355,7 @@
     <li><a href="#services">Services</a></li>
     <li><a href="#food">Pet Food</a></li>
     <li><a href="#shop">Shop</a></li>
-    <li><a href="#booking">Book</a></li>
+    <li><a href="javascript:void(0)" onclick="openBooking()">Book</a></li>
     <li><a href="#pricing">Pricing</a></li>
   </ul>
 
@@ -1405,14 +1405,14 @@
     <li><a href="#services" onclick="closeBurger()">🛎 Services</a></li>
     <li><a href="#food" onclick="closeBurger()">🍲 Pet Food</a></li>
     <li><a href="#shop" onclick="closeBurger()">🛒 Shop</a></li>
-    <li><a href="#booking" onclick="closeBurger()">📅 Book</a></li>
+    <li><a href="javascript:void(0)" onclick="closeBurger();openBooking()">📅 Book</a></li>
     <li><a href="#pricing" onclick="closeBurger()">💳 Pricing</a></li>
     <li><a href="#faq" onclick="closeBurger()">❓ FAQs</a></li>
     <li id="burgerLoginLi"><a href="#" onclick="event.preventDefault(); closeBurger(); openAuthModal()">👤 Login / Sign Up</a></li>
     <li id="burgerMyBookingsLi" style="display:none"><a href="my-bookings.html" onclick="closeBurger()">📋 My Bookings</a></li>
     <li id="burgerLogoutLi" style="display:none"><a href="#" onclick="event.preventDefault(); closeBurger(); signOut()">🚪 Logout</a></li>
   </ul>
-  <a href="#booking" class="btn-primary" style="margin:1rem 1.5rem 0; display:block; text-align:center;" onclick="closeBurger()">Book a Service →</a>
+  <a href="javascript:void(0)" class="btn-primary" style="margin:1rem 1.5rem 0; display:block; text-align:center;" onclick="closeBurger();openBooking()">Book a Service →</a>
 </div>
 
 <!--===========================  EMERGENCY BANNER 
@@ -1438,12 +1438,12 @@
     </div>
     <h1>Pet <em>Walking</em> &  <br>Pet <em>Food Delivery</em> </h1>
 
-    <a href="#booking" class="trial-promo">
+    <a href="javascript:void(0)" class="trial-promo" onclick="openBooking()">
       <span style="font-size:1.7em;">🎉</span> Book your first 2 trial walks for <strong>FREE</strong>
     </a>
 
     <div class="hero-actions">
-      <a href="#booking" class="btn-primary">Book a Service ↗</a>
+      <a href="javascript:void(0)" class="btn-primary" onclick="openBooking()">Book a Service ↗</a>
       <a href="#services" class="btn-outline">Explore Services</a>
     </div>
 
@@ -1466,7 +1466,7 @@
     <div class="card-title">Available now</div>
     <h3>Walk &amp; Food Delivery</h3>
     <div class="hero-svc-grid">
-      <a href="#booking" class="hero-svc-tile" onclick="openBooking('Pet Walking')">
+      <a href="javascript:void(0)" class="hero-svc-tile" onclick="openBooking()">
         <span class="svc-icon">🦮</span>
         <span class="svc-name">Pet Walk</span>
         <span class="svc-price">from ₹89</span>
@@ -1509,14 +1509,14 @@
   <p class="section-sub" style="white-space:nowrap;">Currently live in Bengaluru — more services launching soon.</p>
 
   <div class="services-grid">
-    <div class="service-card" onclick="openBooking('Pet Walking')">
+    <div class="service-card" onclick="openBooking()">
       <div class="service-icon">🦮</div>
       <h3>Pet Walking</h3>
       <p>Professional pet executors take your dog for a 15-45 min walk. Live photos, paw cleaning on return & route recorded.</p>
       <div class="service-price">Starting From ₹89/walk <span class="service-tag">Most Popular</span></div>
     </div>
 
-    <div class="service-card" onclick="openBooking('Pet Feeding')">
+    <div class="service-card" onclick="openBooking()">
       <div class="service-icon">🍲</div>
       <h3>Fresh Pet Food</h3>
       <p>Freshly cooked meals delivered in 45–55 min. Veg & non-veg options from a cloud kitchen with vet-approved specific ingredients.</p>
@@ -1732,7 +1732,7 @@
         <li class="plan-feature">Platform fee ₹1–₹2/order</li>
         <li class="plan-feature">Basic live 🟢 tracking/photos</li>
       </ul>
-      <button class="btn-outline" style="width:100%;" onclick="openBooking('Walk')">Get started</button>
+      <button class="btn-outline" style="width:100%;" onclick="openBooking()">Get started</button>
     </div>
 
     <div class="pricing-card featured">
@@ -1747,12 +1747,12 @@
         <li class="plan-feature">5% off on food orders</li>
         <li class="plan-feature">Live 🟢 tracking/photos</li>
       </ul>
-      <button class="btn-primary" style="width:100%;" onclick="openBooking('Walk')">Get Started</button>
+      <button class="btn-primary" style="width:100%;" onclick="openBooking()">Get Started</button>
     </div>
 
     <div class="pricing-card">
       <h3>Standard Pro</h3>
-      <div class="plan-price">₹4,489 <span>/month</span></div>
+      <div class="plan-price">₹4,368 <span>/month</span></div>
       <div class="plan-desc">For families with 1 dog or cat.</div>
       <ul class="plan-features">
         <li class="plan-feature">30 walks included per month for 30 min</li>
@@ -1769,7 +1769,7 @@
     <div>
       <div class="pricing-card">
         <h3>Carnival</h3>
-        <div class="plan-price">₹5,889 <span>/month</span></div>
+        <div class="plan-price">₹5,887 <span>/month</span></div>
         <div class="plan-desc">For families with 2+ dogs or cats.</div>
         <ul class="plan-features">
           <li class="plan-feature">30 walks included per month for 2 pets for 30 min</li>
@@ -1786,218 +1786,7 @@
     </div>
   </div>
 </section>
-<!--=========================== BOOKING ======================== -->
-<section id="booking" class="booking-section">
-  <div class="section-label">Quick booking</div>
-  <h2 class="section-title">Book in under 2 minutes</h2>
-  <p class="section-sub" style="white-space:nowrap;">Select your service, fill in your pet's details, and we'll assign a verified executive near you.</p>
 
-  <div class="booking-form-card">
-    <label style="display:block; font-size:0.82rem; font-weight:700; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:0.6rem;">Step 1 — Select a service</label>
-    <div class="service-tabs" id="serviceTabs">
-      <button class="service-tab active" onclick="selectService(this)">🦮 Walk</button>
-      <button class="service-tab" onclick="selectService(this)">🍲 Food</button>
-    </div>
-
-    <!-- Walk duration — only shown when Walk is selected -->
-    <div id="walkDurationGroup" style="margin: 1rem 0 0.25rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-      <label style="font-size:0.82rem;font-weight:700;color:var(--muted);width:100%;margin-bottom:0.25rem;letter-spacing:0.04em;text-transform:uppercase;">Step 2 — Select walk duration <span class="req">*</span></label>
-      <label id="wdOpt15" class="walk-dur-opt selected" onclick="selectWalkDur(this,'15','8900')">
-        <input type="radio" name="walkDur" value="15" checked> 15 min &nbsp;<strong>₹89</strong>
-      </label>
-      <label id="wdOpt30" class="walk-dur-opt" onclick="selectWalkDur(this,'30','14900')">
-        <input type="radio" name="walkDur" value="30"> 30 min &nbsp;<strong>₹149</strong>
-      </label>
-      <label id="wdOpt45" class="walk-dur-opt" onclick="selectWalkDur(this,'45','19900')">
-        <input type="radio" name="walkDur" value="45"> 45 min &nbsp;<strong>₹199</strong>
-      </label>
-    </div>
-
-    <label id="step3Label" style="display:block; font-size:0.82rem; font-weight:700; color:var(--muted); letter-spacing:0.04em; text-transform:uppercase; margin:1.25rem 0 0.6rem;">Step 3 — Fill in the details</label>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Pet name <span class="req">*</span></label>
-        <input type="text" id="petName" placeholder="e.g. Bruno">
-        <span class="field-error" id="err-petName">Please enter your pet's name.</span>
-      </div>
-      <div class="form-group">
-        <label>Breed <span class="req">*</span></label>
-        <select id="breed">
-          <option value="">Select breed</option>
-          <option>Labrador Retriever</option>
-          <option>Indian Breed (Desi)</option>
-          <option>German Shepherd</option>
-          <option>Beagle</option>
-          <option>Siberian Husky</option>
-          <option>Rottweiler</option>
-          <option>Shih Tzu</option>
-          <option>Dobermann</option>
-          <option>American Bully</option>
-          <option>Pomeranian</option>
-          <option>Persian Cat</option>
-          <option>Other</option>
-        </select>
-        <span class="field-error" id="err-breed">Please select your pet's breed.</span>
-      </div>
-      <div class="form-group">
-        <label>Pet's age <span class="req">*</span></label>
-        <select id="petAge">
-          <option value="">Select age</option>
-          <option>Under 6 months</option>
-          <option>6–12 months</option>
-          <option>1–3 years</option>
-          <option>3–7 years</option>
-          <option>7+ years</option>
-        </select>
-        <span class="field-error" id="err-petAge">Please select your pet's age.</span>
-      </div>
-      <div class="form-group">
-        <label>Gender <span class="req">*</span></label>
-        <select id="gender">
-          <option value="">Select gender</option>
-          <option>Male</option>
-          <option>Female</option>
-        </select>
-        <span class="field-error" id="err-gender">Please select your pet's gender.</span>
-      </div>
-      <div class="form-group full">
-        <label>Your address <span class="req">*</span></label>
-        <input type="text" id="address" placeholder="Flat / Tower / Apartment, Area, City">
-        <span class="field-error" id="err-address">Please enter your address.</span>
-      </div>
-      <div class="form-group">
-        <label>Date <span class="req">*</span></label>
-        <input type="date" id="bookDate">
-        <span class="field-error" id="err-bookDate">Please select a date.</span>
-      </div>
-      <div class="form-group">
-        <label>Time slot <span class="req">*</span></label>
-        <select id="timeSlot">
-          <option value="">Select time slot</option>
-          <option>6:00 AM – 6:30 AM</option>
-          <option>6:30 AM – 7:30 AM</option>
-          <option>7:30 AM – 8:00 AM</option>
-          <option>8:30 AM – 9:00 AM</option>
-          <option>5:30 PM – 6:00 PM</option>
-          <option>6:30 PM – 7:00 PM</option>
-          <option>7:30 PM – 8:00 PM</option>
-          <option>8:30 PM – 9:00 PM</option>
-          <option>9:00 PM – 9:30 PM</option>
-        </select>
-        <span class="field-error" id="err-timeSlot">Please select a time slot.</span>
-      </div>
-      <div class="form-group">
-        <label>Phone number <span class="req">*</span></label>
-        <input type="tel" id="phone" placeholder="+91 98765 43210">
-        <span class="field-error" id="err-phone">Please enter a valid 10-digit phone number.</span>
-      </div>
-      <div class="form-group">
-        <label>Email address <span class="req">*</span></label>
-        <input type="email" id="email" placeholder="you@example.com">
-        <span class="field-error" id="err-email">Please enter a valid email address.</span>
-      </div>
-      <div class="form-group">
-        <label>Payment <span class="req">*</span></label>
-        <select id="payment">
-          <option value="">Select payment method</option>
-          <option value="UPI">💳 UPI (PhonePe / GPay / Paytm)</option>
-          <option value="Card">💳 Debit / Credit Card</option>
-          <option value="Netbanking">🏦 Net Banking</option>
-          <option value="Cash">🏠 Cash on Delivery</option>
-          <option>Urban Paws Wallet</option>
-        </select>
-        <span class="field-error" id="err-payment">Please select a payment method.</span>
-      </div>
-      <div class="form-group full">
-        <label>Special instructions <span style="font-size:0.8rem;color:#888;">(optional)</span></label>
-        <textarea id="instructions" rows="2" placeholder="e.g. Bruno gets anxious around loud sounds..."></textarea>
-      </div>
-
-      <!-- Additional Info -->
-      <div class="form-group full" style="margin-top:0.5rem;">
-        <label style="font-size:1rem; font-weight:700; color:var(--paw-amber);">Additional Health Info <span style="font-weight:400;font-size:0.85rem;color:#888;">(helps us care better)</span></label>
-      </div>
-      <div class="form-group">
-        <label>Known allergies? <span class="req">*</span> <span style="font-size:0.8rem;color:#888;">(food, environment, medication)</span></label>
-        <select id="allergies">
-          <option value="">Please select</option>
-          <option>No known allergies</option>
-          <option>Yes, food allergies</option>
-          <option>Yes, environmental allergies</option>
-          <option>Yes, medication allergies</option>
-          <option>Not sure</option>
-        </select>
-        <span class="field-error" id="err-allergies">Please let us know about any allergies.</span>
-      </div>
-      <div class="form-group">
-        <label>Any limping or difficulty walking? <span class="req">*</span></label>
-        <select id="limping">
-          <option value="">Please select</option>
-          <option>No, moving perfectly fine</option>
-          <option>Slight limping (mild)</option>
-          <option>Yes, noticeable limping</option>
-          <option>Not sure</option>
-        </select>
-        <span class="field-error" id="err-limping">Please let us know about any limping.</span>
-      </div>
-      <div class="form-group">
-        <label>Surgery in the last 30 days? <span class="req">*</span></label>
-        <select id="recentSurgery">
-          <option value="">Please select</option>
-          <option>No recent surgery</option>
-          <option>Yes, within the last 30 days</option>
-          <option>Yes, more than 30 days ago</option>
-        </select>
-        <span class="field-error" id="err-recentSurgery">Please let us know about any recent surgery.</span>
-      </div>
-      <div class="form-group">
-        <label>Eating regularly? <span class="req">*</span> <span style="font-size:0.8rem;color:#888;">(fed within last 6 hrs?)</span></label>
-        <select id="eatingHabits">
-          <option value="">Please select</option>
-          <option>Yes, eating well and had food within 6 hours</option>
-          <option>Yes, eating well but not within 6 hours</option>
-          <option>Eating less than usual</option>
-          <option>Not eating at all</option>
-          <option>Not sure</option>
-        </select>
-        <span class="field-error" id="err-eatingHabits">Please let us know about your pet's eating habits.</span>
-      </div>
-      <div class="form-group">
-        <label>Vaccination status? <span class="req">*</span></label>
-        <select id="vaccinated">
-          <option value="">Please select</option>
-          <option>Yes, fully vaccinated</option>
-          <option>Partially vaccinated</option>
-          <option>Not vaccinated</option>
-          <option>Not sure</option>
-        </select>
-        <span class="field-error" id="err-vaccinated">Please let us know your pet's vaccination status.</span>
-      </div>
-      <div class="form-group">
-        <label>Pet's temperament? <span class="req">*</span></label>
-        <select id="temperament">
-          <option value="">Please select</option>
-          <option>Very friendly — loves everyone</option>
-          <option>Friendly but takes time to warm up</option>
-          <option>Reactive to strangers</option>
-          <option>Aggressive with strangers</option>
-          <option>Aggressive with other dogs</option>
-          <option>Unpredictable — varies by mood</option>
-        </select>
-        <span class="field-error" id="err-temperament">Please let us know your pet's temperament.</span>
-      </div>
-      <div class="form-group full">
-        <label>Any other health issues or concerns we should know about? <span style="font-size:0.8rem;color:#888;">(optional)</span></label>
-        <textarea id="otherIssues" rows="2" placeholder="e.g. Bruno has a heart condition, gets tired quickly on long walks..."></textarea>
-      </div>
-    </div>
-
-    <button class="btn-primary" id="confirmBtn" style="margin-top:1.5rem; width:100%; padding:16px; font-size:1rem;" onclick="submitMainBooking()">
-      Confirm Booking →
-    </button>
-  </div>
-</section>
 
 <!--- =========================== TESTIMONIALS    
 <section style="background:#fff;">
@@ -2315,27 +2104,18 @@
     if (s3) s3.textContent = isWalk ? 'Step 3 — Fill in the details' : 'Step 2 — Fill in the details';
   }
 
-  function openBooking(service) {
-    // Pre-select the matching service tab in the booking form (if one exists)
-    const tabKeywords = {
-      'Pet Walking': 'Walk',
-      'Pet Feeding': 'Food',
-      'Grooming': 'Grooming',
-      'Boarding': 'Boarding',
-      'Vaccination': 'Vaccination',
-      'Pet Taxi': 'Taxi',
-      'Walk': 'Walk'
-    };
-    const keyword = tabKeywords[service];
-    if (keyword) {
-      document.querySelectorAll('#serviceTabs .service-tab').forEach(function (tab) {
-        if (tab.textContent.indexOf(keyword) !== -1) selectService(tab);
-      });
-    }
-
-    // Scroll to the booking form
-    document.getElementById('booking').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  function openBooking() {
+    db.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = 'my-bookings.html?p=book';
+      } else {
+        _pendingBook = true;
+        openAuthModal();
+      }
+    });
   }
+
+  let _pendingBook = false;
 
   function closeModal() {
     document.getElementById('bookingModal').classList.remove('open');
@@ -2627,7 +2407,7 @@
     { icon: '⭐', title: 'Paws+ Plan – ₹999/mo', desc: 'Daily walks + priority support', href: '#pricing', tags: ['price', 'pricing', 'subscription', 'monthly', 'paws plus', '999'] },
     { icon: '👑', title: 'Elite Plan – ₹2499/mo', desc: 'Everything + grooming + insurance', href: '#pricing', tags: ['price', 'pricing', 'elite', 'premium', 'best', '2499', 'grooming plan'] },
     // Booking
-    { icon: '📅', title: 'Book a Service', desc: 'Quick booking in under 2 minutes', href: '#booking', tags: ['book', 'booking', 'schedule', 'appointment', 'reserve', 'hire'] },
+    { icon: '📅', title: 'Book a Service', desc: 'Quick booking in under 2 minutes', action: openBooking, tags: ['book', 'booking', 'schedule', 'appointment', 'reserve', 'hire'] },
     // FAQ
     { icon: '❓', title: 'Is my dog safe?', desc: 'All executives are background verified', href: '#faq', tags: ['safe', 'safety', 'trust', 'secure', 'verified', 'background'] },
     { icon: '❓', title: 'Aggressive dogs', desc: 'We handle reactive & aggressive dogs', href: '#faq', tags: ['aggressive', 'reactive', 'bite', 'dangerous', 'temperament'] },
@@ -2653,12 +2433,13 @@
     if (!results.length) {
       dropdown.innerHTML = '<div class="search-no-result">No results for "' + query + '"</div>';
     } else {
-      dropdown.innerHTML = results.map(r =>
-        '<a class="search-result" href="' + r.href + '" onclick="closeSearch()">' +
+      dropdown.innerHTML = results.map((r, i) =>
+        '<a class="search-result" href="' + (r.href || 'javascript:void(0)') + '" onclick="closeSearch();' + (r.action ? '_searchActions[' + i + ']()' : '') + '">' +
           '<span class="search-result-icon">' + r.icon + '</span>' +
           '<span class="search-result-text"><strong>' + r.title + '</strong><span>' + r.desc + '</span></span>' +
         '</a>'
       ).join('');
+      window._searchActions = results.map(r => r.action || null);
     }
     dropdown.classList.add('open');
   }
@@ -2836,9 +2617,13 @@
   // Listen for login/logout changes — redirect logged-in users to the app
   db.auth.onAuthStateChange((_event, session) => {
     const user = session ? session.user : null;
-    const params = new URLSearchParams(window.location.search);
-    if (user && !params.has('book')) {
-      window.location.replace('my-bookings.html');
+    if (user) {
+      if (_pendingBook) {
+        _pendingBook = false;
+        window.location.href = 'my-bookings.html?p=book';
+      } else {
+        window.location.replace('my-bookings.html');
+      }
       return;
     }
     updateAuthUI(user);
