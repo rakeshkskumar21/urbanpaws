@@ -1192,10 +1192,11 @@ async function saveProfile() {
   const { error } = await db.from('profiles').upsert({ id: currentUser.id, email: currentUser.email, full_name, phone: document.getElementById('pfPhone').value.trim(), address: document.getElementById('pfAddress').value.trim() });
   btn.disabled = false; btn.textContent = 'Save Changes →';
   if (error) { showToast('❌ '+error.message); return; }
-  document.getElementById('pfNameBig').textContent = full_name;
-  document.getElementById('sbAvatar').textContent  = initials(full_name);
-  document.getElementById('sbName').textContent    = full_name.split(' ')[0];
-  document.getElementById('welcomeMsg').textContent = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
+  document.getElementById('pfNameBig').textContent    = full_name;
+  document.getElementById('pfAvatarBig').textContent  = initials(full_name);
+  document.getElementById('sbAvatar').textContent     = initials(full_name);
+  document.getElementById('sbName').textContent       = full_name.split(' ')[0];
+  document.getElementById('welcomeMsg').textContent   = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
   const ok = document.getElementById('saveOk'); ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),3000);
   showToast('✅ Profile saved!', 'success');
   pfCancelEdit();

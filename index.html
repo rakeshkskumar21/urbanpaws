@@ -1723,13 +1723,10 @@
   <div class="pricing-grid">
     <div class="pricing-card">
       <h3>Starter (Pay as you go)</h3>
-      <div class="plan-price">₹0 <span>/month</span></div>
       <div class="plan-desc">No subscription, no commitment. Book anytime.</div>
       <ul class="plan-features">
-        <li class="plan-feature">Dog Walking - ₹89 for 15 min</li>
         <li class="plan-feature">Dog Walking - ₹149 for 30 min</li>
         <li class="plan-feature">Dog Walking - ₹199 for 45 min</li>
-
         <li class="plan-feature">Food delivery from ₹28</li>
         <li class="plan-feature">Grooming at your home from ₹478</li>
         <li class="plan-feature">Platform fee ₹1–₹2/order</li>
@@ -1741,22 +1738,21 @@
     <div class="pricing-card featured">
       <div class="plan-badge">Most popular</div>
       <h3>Casual</h3>
-      <div class="plan-price">₹1,289 <span>/month</span></div>
+      <div class="plan-price">₹3,178 <span>/month</span></div>
       <div class="plan-desc">For the committed pet parent. Save 30% on every service.</div>
       <ul class="plan-features">
-        <li class="plan-feature">15 walks included per month for 30 min</li>
+        <li class="plan-feature">22 walks included per month for 30 min</li>
         <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
         <li class="plan-feature">Free delivery on medicines</li>
-        <li class="plan-feature">10% off on food orders</li>
-        <li class="plan-feature">Priority booking</li>
-        <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
+        <li class="plan-feature">5% off on food orders</li>
+        <li class="plan-feature">Live 🟢 tracking/photos</li>
       </ul>
       <button class="btn-primary" style="width:100%;" onclick="openBooking('Walk')">Get Started</button>
     </div>
 
     <div class="pricing-card">
       <h3>Standard Pro</h3>
-      <div class="plan-price">₹4,500 <span>/month</span></div>
+      <div class="plan-price">₹4,489 <span>/month</span></div>
       <div class="plan-desc">For families with 1 dog or cat.</div>
       <ul class="plan-features">
         <li class="plan-feature">30 walks included per month for 30 min</li>
@@ -1764,9 +1760,7 @@
         <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
         <li class="plan-feature">Free delivery on medicines</li>
         <li class="plan-feature">10% off on food orders</li>
-        <li class="plan-feature">Dedicated account manager</li>
-        <li class="plan-feature">Emergency line access</li>
-        <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
+        <li class="plan-feature">Live 🟢 tracking/photos</li>
 
       </ul>
       
@@ -1774,7 +1768,7 @@
     </div>
     <div>
       <div class="pricing-card">
-        <h3>Premium</h3>
+        <h3>Carnival</h3>
         <div class="plan-price">₹5,889 <span>/month</span></div>
         <div class="plan-desc">For families with 2+ dogs or cats.</div>
         <ul class="plan-features">
@@ -1782,11 +1776,9 @@
           <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
           <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
           <li class="plan-feature">Free delivery on medicines</li>
-          <li class="plan-feature">Free boarding up to 2 nights</li>
+          <li class="plan-feature">Free boarding up to 1 night</li>
           <li class="plan-feature">10% off on food orders</li>
-          <li class="plan-feature">Dedicated account manager</li>
-          <li class="plan-feature">Emergency line access</li>
-          <li class="plan-feature">Pet Live 🟢 tracking/photos</li>
+          <li class="plan-feature">Live 🟢 tracking/photos</li>
 
        </ul>
        <button class="btn-outline" style="width:100%;" onclick="showToast('🐾 Family plan selected! Redirecting...')">Get started</button>
@@ -2095,7 +2087,7 @@
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-a">
-            <p>We are currently operational in select neighbourhoods across Bengaluru, with rapid expansion underway. Enter your address in the booking form and we'll confirm availability in your area.</p>
+            <p>We are currently operational in select neighbourhoods in Whitefield, Bengaluru, with rapid expansion underway. Enter your address in the booking form and we'll confirm availability in your area.</p>
           </div>
         </div>
         <div class="faq-item">
@@ -2803,17 +2795,20 @@
     if (user) {
       loginBtn.style.display = 'none';
       userChip.style.display = 'flex';
-      const meta = user.user_metadata || {};
-      const name = meta.full_name || meta.name || user.email || 'User';
-      const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-      document.getElementById('navUserAvatar').textContent = initials;
-      document.getElementById('navUserName').textContent = name.split(' ')[0];
       burgerLogin.style.display = 'none';
       burgerMyBookings.style.display = '';
       burgerLogout.style.display = '';
       const emailInput = document.getElementById('email');
       if (emailInput && !emailInput.value) emailInput.value = user.email || '';
       subscribeToBookingUpdates(user.email);
+      // Fetch latest name from profiles table so edits in my-bookings reflect here
+      db.from('profiles').select('full_name').eq('id', user.id).single().then(({ data: p }) => {
+        const meta = user.user_metadata || {};
+        const name = (p && p.full_name) || meta.full_name || meta.name || user.email || 'User';
+        const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        document.getElementById('navUserAvatar').textContent = initials;
+        document.getElementById('navUserName').textContent = name.split(' ')[0];
+      });
     } else {
       loginBtn.style.display = '';
       userChip.style.display = 'none';
