@@ -1014,19 +1014,19 @@
 
   /* ===== AUTH NAV ===== */
   .nav-login-btn {
-    background: none;
-    border: 1.5px solid var(--border);
+    background: var(--paw);
+    border: none;
     border-radius: 8px;
-    padding: 7px 14px;
+    padding: 8px 18px;
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--text);
+    color: #fff;
     cursor: pointer;
     white-space: nowrap;
     font-family: inherit;
-    transition: background 0.15s;
+    transition: background 0.15s, transform 0.15s;
   }
-  .nav-login-btn:hover { background: var(--surface); }
+  .nav-login-btn:hover { background: var(--paw-deep); transform: translateY(-1px); }
   .nav-user-chip {
     display: flex;
     align-items: center;
