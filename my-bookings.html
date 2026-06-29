@@ -1775,7 +1775,8 @@ async function loadProfile(user) {
   const name = (p&&p.full_name) || meta.full_name || meta.name || user.email;
   const plan = (p&&p.plan) || 'starter';
   _currentPlan = plan;
-  const since = p&&p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  const sinceRaw = (p&&p.created_at) || user.created_at;
+  const since = sinceRaw ? new Date(sinceRaw).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
   document.getElementById('sbAvatar').textContent  = initials(name);
   document.getElementById('sbName').textContent    = name.split(' ')[0];
   document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||'Starter Plan';
@@ -1788,7 +1789,7 @@ async function loadProfile(user) {
   if (el('cbdName'))  el('cbdName').textContent  = name;
   if (el('cbdEmail')) el('cbdEmail').textContent  = user.email;
   if (el('cbdPlan'))  el('cbdPlan').textContent   = planLabels[plan] || '⭐ Starter';
-  if (el('cbdSince') && since !== '—') el('cbdSince').textContent = 'Member since ' + since;
+  if (el('cbdSince')) el('cbdSince').textContent = since !== '—' ? 'Member since ' + since : '';
   const firstName = name.split(' ')[0];
   const hour = new Date().getHours();
   const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
