@@ -1788,6 +1788,21 @@ const PROFILE_FIELDS = [
   { key: 'petName', label: 'Pet Name' },
 ];
 
+function recomputeRingFromFields() {
+  const val = id => (document.getElementById(id)||{}).value || '';
+  const checks = {
+    name:    val('pfName').trim() !== '' && !val('pfName').includes('@'),
+    phone:   val('pfPhone').trim() !== '',
+    address: val('pfAddress').trim() !== '',
+    petName: val('pfPetName').trim() !== '',
+  };
+  const pct = Math.round(Object.values(checks).filter(Boolean).length / PROFILE_FIELDS.length * 100);
+  updateProfileRing(pct);
+  // also refresh prompt tags if prompt is visible
+  const prompt = document.getElementById('profilePrompt');
+  if (prompt && prompt.classList.contains('show')) showProfilePrompt(checks);
+}
+
 function checkProfileCompletion(p, userId) {
   const health = JSON.parse(localStorage.getItem('urbanpaws_health_' + userId) || '{}');
   const checks = {
@@ -1796,13 +1811,19 @@ function checkProfileCompletion(p, userId) {
     address: !!(p && p.address && p.address.trim()),
     petName: !!(health.pet_name && health.pet_name.trim()),
   };
-  const done  = Object.values(checks).filter(Boolean).length;
-  const total = PROFILE_FIELDS.length;
-  const pct   = Math.round((done / total) * 100);
+  const pct = Math.round(Object.values(checks).filter(Boolean).length / PROFILE_FIELDS.length * 100);
   updateProfileRing(pct);
   if (pct < 100 && !sessionStorage.getItem('ppDismissed')) {
     setTimeout(() => showProfilePrompt(checks), 1800);
   }
+  // Attach live listeners once fields are populated
+  ['pfName','pfPhone','pfAddress','pfPetName'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el._ringListenerAttached) {
+      el.addEventListener('input', recomputeRingFromFields);
+      el._ringListenerAttached = true;
+    }
+  });
 }
 
 function updateProfileRing(pct) {
@@ -2071,6 +2092,7 @@ function saveHealthInfo() {
   };
   localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
   showToast('✅ Pet info saved!', 'success');
+  recomputeRingFromFields();
   pfCancelHealthEdit();
 }
 
@@ -2101,6 +2123,7 @@ async function saveProfile() {
   document.getElementById('welcomeMsg').textContent   = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
   const ok = document.getElementById('saveOk'); ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),3000);
   showToast('✅ Profile saved!', 'success');
+  recomputeRingFromFields();
   pfCancelEdit();
 }
 
