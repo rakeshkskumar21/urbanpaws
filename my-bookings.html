@@ -53,52 +53,53 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   z-index: 100; transition: transform .25s ease;
 }
 .sb-brand {
-  padding: 1.3rem 1.25rem 1.1rem;
+  padding: 1.1rem 1.2rem .9rem;
   border-bottom: 1px solid var(--border2);
-  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem;
-  color: var(--paw); display: flex; align-items: center; gap: 7px;
+  display: flex; align-items: center; gap: 8px;
 }
+.sb-brand-logo { font-size: 1.3rem; line-height: 1; }
+.sb-brand-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: .95rem; color: var(--night); }
+.sb-brand-sub { font-size: .68rem; color: var(--muted); margin-top: 1px; }
+
 .sb-user {
-  margin: .75rem .75rem .25rem;
-  padding: .75rem 1rem;
-  background: var(--paw-soft);
-  border-radius: 12px;
   display: flex; align-items: center; gap: 10px;
+  padding: .8rem 1.2rem;
+  border-bottom: 1px solid var(--border2);
 }
 .sb-avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: var(--paw);
-  color: #fff; font-size: .75rem; font-weight: 700; font-family: 'Syne', sans-serif;
+  width: 32px; height: 32px; border-radius: 50%; background: var(--paw);
+  color: #fff; font-size: .72rem; font-weight: 700; font-family: 'Syne', sans-serif;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.sb-user-name { font-size: .82rem; font-weight: 700; color: var(--night); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sb-user-plan { font-size: .68rem; color: var(--muted); margin-top: 1px; }
+.sb-user-name { font-size: .8rem; font-weight: 700; color: var(--night); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user-plan { font-size: .66rem; color: var(--muted); margin-top: 1px; }
 
-.sb-nav { flex: 1; padding: .5rem .75rem .5rem; overflow-y: auto; }
+.sb-nav { flex: 1; padding: .5rem .75rem; overflow-y: auto; }
 .sb-nav a {
-  display: flex; align-items: center; gap: 9px;
-  padding: 9px 12px; font-size: .83rem; font-weight: 600;
-  color: var(--muted); text-decoration: none;
-  transition: all .15s; cursor: pointer;
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 13px; font-size: .855rem; font-weight: 500;
+  color: var(--night); text-decoration: none;
+  transition: background .12s, color .12s; cursor: pointer;
   border: none; background: none; width: 100%; font-family: inherit;
-  border-radius: 9px; margin-bottom: 2px;
+  border-radius: 9px; margin-bottom: 1px; line-height: 1.2;
 }
-.sb-nav a:hover { color: var(--night); background: var(--surface); }
-.sb-nav a.active { color: var(--paw); background: var(--paw-soft); font-weight: 700; }
-.sb-section {
-  font-size: .6rem; font-weight: 700; color: #bbb;
-  padding: .9rem .75rem .3rem; letter-spacing: .09em; text-transform: uppercase;
-}
-.sb-icon { font-size: .95rem; width: 18px; text-align: center; flex-shrink: 0; }
+.sb-nav a:hover { background: var(--surface); }
+.sb-nav a.active { color: var(--paw); background: var(--paw-faint); font-weight: 700; }
+.sb-nav a.active .sb-icon { color: var(--paw); }
+.sb-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #6b7280; }
+.sb-icon svg { width: 18px; height: 18px; }
+.sb-divider { border: none; border-top: 1px solid var(--border2); margin: .4rem 0; }
 
-.sb-footer { padding: .75rem; border-top: 1px solid var(--border2); }
+.sb-footer { padding: .65rem .75rem .85rem; border-top: 1px solid var(--border2); }
 .sb-logout {
-  display: flex; align-items: center; gap: 9px; width: 100%;
-  padding: 9px 12px; font-size: .83rem; font-weight: 600;
-  color: var(--muted); border: none; background: none;
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 10px 13px; font-size: .855rem; font-weight: 500;
+  color: #6b7280; border: none; background: none;
   cursor: pointer; font-family: inherit; transition: all .15s;
   border-radius: 9px;
 }
 .sb-logout:hover { background: #FEE2E2; color: #dc2626; }
+.sb-logout:hover .sb-icon { color: #dc2626; }
 
 /* MOBILE TOP BAR */
 .topbar {
@@ -524,31 +525,66 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 <div id="app">
 
   <aside class="sidebar" id="sidebar">
-    <div class="sb-brand">🐾 Urban Paws</div>
+    <div class="sb-brand">
+      <span class="sb-brand-logo">🐾</span>
+      <div>
+        <div class="sb-brand-text">Urban Paws</div>
+        <div class="sb-brand-sub">Pet Services, Bengaluru</div>
+      </div>
+    </div>
     <div class="sb-user">
       <div class="sb-avatar" id="sbAvatar">?</div>
-      <div>
+      <div style="min-width:0;">
         <div class="sb-user-name" id="sbName">Loading…</div>
         <div class="sb-user-plan" id="sbPlan">Starter Plan</div>
       </div>
     </div>
     <nav class="sb-nav">
-      <div class="sb-section">Overview</div>
-      <a onclick="showPage('dashboard')" id="nav-dashboard" class="active"><span class="sb-icon">🏠</span> Dashboard</a>
-      <div class="sb-section">Services</div>
-      <a onclick="showPage('bookings')" id="nav-bookings"><span class="sb-icon">📋</span> My Bookings</a>
-      <a onclick="showPage('book')" id="nav-book"><span class="sb-icon">➕</span> Book a Service</a>
-      <div class="sb-section">Account</div>
-      <a onclick="showPage('profile')" id="nav-profile"><span class="sb-icon">👤</span> My Profile</a>
-      <div class="sb-section">Explore</div>
-      <a onclick="showPage('services')" id="nav-services"><span class="sb-icon">🛎</span> Services</a>
-      <a onclick="showPage('food')" id="nav-food"><span class="sb-icon">🍲</span> Pet Food</a>
-      <a onclick="showPage('shop')" id="nav-shop"><span class="sb-icon">🛒</span> Shop</a>
-      <a onclick="showPage('pricing')" id="nav-pricing"><span class="sb-icon">💳</span> Pricing</a>
-      <a onclick="showPage('faq')" id="nav-faq"><span class="sb-icon">❓</span> FAQs</a>
+      <a onclick="showPage('profile')" id="nav-profile">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg></span>
+        My Profile
+      </a>
+      <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg></span>
+        Dashboard
+      </a>
+      <a onclick="showPage('book')" id="nav-book">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+        Book a Service
+      </a>
+      <a onclick="showPage('bookings')" id="nav-bookings">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg></span>
+        My Bookings
+      </a>
+
+      <hr class="sb-divider">
+
+      <a onclick="showPage('services')" id="nav-services">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg></span>
+        Services
+      </a>
+      <a onclick="showPage('food')" id="nav-food">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 9.75a3 3 0 11-6 0 3 3 0 016 0zm-9 9h12a2 2 0 002-2v-1H4v1a2 2 0 002 2z"/></svg></span>
+        Pet Food
+      </a>
+      <a onclick="showPage('shop')" id="nav-shop">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/></svg></span>
+        Shop
+      </a>
+      <a onclick="showPage('pricing')" id="nav-pricing">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"/></svg></span>
+        Pricing
+      </a>
+      <a onclick="showPage('faq')" id="nav-faq">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg></span>
+        FAQs
+      </a>
     </nav>
     <div class="sb-footer">
-      <button class="sb-logout" onclick="signOut()"><span class="sb-icon">🚪</span> Log out</button>
+      <button class="sb-logout" onclick="signOut()">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg></span>
+        Log out
+      </button>
     </div>
   </aside>
 
