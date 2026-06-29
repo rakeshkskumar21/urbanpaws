@@ -105,9 +105,10 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .topbar {
   display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
   background: #fff; border-bottom: 1px solid var(--border);
-  align-items: center; justify-content: space-between; padding: 0 1rem; z-index: 90;
+  align-items: center; justify-content: center; padding: 0 1rem; z-index: 90;
 }
-.tb-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--paw); }
+.tb-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--paw); flex: 1; }
+.tb-hamburger { flex-shrink: 0; margin-right: .75rem; }
 .tb-hamburger {
   width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px;
   background: none; cursor: pointer; display: flex; align-items: center;
@@ -178,24 +179,18 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .filter-select:focus, .filter-input:focus { border-color: var(--paw); }
 .filter-input { min-width: 180px; }
 
-/* BOOKING CARDS */
-.bookings-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 1rem; }
-.booking-card {
-  background: var(--white); border-radius: 16px; border: 1px solid var(--border2);
-  padding: 1.2rem; display: flex; flex-direction: column; gap: .75rem;
-  transition: box-shadow .2s, transform .15s;
-}
-.booking-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.07); transform: translateY(-1px); }
-.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
-.card-svc { display: flex; align-items: center; gap: 10px; }
-.card-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--paw-soft); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
-.card-svc-name { font-weight: 700; font-size: .92rem; }
-.card-booking-id { font-size: .72rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
-.card-divider { border: none; border-top: 1px solid var(--border2); }
-.card-details { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .75rem; }
-.card-detail-label { font-size: .68rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
-.card-detail-val { font-size: .82rem; font-weight: 600; }
-.card-detail.full { grid-column: 1/-1; }
+/* BOOKING LIST */
+.bk-list { display: flex; flex-direction: column; border: 1px solid var(--border2); border-radius: 14px; overflow: hidden; background: var(--white); }
+.bk-list-row { display: flex; align-items: center; gap: 12px; padding: .85rem 1rem; border-bottom: 1px solid var(--border2); transition: background .12s; }
+.bk-list-row:last-child { border-bottom: none; }
+.bk-list-row:hover { background: var(--paw-faint); }
+.bk-list-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--paw-soft); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.bk-list-body { flex: 1; min-width: 0; }
+.bk-list-svc { font-size: .88rem; font-weight: 700; }
+.bk-list-id { font-size: .72rem; color: var(--muted); font-weight: 500; }
+.bk-list-meta { font-size: .75rem; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bk-list-right { text-align: right; flex-shrink: 0; }
+.bk-list-pay { font-size: .72rem; color: var(--muted); margin-top: 4px; }
 
 /* PROFILE */
 .profile-shell { display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem; align-items: start; }
@@ -386,6 +381,9 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   .page { padding: 1.25rem 1rem; }
   .plan-options { grid-template-columns: 1fr; }
   .pf-grid { grid-template-columns: 1fr; }
+  .profile-shell { gap: .75rem; }
+  .profile-id-card { padding: 1.25rem; }
+  .profile-form-card { padding: 1.25rem; }
 }
 @media (max-width: 540px) {
   .stats-grid { grid-template-columns: 1fr 1fr; gap: .75rem; }
@@ -398,9 +396,12 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .book-form-wrap { max-width: 720px; }
 .bk-form-card { background: var(--white); border: 1px solid var(--border2); border-radius: 20px; padding: 2rem; }
 .bk-step-label { display: block; font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: .6rem; }
-.bk-service-tabs { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.bk-tab { padding: 8px 20px; border-radius: 100px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; font-family: inherit; }
-.bk-tab.active, .bk-tab:hover { background: var(--paw); border-color: var(--paw); color: #fff; }
+.bk-service-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 1.5rem; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+.bk-tab { padding: 12px 16px; border: none; background: transparent; color: var(--muted); font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .18s; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; border-right: 1.5px solid var(--border); }
+.bk-tab:last-child { border-right: none; }
+.bk-tab .bk-tab-icon { font-size: 1.2rem; line-height: 1; }
+.bk-tab.active { background: var(--paw); color: #fff; }
+.bk-tab:not(.active):hover { background: var(--paw-soft); color: var(--paw2); }
 .bk-food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; margin-bottom: 1.25rem; }
 .bk-food-item { border: 2px solid var(--border); border-radius: 12px; padding: .85rem; cursor: pointer; transition: all .15s; background: var(--white); text-align: center; }
 .bk-food-item:hover { border-color: var(--paw); }
@@ -589,8 +590,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   </aside>
 
   <div class="topbar">
-    <div class="tb-logo">🐾 Urban Paws</div>
     <button class="tb-hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="tb-logo">🐾 Urban Paws</div>
   </div>
   <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
 
@@ -922,13 +923,13 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="page-title">Every service your pet needs</div>
       <div class="page-sub">From daily walks to emergency care — one app, one partner, all covered.</div>
       <div class="services-grid">
-        <div class="service-card">
+        <div class="service-card" onclick="bookWith('walk')" style="cursor:pointer;">
           <div class="service-icon">🦮</div>
           <h3>Pet Walking</h3>
           <p>Professional pet executors take your dog for a 15–45 min walk. Live photos, paw cleaning on return & route recorded.</p>
           <div class="service-price">From ₹89/walk <span class="service-tag">Most Popular</span></div>
         </div>
-        <div class="service-card">
+        <div class="service-card" onclick="bookWith('food')" style="cursor:pointer;">
           <div class="service-icon">🍲</div>
           <h3>Fresh Pet Food</h3>
           <p>Freshly cooked meals delivered in 45–55 min. Veg & non-veg options from a cloud kitchen with vet-approved ingredients.</p>
@@ -982,7 +983,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="page-title">Fresh food, zero preservatives</div>
       <div class="page-sub">Cooked fresh daily in our cloud kitchen. Vet-approved ingredients. Veg and non-veg options.</div>
       <div class="menu-grid">
-        <div class="menu-card">
+        <div class="menu-card" onclick="bookWith('food','Rice \x26 Curd')" style="cursor:pointer;">
           <div class="menu-card-img">🍚🥛</div>
           <div class="menu-card-body">
             <h4>Rice & Curd</h4>
@@ -990,7 +991,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <div class="menu-price-row"><span class="menu-price">₹30/bowl</span><span class="menu-badge badge-veg">🌿 Veg</span></div>
           </div>
         </div>
-        <div class="menu-card">
+        <div class="menu-card" onclick="bookWith('food','Rice \x26 Chicken')" style="cursor:pointer;">
           <div class="menu-card-img">🍚🍗</div>
           <div class="menu-card-body">
             <h4>Rice & Chicken</h4>
@@ -998,7 +999,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <div class="menu-price-row"><span class="menu-price">₹80/bowl</span><span class="menu-badge badge-nonveg">🥩 Non-veg</span></div>
           </div>
         </div>
-        <div class="menu-card">
+        <div class="menu-card" onclick="bookWith('food','Rice \x26 Raw Egg')" style="cursor:pointer;">
           <div class="menu-card-img">🍚🥚</div>
           <div class="menu-card-body">
             <h4>Rice & Raw Egg</h4>
@@ -1006,7 +1007,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <div class="menu-price-row"><span class="menu-price">₹75/bowl</span><span class="menu-badge badge-nonveg">🥩 Non-veg</span></div>
           </div>
         </div>
-        <div class="menu-card">
+        <div class="menu-card" onclick="bookWith('food','Rice \x26 Milk')" style="cursor:pointer;">
           <div class="menu-card-img">🍚🥛</div>
           <div class="menu-card-body">
             <h4>Rice & Milk</h4>
@@ -1014,15 +1015,15 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <div class="menu-price-row"><span class="menu-price">₹30/bowl</span><span class="menu-badge badge-veg">🌿 Veg</span></div>
           </div>
         </div>
-        <div class="menu-card">
+        <div class="menu-card" onclick="bookWith('food','Rice, Carrots, Beans \x26 Potato')" style="cursor:pointer;">
           <div class="menu-card-img">🍗🥕🥔</div>
           <div class="menu-card-body">
             <h4>Rice, Carrots, Beans & Potato</h4>
             <p>Rice + carrots, beans & potato. Approx. 450g. High fibre.</p>
-            <div class="menu-price-row"><span class="menu-price">₹75/bowl</span><span class="menu-badge badge-nonveg">🥩 Non-veg</span></div>
+            <div class="menu-price-row"><span class="menu-price">₹75/bowl</span><span class="menu-badge badge-veg">🌿 Veg</span></div>
           </div>
         </div>
-        <div class="menu-card">
+        <div class="menu-card" onclick="bookWith('food','Rice \x26 Boiled Egg')" style="cursor:pointer;">
           <div class="menu-card-img">🍚🥚</div>
           <div class="menu-card-body">
             <h4>Rice & Boiled Egg</h4>
@@ -1049,22 +1050,22 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="page-title">Everything your pet needs, delivered</div>
       <div class="page-sub">Quality grooming products, accessories, and essentials — curated by our vet team and shipped same day.</div>
       <div class="shop-grid">
-        <div class="shop-item">
+        <div class="shop-item" onclick="showPage('book')" style="cursor:pointer;">
           <span class="shop-item-icon">🥣</span>
           <h4>Food & Water Bowl</h4>
           <p>Stainless steel, anti-tip</p>
         </div>
-        <div class="shop-item">
+        <div class="shop-item" onclick="showPage('book')" style="cursor:pointer;">
           <span class="shop-item-icon">🦮</span>
           <h4>Retractable Leash</h4>
           <p>5m, reflective, padded handle</p>
         </div>
-        <div class="shop-item">
+        <div class="shop-item" onclick="showPage('book')" style="cursor:pointer;">
           <span class="shop-item-icon">🐾</span>
           <h4>Paw Balm</h4>
           <p>Soothes cracked paws</p>
         </div>
-        <div class="shop-item">
+        <div class="shop-item" onclick="showPage('book')" style="cursor:pointer;">
           <span class="shop-item-icon">🏷️</span>
           <h4>ID Tag</h4>
           <p>Laser engraved, custom</p>
@@ -1213,8 +1214,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="bk-form-card">
         <span class="bk-step-label">Step 1 — Select a service</span>
         <div class="bk-service-tabs" id="bkServiceTabs">
-          <button class="bk-tab active" onclick="bkSelectService(this)">🦮 Walk</button>
-          <button class="bk-tab" onclick="bkSelectService(this)">🍲 Food</button>
+          <button class="bk-tab active" onclick="bkSelectService(this)"><span class="bk-tab-icon">🦮</span> Walk</button>
+          <button class="bk-tab" onclick="bkSelectService(this)"><span class="bk-tab-icon">🍲</span> Food</button>
         </div>
 
         <div id="bkFoodGroup" style="display:none; margin-bottom:1.25rem;">
@@ -1421,7 +1422,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 const { createClient } = supabase;
 const db = createClient('https://uyawcevbvxlhfbovntxh.supabase.co', 'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5');
 
-let currentUser = null, allBookings = [], realtimeChannel = null;
+let currentUser = null, allBookings = [], realtimeChannel = null, _currentPlan = 'starter';
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
@@ -1460,21 +1461,15 @@ const BADGE_LBL = { pending:'⏳ Pending', confirmed:'✅ Confirmed', completed:
 function badgeHtml(st) { return `<span class="badge badge-${st||'pending'}">${BADGE_LBL[st]||st}</span>`; }
 
 function renderCard(b) {
-  return `<div class="booking-card" id="card-${b.id}">
-    <div class="card-top">
-      <div class="card-svc">
-        <div class="card-icon">${svcIcon(b.service)}</div>
-        <div><div class="card-svc-name">${b.service||'—'}</div><div class="card-booking-id">#${b.booking_id||b.id}</div></div>
-      </div>
-      <div id="badge-${b.id}">${badgeHtml(b.status)}</div>
+  return `<div class="bk-list-row" id="card-${b.id}">
+    <div class="bk-list-icon">${svcIcon(b.service)}</div>
+    <div class="bk-list-body">
+      <div class="bk-list-svc">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
+      <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
     </div>
-    <hr class="card-divider">
-    <div class="card-details">
-      <div><div class="card-detail-label">Pet</div><div class="card-detail-val">${b.pet_name||'—'} <span style="color:var(--muted);font-weight:400">(${b.breed||'—'})</span></div></div>
-      <div><div class="card-detail-label">Date</div><div class="card-detail-val">📅 ${b.booking_date||'—'}</div></div>
-      <div><div class="card-detail-label">Time Slot</div><div class="card-detail-val">⏰ ${b.time_slot||'—'}</div></div>
-      <div><div class="card-detail-label">Payment</div><div class="card-detail-val">💳 ${b.payment||'—'}</div></div>
-      <div class="card-detail full"><div class="card-detail-label">Address</div><div class="card-detail-val">📍 ${b.address||'—'}</div></div>
+    <div class="bk-list-right">
+      <div id="badge-${b.id}">${badgeHtml(b.status)}</div>
+      <div class="bk-list-pay">💳 ${b.payment||'—'}</div>
     </div>
   </div>`;
 }
@@ -1490,7 +1485,7 @@ function renderRecent(bk) {
   const recent = bk.slice(0,4);
   const el = document.getElementById('recentList');
   if (!recent.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>No bookings yet</h3><p>Ready to book your first pet service?</p><a href="index.html?book=1" style="display:inline-block;background:var(--paw);color:#fff;border-radius:100px;padding:10px 24px;font-size:.9rem;font-weight:700;text-decoration:none">Book a Service →</a></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>No bookings yet</h3><p>Ready to book your first pet service?</p><button onclick="showPage('book')" style="display:inline-block;background:var(--paw);color:#fff;border-radius:100px;padding:10px 24px;font-size:.9rem;font-weight:700;border:none;cursor:pointer;font-family:inherit">Book a Service →</button></div>`;
     return;
   }
   el.innerHTML = '<div class="recent-bkgs">' + recent.map(b => `
@@ -1522,7 +1517,7 @@ function applyBkFilter() {
     list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No bookings match</h3><p>Try clearing your filters.</p></div>`;
     return;
   }
-  list.innerHTML = '<div class="bookings-grid">' + filtered.map(renderCard).join('') + '</div>';
+  list.innerHTML = '<div class="bk-list">' + filtered.map(renderCard).join('') + '</div>';
 }
 
 async function loadBookings(email) {
@@ -1566,6 +1561,7 @@ async function loadProfile(user) {
   const meta = user.user_metadata || {};
   const name = (p&&p.full_name) || meta.full_name || meta.name || user.email;
   const plan = (p&&p.plan) || 'starter';
+  _currentPlan = plan;
   const since = p&&p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
   document.getElementById('sbAvatar').textContent  = initials(name);
   document.getElementById('sbName').textContent    = name.split(' ')[0];
@@ -1722,13 +1718,29 @@ function renderPricingCTAs(currentPlan) {
       btn.style.display = '';
       if (r > rank) {
         btn.textContent = 'Upgrade →'; btn.className = 'ex-btn ex-btn-primary'; btn.disabled = false;
-        btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+        btn.onclick = () => { obInit(key); showPage('onboarding'); };
       } else {
         btn.textContent = 'Downgrade'; btn.className = 'ex-btn ex-btn-downgrade'; btn.disabled = false;
-        btn.onclick = key === 'starter' ? () => showPage('book') : () => { obInit(key); showPage('onboarding'); };
+        btn.onclick = () => activatePlan(key);
       }
     }
   });
+}
+
+async function activatePlan(targetPlan) {
+  if (!currentUser) return;
+  const meta = PLAN_META[targetPlan] || PLAN_META.starter;
+  if (!confirm('Downgrade to ' + meta.label + '? Your plan will be updated immediately.')) return;
+  const { error } = await db.from('profiles').update({ plan: targetPlan }).eq('id', currentUser.id);
+  if (error) { showToast('❌ Could not update plan. Please try again.'); return; }
+  _currentPlan = targetPlan;
+  setPlanChip(targetPlan);
+  document.getElementById('sbPlan').textContent = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[targetPlan]||'Starter Plan';
+  const bkStrip = document.getElementById('bkPlanStrip');
+  if (bkStrip) bkStrip.style.display = targetPlan !== 'starter' ? '' : 'none';
+  if (targetPlan !== 'starter') document.getElementById('bkPlanName').textContent = meta.label;
+  renderPricingCTAs(targetPlan);
+  showToast('✅ Plan updated to ' + meta.label, 'success');
 }
 
 function loadHealthInfo() {
@@ -1921,6 +1933,24 @@ async function autoSelectDelivery(address) {
     statusEl.textContent = '✓ ~' + km.toFixed(1) + ' km away';
   } catch(e) {
     statusEl.textContent = '';
+  }
+}
+
+function bookWith(type, meal) {
+  showPage('book');
+  const tabs = document.querySelectorAll('#bkServiceTabs .bk-tab');
+  if (type === 'food') {
+    if (!tabs[1].classList.contains('active')) bkSelectService(tabs[1]);
+    if (meal) {
+      const items = document.querySelectorAll('.bk-food-item');
+      items.forEach(el => {
+        const onclickAttr = el.getAttribute('onclick') || '';
+        const match = onclickAttr.match(/bkSelectFood\(this,'([^']+)'\)/);
+        if (match && match[1] === meal) bkSelectFood(el, meal);
+      });
+    }
+  } else {
+    if (!tabs[0].classList.contains('active')) bkSelectService(tabs[0]);
   }
 }
 

@@ -304,6 +304,7 @@
               <th>Date/Time</th>
               <th>Service</th>
               <th>Pet</th>
+              <th>Account Email</th>
               <th>Owner</th>
               <th>Phone</th>
               <th>Address</th>
@@ -313,7 +314,7 @@
             </tr>
           </thead>
           <tbody id="bookingsBody">
-            <tr><td colspan="10" class="loading">Loading bookings…</td></tr>
+            <tr><td colspan="11" class="loading">Loading bookings…</td></tr>
           </tbody>
         </table>
       </div>
@@ -376,10 +377,11 @@
                 <th>Password</th>
                 <th>Joined</th>
                 <th>Bookings</th>
+                <th>Paid Via</th>
               </tr>
             </thead>
             <tbody id="usersBody">
-              <tr><td colspan="9" class="loading">Loading users…</td></tr>
+              <tr><td colspan="10" class="loading">Loading users…</td></tr>
             </tbody>
           </table>
         </div>
@@ -426,7 +428,7 @@
   // ── Load bookings ──
   async function loadBookings() {
     document.getElementById('bookingsBody').innerHTML =
-      '<tr><td colspan="10" class="loading">Loading…</td></tr>';
+      '<tr><td colspan="11" class="loading">Loading…</td></tr>';
 
     const { data, error } = await db
       .from('bookings')
@@ -436,7 +438,7 @@
 
     if (error) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="10" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
+        '<tr><td colspan="11" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
       return;
     }
 
@@ -494,7 +496,7 @@
   function renderTable(bookings) {
     if (!bookings.length) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="10" class="empty">No bookings found.</td></tr>';
+        '<tr><td colspan="11" class="empty">No bookings found.</td></tr>';
       return;
     }
 
@@ -508,7 +510,8 @@
         <td>${b.booking_date || '—'}<br><span style="color:var(--muted);font-size:0.78rem">${b.time_slot || ''}</span></td>
         <td>${b.service || '—'}</td>
         <td><strong>${b.pet_name || '—'}</strong><br><span style="color:var(--muted);font-size:0.78rem">${b.breed || ''} · ${b.pet_age || ''} · ${b.gender || ''}</span></td>
-        <td>${b.email || '—'}<br><span style="color:var(--muted);font-size:0.78rem">${b.phone || ''}</span></td>
+        <td style="font-size:0.82rem;font-weight:600">${b.email || '—'}</td>
+        <td><span style="color:var(--muted);font-size:0.78rem">${b.phone || '—'}</span></td>
         <td>${b.phone || '—'}</td>
         <td style="max-width:160px;word-break:break-word;font-size:0.78rem">${b.address || '—'}</td>
         <td>${flags || '<span style="color:#ccc">None</span>'}</td>
@@ -600,22 +603,29 @@
 
   async function loadUsers() {
     window._usersLoaded = true;
-    document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="loading">Loading users…</td></tr>';
+    document.getElementById('usersBody').innerHTML = '<tr><td colspan="10" class="loading">Loading users…</td></tr>';
     // Load profiles + booking counts in parallel
     const [profilesRes, bookingsRes] = await Promise.all([
       db.from('profiles').select('*').order('created_at', { ascending: false }),
-      db.from('bookings').select('email')
+      db.from('bookings').select('email, payment')
     ]);
     if (profilesRes.error) {
-      document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="empty">Error: ' + profilesRes.error.message + '</td></tr>';
+      document.getElementById('usersBody').innerHTML = '<tr><td colspan="10" class="empty">Error: ' + profilesRes.error.message + '</td></tr>';
       return;
     }
-    // Count bookings per email
+    // Count bookings and aggregate payment methods per email
     const bookingCount = {};
+    const paymentMap = {};
     (bookingsRes.data || []).forEach(b => {
-      if (b.email) bookingCount[b.email] = (bookingCount[b.email] || 0) + 1;
+      if (!b.email) return;
+      bookingCount[b.email] = (bookingCount[b.email] || 0) + 1;
+      if (b.payment) {
+        if (!paymentMap[b.email]) paymentMap[b.email] = {};
+        const pm = b.payment.split(' |')[0].trim();
+        paymentMap[b.email][pm] = (paymentMap[b.email][pm] || 0) + 1;
+      }
     });
-    allUsers = (profilesRes.data || []).map(u => ({ ...u, booking_count: bookingCount[u.email] || 0 }));
+    allUsers = (profilesRes.data || []).map(u => ({ ...u, booking_count: bookingCount[u.email] || 0, payment_summary: paymentMap[u.email] || null }));
     updateUserStats();
     applyUserFilters();
   }
@@ -646,7 +656,7 @@
 
   function renderUsersTable(users) {
     if (!users.length) {
-      document.getElementById('usersBody').innerHTML = '<tr><td colspan="9" class="empty">No users found.</td></tr>';
+      document.getElementById('usersBody').innerHTML = '<tr><td colspan="10" class="empty">No users found.</td></tr>';
       return;
     }
     const planLabel = { starter:'⭐ Starter', casual:'🐾 Casual', standard:'🌟 Standard Pro', carnival:'🎊 Carnival' };
@@ -654,6 +664,9 @@
     document.getElementById('usersBody').innerHTML = users.map((u, i) => {
       const plan  = (planLabel[u.plan] ? u.plan : null) || 'starter';
       const since = u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+      const paidSummary = u.payment_summary
+        ? Object.entries(u.payment_summary).map(([pm, n]) => `<span style="display:inline-block;padding:2px 8px;background:var(--paw-soft);border-radius:100px;font-size:0.72rem;font-weight:600;color:var(--paw2);margin:1px">${pm} ×${n}</span>`).join(' ')
+        : '<span style="color:#ccc;font-size:0.78rem">—</span>';
       return `<tr>
         <td style="color:var(--muted);font-size:0.78rem">${i+1}</td>
         <td><strong>${u.full_name || '—'}</strong></td>
@@ -664,6 +677,7 @@
         <td><span style="font-size:0.78rem;color:var(--muted)">🔒 Secured</span></td>
         <td style="font-size:0.78rem;white-space:nowrap">${since}</td>
         <td style="text-align:center"><strong>${u.booking_count}</strong></td>
+        <td style="min-width:120px">${paidSummary}</td>
       </tr>`;
     }).join('');
   }
