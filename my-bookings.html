@@ -1732,7 +1732,12 @@ function initApp(user) {
 function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }
 
 /* ── Book a Service page ── */
-let _bkWalkDur = '15', _bkWalkPaise = 8900, _bkSelectedFood = '';
+let _bkWalkDur = '15', _bkWalkPaise = 8900, _bkSelectedFood = '', _bkFoodPaise = 0;
+
+const FOOD_PRICES = {
+  'Rice & Curd': 3000, 'Rice & Chicken': 8000, 'Rice & Raw Egg': 7500,
+  'Rice & Milk': 3000, 'Chicken & Carrots': 7500, 'Rice & Boiled Egg': 4000
+};
 
 function bkSelectService(el) {
   document.querySelectorAll('.bk-tab').forEach(t => t.classList.remove('active'));
@@ -1747,6 +1752,7 @@ function bkSelectFood(el, name) {
   document.querySelectorAll('.bk-food-item').forEach(i => i.classList.remove('selected'));
   el.classList.add('selected');
   _bkSelectedFood = name;
+  _bkFoodPaise = FOOD_PRICES[name] || 3000;
 }
 
 function bkSelectDur(el, mins, paise) {
@@ -1826,7 +1832,7 @@ function bkSubmit() {
   const btn = document.getElementById('bkConfirmBtn');
   if (data.payment === 'Cash') { bkSave(data, btn); return; }
 
-  const amountPaise = isWalk ? _bkWalkPaise : 2800;
+  const amountPaise = isWalk ? _bkWalkPaise : _bkFoodPaise;
   btn.disabled = true; btn.textContent = '⏳ Opening payment…';
   const rzp = new Razorpay({
     key: 'rzp_live_T5XRSkWC2aoLPU',
