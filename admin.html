@@ -541,9 +541,11 @@
       const dtObj = b.created_at ? new Date(b.created_at) : null;
       const dtDate = dtObj ? dtObj.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
       const dtTime = dtObj ? dtObj.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12: true }) : '';
-      const paidVia = b.payment ? b.payment.split(' |')[0].trim() : '—';
-      const amtCell = b.amount_paise
-        ? `<div style="font-size:.92rem;font-weight:800;color:var(--green)">₹${(b.amount_paise/100).toLocaleString('en-IN')}</div>`
+      const payParts = (b.payment || '').split(' | ');
+      const paidVia = payParts[0] || '—';
+      const amtRaw  = payParts.find(p => p.startsWith('₹'));
+      const amtCell = amtRaw
+        ? `<div style="font-size:.92rem;font-weight:800;color:var(--green)">${amtRaw}</div>`
         : '<span style="color:#aaa;font-size:.78rem">—</span>';
       return `<tr>
         <td><strong>${b.booking_id || '—'}</strong><br><span style="font-size:0.72rem;color:#aaa">${dtDate}</span><br><span style="font-size:0.72rem;color:var(--paw);font-weight:600">${dtTime}</span></td>

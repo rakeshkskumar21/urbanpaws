@@ -2558,7 +2558,7 @@ function checkoutPay() {
 
   if (_checkoutPayment === 'Cash') {
     closeCheckout();
-    bkSave({ ...data, amount_paise: _checkoutAmountPaise }, document.getElementById('bkConfirmBtn'));
+    bkSave({ ...data, payment: 'Cash | ₹' + (_checkoutAmountPaise/100) }, document.getElementById('bkConfirmBtn'));
     return;
   }
 
@@ -2573,7 +2573,7 @@ function checkoutPay() {
     theme: { color: '#6C6FD4' },
     handler: function(resp) {
       closeCheckout();
-      bkSave({ ...data, payment: _checkoutPayment + ' | Pay ID: ' + resp.razorpay_payment_id, amount_paise: _checkoutAmountPaise }, document.getElementById('bkConfirmBtn'));
+      bkSave({ ...data, payment: _checkoutPayment + ' | ₹' + (_checkoutAmountPaise/100) + ' | Pay ID: ' + resp.razorpay_payment_id }, document.getElementById('bkConfirmBtn'));
     },
     modal: {
       ondismiss: function() {
