@@ -164,10 +164,42 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .cb-search-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--muted); display: none; font-size: .78rem; }
 .cb-search-results { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #fff; border: 1px solid var(--border2); border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,.1); z-index: 200; max-height: 340px; overflow-y: auto; display: none; }
 .cb-search-results.open { display: block; }
-.cb-profile { display: flex; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border); background: var(--paw-faint); transition: border-color .15s; }
-.cb-profile:hover { border-color: var(--paw); }
-.cb-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--paw); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 800; flex-shrink: 0; }
-.cb-name { font-size: .8rem; font-weight: 700; color: var(--night); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* PROFILE RING */
+.cb-profile-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; cursor: pointer; padding: 4px 12px 4px 4px; border-radius: 100px; border: 1px solid var(--border); background: var(--paw-faint); transition: border-color .15s; }
+.cb-profile-wrap:hover { border-color: var(--paw); }
+.cb-ring-container { position: relative; width: 46px; height: 46px; flex-shrink: 0; }
+.cb-ring-svg { position: absolute; top: 0; left: 0; width: 46px; height: 46px; transform: rotate(-90deg); }
+.cb-ring-bg  { fill: none; stroke: #e5e7eb; stroke-width: 3.5; }
+.cb-ring-fill { fill: none; stroke: #22c55e; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 113.1; stroke-dashoffset: 113.1; transition: stroke-dashoffset .7s cubic-bezier(.4,0,.2,1), stroke .4s; }
+.cb-avatar { position: absolute; top: 5px; left: 5px; width: 36px; height: 36px; border-radius: 50%; background: var(--paw); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .82rem; font-weight: 800; }
+.cb-ring-pct { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-size: .58rem; font-weight: 800; color: #22c55e; white-space: nowrap; background: #fff; padding: 0 3px; border-radius: 4px; line-height: 1.4; }
+.cb-name { font-size: .8rem; font-weight: 700; color: var(--night); max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* PROFILE COMPLETION PROMPT */
+.profile-prompt {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 300;
+  background: #fff; border: 1px solid var(--border2); border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.14); padding: 1.25rem 1.4rem;
+  max-width: 320px; width: calc(100vw - 3rem);
+  transform: translateY(20px); opacity: 0;
+  transition: transform .3s ease, opacity .3s ease;
+  pointer-events: none;
+}
+.profile-prompt.show { transform: translateY(0); opacity: 1; pointer-events: all; }
+.pp-top { display: flex; align-items: flex-start; gap: 12px; }
+.pp-icon { width: 40px; height: 40px; border-radius: 12px; background: #fff3cd; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.pp-title { font-size: .9rem; font-weight: 800; color: var(--night); margin-bottom: 3px; }
+.pp-sub { font-size: .78rem; color: var(--muted); line-height: 1.4; }
+.pp-fields { display: flex; flex-wrap: wrap; gap: 6px; margin: .85rem 0 1rem; }
+.pp-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 100px; font-size: .72rem; font-weight: 700; }
+.pp-tag.missing { background: #fee2e2; color: #dc2626; }
+.pp-tag.done { background: #dcfce7; color: #16a34a; }
+.pp-actions { display: flex; gap: 8px; }
+.pp-btn-fill { flex: 1; padding: 9px; background: var(--paw); color: #fff; border: none; border-radius: 100px; font-size: .83rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+.pp-btn-fill:hover { background: var(--paw2); }
+.pp-btn-dismiss { padding: 9px 14px; background: none; border: 1.5px solid var(--border); border-radius: 100px; font-size: .82rem; font-weight: 600; color: var(--muted); cursor: pointer; font-family: inherit; white-space: nowrap; }
+.pp-btn-dismiss:hover { border-color: var(--muted); }
+.pp-close { position: absolute; top: 10px; right: 12px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; line-height: 1; }
 
 /* PAGE HEADER */
 .page-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: .3rem; }
@@ -663,8 +695,15 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <button class="cb-search-clear" id="cbSearchClear" onclick="cbSearchClear()">✕</button>
         <div class="cb-search-results tb-search-results" id="cbSearchResults"></div>
       </div>
-      <div class="cb-profile" onclick="showPage('profile')">
-        <div class="cb-avatar" id="cbAvatar">?</div>
+      <div class="cb-profile-wrap" onclick="showPage('profile')">
+        <div class="cb-ring-container">
+          <svg class="cb-ring-svg" viewBox="0 0 46 46">
+            <circle class="cb-ring-bg"   cx="23" cy="23" r="18"/>
+            <circle class="cb-ring-fill" id="cbRingFill" cx="23" cy="23" r="18"/>
+          </svg>
+          <div class="cb-avatar" id="cbAvatar">?</div>
+          <span class="cb-ring-pct" id="cbRingPct">0%</span>
+        </div>
         <span class="cb-name" id="cbName">Profile</span>
       </div>
     </div>
@@ -1719,6 +1758,7 @@ async function loadProfile(user) {
   }
   document.getElementById('pfAddress').value = (p&&p.address)||'';
   loadHealthInfo();
+  checkProfileCompletion(p, user.id);
   renderPricingCTAs(plan);
   const bkStrip = document.getElementById('bkPlanStrip');
   const bkPlanName = document.getElementById('bkPlanName');
@@ -1726,6 +1766,56 @@ async function loadProfile(user) {
     bkPlanName.textContent = {casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||plan;
     bkStrip.style.display = '';
   }
+}
+
+/* ── Profile completion ring & prompt ── */
+const PROFILE_FIELDS = [
+  { key: 'name',    label: 'Full Name' },
+  { key: 'phone',   label: 'Phone Number' },
+  { key: 'address', label: 'Address' },
+  { key: 'petName', label: 'Pet Name' },
+];
+
+function checkProfileCompletion(p, userId) {
+  const health = JSON.parse(localStorage.getItem('urbanpaws_health_' + userId) || '{}');
+  const checks = {
+    name:    !!(p && p.full_name && !p.full_name.includes('@')),
+    phone:   !!(p && p.phone && p.phone.trim()),
+    address: !!(p && p.address && p.address.trim()),
+    petName: !!(health.pet_name && health.pet_name.trim()),
+  };
+  const done  = Object.values(checks).filter(Boolean).length;
+  const total = PROFILE_FIELDS.length;
+  const pct   = Math.round((done / total) * 100);
+  updateProfileRing(pct);
+  if (pct < 100 && !sessionStorage.getItem('ppDismissed')) {
+    setTimeout(() => showProfilePrompt(checks), 1800);
+  }
+}
+
+function updateProfileRing(pct) {
+  const circumference = 2 * Math.PI * 18; // r=18
+  const offset = circumference * (1 - pct / 100);
+  const color  = pct === 100 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#ef4444';
+  const fill = document.getElementById('cbRingFill');
+  if (fill) { fill.style.strokeDashoffset = offset; fill.style.stroke = color; }
+  const pctEl = document.getElementById('cbRingPct');
+  if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.color = color; }
+}
+
+function showProfilePrompt(checks) {
+  const fields = document.getElementById('ppFields');
+  if (fields) {
+    fields.innerHTML = PROFILE_FIELDS.map(f =>
+      `<span class="pp-tag ${checks[f.key] ? 'done' : 'missing'}">${checks[f.key] ? '✓' : '✗'} ${f.label}</span>`
+    ).join('');
+  }
+  document.getElementById('profilePrompt').classList.add('show');
+}
+
+function dismissProfilePrompt() {
+  document.getElementById('profilePrompt').classList.remove('show');
+  sessionStorage.setItem('ppDismissed', '1');
 }
 
 function setPlanChip(plan) {
@@ -2537,6 +2627,23 @@ db.auth.onAuthStateChange((_event, session) => {
         <span class="co-pay-btn-amt" id="coPayBtnAmt">₹—</span>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- PROFILE COMPLETION PROMPT -->
+<div class="profile-prompt" id="profilePrompt">
+  <button class="pp-close" onclick="dismissProfilePrompt()">✕</button>
+  <div class="pp-top">
+    <div class="pp-icon">👤</div>
+    <div>
+      <div class="pp-title">Complete your profile</div>
+      <div class="pp-sub">Fill in the missing details so we can serve your pet better.</div>
+    </div>
+  </div>
+  <div class="pp-fields" id="ppFields"></div>
+  <div class="pp-actions">
+    <button class="pp-btn-fill" onclick="showPage('profile');dismissProfilePrompt()">Fill Details →</button>
+    <button class="pp-btn-dismiss" onclick="dismissProfilePrompt()">Later</button>
   </div>
 </div>
 </body>
