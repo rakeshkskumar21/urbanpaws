@@ -1126,11 +1126,12 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
 
           <div id="bkDeliveryGroup" style="margin-top:1.1rem;">
-            <span class="bk-step-label" style="margin-bottom:.5rem;display:block;">Delivery distance <span class="bk-req">*</span></span>
-            <div class="bk-dur-group">
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,3900,'Under 3 km')">🛵 Under 3 km &nbsp;<strong>+₹39</strong></label>
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,6900,'3–5 km')">🛵 3–5 km &nbsp;<strong>+₹69</strong></label>
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,9900,'5+ km')">🛵 5+ km &nbsp;<strong>+₹99</strong></label>
+            <span class="bk-step-label" style="margin-bottom:.5rem;display:block;">Delivery distance <span class="bk-req">*</span> <span id="bkDistStatus" style="font-size:.75rem;color:var(--muted);font-weight:400;"></span></span>
+            <div class="bk-dur-group" id="bkDeliveryOpts">
+              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,2900,'0–3 km')">🛵 0–3 km &nbsp;<strong>+₹29</strong></label>
+              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,4900,'3–5 km')">🛵 3–5 km &nbsp;<strong>+₹49</strong></label>
+              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,7900,'5–10 km')">🛵 5–10 km &nbsp;<strong>+₹79</strong></label>
+              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,9900,'10+ km')">🛵 10+ km &nbsp;<strong>+₹99</strong></label>
             </div>
             <span class="bk-err" id="bkerr-delivery">Please select your delivery distance.</span>
           </div>
@@ -1519,10 +1520,16 @@ async function loadProfile(user) {
   document.getElementById('pfEmail').value   = user.email;
   document.getElementById('pfPhone').value   = (p&&p.phone)||'';
   // Pre-fill booking form with known user details
-  const bkEmailEl = document.getElementById('bkEmail');
-  const bkPhoneEl = document.getElementById('bkPhone');
-  if (bkEmailEl && !bkEmailEl.value) bkEmailEl.value = user.email || '';
-  if (bkPhoneEl && !bkPhoneEl.value) bkPhoneEl.value = (p&&p.phone) || '';
+  const bkEmailEl   = document.getElementById('bkEmail');
+  const bkPhoneEl   = document.getElementById('bkPhone');
+  const bkAddressEl = document.getElementById('bkAddress');
+  if (bkEmailEl   && !bkEmailEl.value)   bkEmailEl.value   = user.email       || '';
+  if (bkPhoneEl   && !bkPhoneEl.value)   bkPhoneEl.value   = (p&&p.phone)     || '';
+  if (bkAddressEl && !bkAddressEl.value) {
+    const profileAddr = (p&&p.address) || '';
+    bkAddressEl.value = profileAddr;
+    if (profileAddr) autoSelectDelivery(profileAddr);
+  }
   document.getElementById('pfAddress').value = (p&&p.address)||'';
   loadHealthInfo();
   renderPricingCTAs(plan);
@@ -1760,6 +1767,45 @@ const FOOD_PRICES = {
   'Rice & Curd': 3000, 'Rice & Chicken': 8000, 'Rice & Raw Egg': 7500,
   'Rice & Milk': 3000, 'Chicken & Carrots': 7500, 'Rice & Boiled Egg': 4000
 };
+
+// Urban Paws kitchen coordinates — update if hub location changes
+const URBAN_PAWS_HUB = { lat: 12.9141, lng: 77.6101 }; // BTM Layout, Bengaluru
+
+const DELIVERY_TIERS = [
+  { km: 3,   paise: 2900, label: '0–3 km'  },
+  { km: 5,   paise: 4900, label: '3–5 km'  },
+  { km: 10,  paise: 7900, label: '5–10 km' },
+  { km: Infinity, paise: 9900, label: '10+ km' }
+];
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+async function autoSelectDelivery(address) {
+  if (!address) return;
+  const statusEl = document.getElementById('bkDistStatus');
+  statusEl.textContent = '📍 Detecting distance…';
+  try {
+    const q = encodeURIComponent(address + ', Bengaluru, India');
+    const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + q + '&format=json&limit=1', {
+      headers: { 'Accept-Language': 'en', 'User-Agent': 'UrbanPaws/1.0' }
+    });
+    const data = await res.json();
+    if (!data.length) { statusEl.textContent = ''; return; }
+    const km = haversineKm(URBAN_PAWS_HUB.lat, URBAN_PAWS_HUB.lng, parseFloat(data[0].lat), parseFloat(data[0].lon));
+    const tier = DELIVERY_TIERS.find(t => km <= t.km);
+    const opts = document.querySelectorAll('#bkDeliveryOpts .bk-dur-opt');
+    const idx = DELIVERY_TIERS.indexOf(tier);
+    if (opts[idx]) bkSelectDelivery(opts[idx], tier.paise, tier.label);
+    statusEl.textContent = '✓ ~' + km.toFixed(1) + ' km away';
+  } catch(e) {
+    statusEl.textContent = '';
+  }
+}
 
 function bkSelectService(el) {
   document.querySelectorAll('.bk-tab').forEach(t => t.classList.remove('active'));
