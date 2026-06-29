@@ -500,9 +500,11 @@
 
     document.getElementById('bookingsBody').innerHTML = bookings.map(b => {
       const flags = healthFlags(b);
-      const dt = b.created_at ? new Date(b.created_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+      const dtObj = b.created_at ? new Date(b.created_at) : null;
+      const dtDate = dtObj ? dtObj.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+      const dtTime = dtObj ? dtObj.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12: true }) : '';
       return `<tr>
-        <td><strong>${b.booking_id || '—'}</strong><br><span style="font-size:0.72rem;color:#aaa">${dt}</span></td>
+        <td><strong>${b.booking_id || '—'}</strong><br><span style="font-size:0.72rem;color:#aaa">${dtDate}</span><br><span style="font-size:0.72rem;color:var(--paw);font-weight:600">${dtTime}</span></td>
         <td>${b.booking_date || '—'}<br><span style="color:var(--muted);font-size:0.78rem">${b.time_slot || ''}</span></td>
         <td>${b.service || '—'}</td>
         <td><strong>${b.pet_name || '—'}</strong><br><span style="color:var(--muted);font-size:0.78rem">${b.breed || ''} · ${b.pet_age || ''} · ${b.gender || ''}</span></td>
