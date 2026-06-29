@@ -275,6 +275,22 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .toast.show { transform: translateX(-50%) translateY(0); }
 .toast.success { background: var(--green); }
 
+/* ── WELCOME BANNER ── */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--paw-soft) 0%, #fff7f2 100%);
+  border: 1.5px solid #f5c9b0;
+  border-radius: 16px; padding: 1.2rem 1.4rem;
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.5rem; position: relative;
+  animation: wbIn .4s ease;
+}
+@keyframes wbIn { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+.wb-emoji { font-size: 2rem; flex-shrink: 0; }
+.wb-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--night); margin-bottom: 2px; }
+.wb-sub { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+.wb-close { position: absolute; top: .7rem; right: .75rem; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--muted); line-height: 1; padding: 2px 6px; border-radius: 6px; transition: background .15s; }
+.wb-close:hover { background: rgba(0,0,0,.06); }
+
 /* ── EXPLORE PAGES ── */
 .ex-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--paw); margin-bottom: .4rem; }
 .ex-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.15; color: var(--night); margin-bottom: .5rem; }
@@ -477,6 +493,14 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
     <!-- DASHBOARD -->
     <div class="page" id="page-dashboard">
+      <div id="welcomeBanner" class="welcome-banner" style="display:none">
+        <div class="wb-emoji" id="wbEmoji">🎉</div>
+        <div>
+          <div class="wb-title" id="wbTitle">Welcome to Urban Paws!</div>
+          <div class="wb-sub" id="wbSub">Your account is all set. Book your first service and let your pet's best days begin.</div>
+        </div>
+        <button class="wb-close" onclick="dismissWelcome()">×</button>
+      </div>
       <div class="page-title" id="welcomeMsg">Welcome back 👋</div>
       <div class="page-sub"><span class="rt-dot"></span> Live updates enabled — status changes appear instantly</div>
 
@@ -1431,6 +1455,17 @@ function subscribeRealtime(email) {
 
 function initials(name) { return (name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
 
+function showWelcomeBanner(emoji, title, sub) {
+  const el = document.getElementById('welcomeBanner');
+  document.getElementById('wbEmoji').textContent = emoji;
+  document.getElementById('wbTitle').textContent = title;
+  document.getElementById('wbSub').textContent   = sub;
+  el.style.display = 'flex';
+}
+function dismissWelcome() {
+  document.getElementById('welcomeBanner').style.display = 'none';
+}
+
 async function loadProfile(user) {
   const { data: p } = await db.from('profiles').select('*').eq('id', user.id).single();
   const meta = user.user_metadata || {};
@@ -1440,7 +1475,17 @@ async function loadProfile(user) {
   document.getElementById('sbAvatar').textContent  = initials(name);
   document.getElementById('sbName').textContent    = name.split(' ')[0];
   document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||'Starter Plan';
-  document.getElementById('welcomeMsg').textContent = 'Welcome back, '+name.split(' ')[0]+' 👋';
+  const firstName = name.split(' ')[0];
+  const hour = new Date().getHours();
+  const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const isNewUser = sessionStorage.getItem('newUser');
+  if (isNewUser) {
+    sessionStorage.removeItem('newUser');
+    document.getElementById('welcomeMsg').textContent = 'Welcome, ' + firstName + ' 👋';
+    showWelcomeBanner('🎉', 'Welcome to Urban Paws, ' + firstName + '!', 'Your account is all set. Book your first service and let your pet\'s best days begin. 🐾');
+  } else {
+    document.getElementById('welcomeMsg').textContent = timeGreet + ', ' + firstName + ' 👋';
+  }
   document.getElementById('pfAvatarBig').textContent  = initials(name);
   document.getElementById('pfNameBig').textContent    = name;
   document.getElementById('pfEmailSmall').textContent = user.email;

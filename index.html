@@ -1339,6 +1339,28 @@
     font-family: inherit;
   }
   .auth-google:hover { background: var(--surface); }
+
+  /* ── SIGNUP LOADER ── */
+  #signupLoader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(255,255,255,0.97);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.25rem; text-align: center; padding: 2rem;
+  }
+  #signupLoader.show { display: flex; }
+  .sl-spinner {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 4px solid rgba(232,83,26,0.15);
+    border-top-color: var(--paw);
+    animation: sl-spin .85s linear infinite;
+  }
+  @keyframes sl-spin { to { transform: rotate(360deg); } }
+  .sl-paw { font-size: 2.5rem; animation: sl-bounce .9s ease-in-out infinite alternate; }
+  @keyframes sl-bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+  .sl-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--night); }
+  .sl-sub { font-size: .88rem; color: var(--muted); max-width: 280px; line-height: 1.6; }
+
   .pw-wrap { position: relative; }
   .pw-wrap input { padding-right: 40px; }
   .pw-toggle {
@@ -2133,6 +2155,14 @@
   </div>
 </div>
 
+<!--=========================== SIGNUP LOADER ===========================-->
+<div id="signupLoader">
+  <div class="sl-paw">🐾</div>
+  <div class="sl-spinner"></div>
+  <div class="sl-title" id="slTitle">Welcome to Urban Paws!</div>
+  <p class="sl-sub" id="slSub">Setting up your account — just a sec 🐶</p>
+</div>
+
 <!--=========================== TOAST ===========================-->
 <div class="toast" id="toast">
   <span class="toast-paw">🐾</span>
@@ -2611,6 +2641,8 @@
     });
   }
 
+  let _signupRedirecting = false;
+
   function signUp() {
     const name = document.getElementById('suName').value.trim();
     const email = document.getElementById('suEmail').value.trim();
@@ -2630,9 +2662,16 @@
           { onConflict: 'id' }
         );
       }
-      errEl.style.color = '#16a34a';
-      errEl.textContent = '✅ Account created! You can now log in.';
-      errEl.classList.add('visible');
+      const firstName = name.split(' ')[0];
+      document.getElementById('slTitle').textContent = 'Welcome, ' + firstName + '! 🐾';
+      document.getElementById('slSub').textContent = 'Your account is ready — taking you to your dashboard…';
+      document.getElementById('signupLoader').classList.add('show');
+      _signupRedirecting = true;
+      sessionStorage.setItem('newUser', '1');
+      setTimeout(() => {
+        _signupRedirecting = false;
+        window.location.replace('my-bookings.html');
+      }, 2000);
     });
   }
 
@@ -2701,6 +2740,7 @@
 
   // Listen for login/logout changes — redirect logged-in users to the app
   db.auth.onAuthStateChange((_event, session) => {
+    if (_signupRedirecting) return; // loader is showing; setTimeout will redirect
     const user = session ? session.user : null;
     if (user) {
       const planIntent = sessionStorage.getItem('postLoginPlan');
