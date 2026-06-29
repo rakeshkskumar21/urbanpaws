@@ -599,30 +599,50 @@
     overflow-y: auto;
   }
 
-  /* BURGER MENU */
+  /* BURGER MENU (sidebar style) */
+  .burger-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 97;
+  }
+  .burger-overlay.open { display: block; }
   .burger-menu {
-    display: none;
-    position: fixed; top: 64px; left: 0; right: 0; z-index: 98;
-    background: rgba(252,225,198,0.98);
-    backdrop-filter: blur(12px);
-    border-bottom: 2px solid var(--border);
-    padding-bottom: 1rem;
-    transform: translateY(-10px); opacity: 0;
-    transition: transform 0.25s ease, opacity 0.25s ease;
-    pointer-events: none;
+    display: block; visibility: hidden;
+    position: fixed; top: 0; left: 0; bottom: 0; width: 260px; z-index: 98;
+    background: #fff; border-right: 1px solid #e5e7eb;
+    box-shadow: 4px 0 24px rgba(0,0,0,.08);
+    transform: translateX(-100%);
+    transition: transform 0.24s cubic-bezier(.4,0,.2,1), visibility 0s linear .24s;
+    display: flex; flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
   }
   .burger-menu.open {
-    display: block;
-    transform: translateY(0); opacity: 1;
-    pointer-events: all;
+    transform: translateX(0); visibility: visible;
+    transition: transform 0.24s cubic-bezier(.4,0,.2,1), visibility 0s;
   }
-  .burger-menu ul { list-style: none; padding: 0.5rem 0; }
-  .burger-menu ul li a {
-    display: block; padding: 13px 1.5rem;
-    font-size: 1rem; font-weight: 500; color: var(--night);
-    text-decoration: none; transition: background 0.15s, color 0.15s;
+  .burger-brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 1.1rem 1.25rem 1rem; border-bottom: 1px solid #f0f0f0;
+    font-family: 'Metropolis', sans-serif; font-weight: 800; font-size: .95rem; color: var(--night);
   }
-  .burger-menu ul li a:hover { background: rgba(0,0,0,0.05); color: var(--paw); }
+  .burger-brand span { font-size: 1.3rem; }
+  .burger-close { margin-left: auto; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.2rem; line-height: 1; padding: 4px; }
+  .burger-menu ul { list-style: none; padding: .5rem 0; flex: 1; }
+  .burger-menu ul li a, .burger-menu ul li button {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 1.25rem; font-size: .88rem; font-weight: 600; color: var(--night);
+    text-decoration: none; transition: background .12s, color .12s;
+    background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;
+  }
+  .burger-menu ul li a:hover, .burger-menu ul li button:hover { background: #f5f5ff; color: var(--paw); }
+  .burger-menu ul li a .bm-icon, .burger-menu ul li button .bm-icon { width: 22px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+  .burger-divider { border: none; border-top: 1px solid #f0f0f0; margin: .35rem .5rem; }
+  .burger-book-btn {
+    margin: .75rem 1.25rem 1.25rem;
+    display: block; text-align: center; background: var(--paw); color: #fff;
+    border-radius: 100px; padding: 11px; font-size: .9rem; font-weight: 700;
+    text-decoration: none; font-family: inherit;
+  }
+  .burger-book-btn:hover { background: var(--paw-deep, #5254B8); }
 
   /* SEARCH */
   .nav-search {
@@ -1065,6 +1085,8 @@
     .nav-search { display: none; }
     .nav-cta { display: none; }
     .mob-controls { display: flex; }
+    .logo svg { width: 26px; height: 26px; }
+    .logo-mark .logo-urban, .logo-mark .logo-paws { font-size: 0.5rem; letter-spacing: 0.18em; }
     .hero { grid-template-columns: 1fr; min-height: auto; }
     .hero-content { padding: 2.5rem 2rem 0; text-align: center; }
     .hero-services-card { padding: 2rem; }
@@ -1108,7 +1130,6 @@
     }
     .service-tabs { gap: 0.5rem; }
     .service-tab { font-size: 0.78rem; padding: 6px 10px; }
-    .burger-menu { top: 64px; }
   }
 
   /* ===== AUTH NAV ===== */
@@ -1449,20 +1470,28 @@
   <div class="search-dropdown" id="mobSearchDropdown"></div>
 </div>
 
-<!-- Burger menu drawer -->
+<!-- Burger overlay -->
+<div class="burger-overlay" id="burgerOverlay" onclick="closeBurger()"></div>
+
+<!-- Burger menu drawer (sidebar style) -->
 <div class="burger-menu" id="burgerMenu">
+  <div class="burger-brand">
+    <span>🐾</span> Urban Paws
+    <button class="burger-close" onclick="closeBurger()" aria-label="Close">✕</button>
+  </div>
   <ul>
-    <li><a href="#services" onclick="closeBurger()">🛎 Services</a></li>
-    <li><a href="#food" onclick="closeBurger()">🍲 Pet Food</a></li>
-    <li><a href="#shop" onclick="closeBurger()">🛒 Shop</a></li>
-    <li><a href="javascript:void(0)" onclick="closeBurger();openBooking()">📅 Book</a></li>
-    <li><a href="#pricing" onclick="closeBurger()">💳 Pricing</a></li>
-    <li><a href="#faq" onclick="closeBurger()">❓ FAQs</a></li>
-    <li id="burgerLoginLi"><a href="#" onclick="event.preventDefault(); closeBurger(); openAuthModal()">👤 Login / Sign Up</a></li>
-    <li id="burgerMyBookingsLi" style="display:none"><a href="my-bookings.html" onclick="closeBurger()">📋 My Bookings</a></li>
-    <li id="burgerLogoutLi" style="display:none"><a href="#" onclick="event.preventDefault(); closeBurger(); signOut()">🚪 Logout</a></li>
+    <li><a href="#services" onclick="closeBurger()"><span class="bm-icon">🛎</span> Services</a></li>
+    <li><a href="#food" onclick="closeBurger()"><span class="bm-icon">🍲</span> Pet Food</a></li>
+    <li><a href="#shop" onclick="closeBurger()"><span class="bm-icon">🛒</span> Shop</a></li>
+    <hr class="burger-divider">
+    <li><a href="#pricing" onclick="closeBurger()"><span class="bm-icon">💳</span> Pricing & Plans</a></li>
+    <li><a href="#faq" onclick="closeBurger()"><span class="bm-icon">❓</span> FAQs</a></li>
+    <hr class="burger-divider">
+    <li id="burgerLoginLi"><a href="#" onclick="event.preventDefault(); closeBurger(); openAuthModal()"><span class="bm-icon">👤</span> Login / Sign Up</a></li>
+    <li id="burgerMyBookingsLi" style="display:none"><a href="my-bookings.html" onclick="closeBurger()"><span class="bm-icon">📋</span> My Bookings</a></li>
+    <li id="burgerLogoutLi" style="display:none"><a href="#" onclick="event.preventDefault(); closeBurger(); signOut()"><span class="bm-icon">🚪</span> Sign Out</a></li>
   </ul>
-  <a href="javascript:void(0)" class="btn-primary" style="margin:1rem 1.5rem 0; display:block; text-align:center;" onclick="closeBurger();openBooking()">Book a Service →</a>
+  <a href="#" class="burger-book-btn" onclick="event.preventDefault();closeBurger();openBooking()">📅 Book a Service →</a>
 </div>
 
 <!--===========================  EMERGENCY BANNER 
@@ -1484,7 +1513,7 @@
 <section class="hero" id="home">
   <div class="hero-content">
     <div class="hero-eyebrow">
-      🌆 Made for metro pet parents
+      🐕 Made for metro pet parents
     </div>
     <h1>Pet <em>Walking</em> &  <br>Pet <em>Food Delivery</em> </h1>
 
@@ -2460,12 +2489,15 @@
   // ====== Burger menu ======
   function toggleBurger() {
     const menu = document.getElementById('burgerMenu');
-    menu.classList.toggle('open');
+    const overlay = document.getElementById('burgerOverlay');
+    const isOpen = menu.classList.toggle('open');
+    overlay.classList.toggle('open', isOpen);
     // Close mobile search if open
     document.getElementById('mobSearchBar').classList.remove('open');
   }
   function closeBurger() {
     document.getElementById('burgerMenu').classList.remove('open');
+    document.getElementById('burgerOverlay').classList.remove('open');
   }
 
   function toggleMobSearch() {
