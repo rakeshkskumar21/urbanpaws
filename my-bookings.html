@@ -432,6 +432,73 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   .bk-grid { grid-template-columns: 1fr; }
   .bk-form-card { padding: 1.25rem; }
 }
+
+/* CHECKOUT OVERLAY */
+#bkCheckoutOverlay {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,.52); align-items: flex-end; justify-content: center;
+}
+.co-sheet {
+  background: #fff; border-radius: 24px 24px 0 0; width: 100%; max-width: 520px;
+  max-height: 92vh; overflow-y: auto; padding-bottom: env(safe-area-inset-bottom, 16px);
+  animation: slideUp .22s ease;
+}
+@media (min-width: 600px) {
+  #bkCheckoutOverlay { align-items: center; padding: 1rem; }
+  .co-sheet { border-radius: 20px; }
+}
+@keyframes slideUp { from { transform: translateY(32px); opacity:0; } to { transform: none; opacity:1; } }
+.co-header {
+  position: sticky; top: 0; background: #fff; border-radius: 24px 24px 0 0;
+  padding: 1rem 1.25rem .8rem; display: flex; align-items: center; gap: .75rem;
+  border-bottom: 1px solid #f0f0f0; z-index: 1;
+}
+.co-close {
+  width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #e5e7eb;
+  background: #fff; cursor: pointer; font-size: 1rem; line-height: 1; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0; color: var(--night);
+}
+.co-header-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--night); }
+.co-section { padding: 1.1rem 1.25rem; border-bottom: 8px solid #f7f7f8; }
+.co-section:last-of-type { border-bottom: none; }
+.co-section-label { font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .85rem; }
+.co-svc-row { display: flex; gap: .9rem; align-items: flex-start; margin-bottom: .65rem; }
+.co-svc-icon { font-size: 1.9rem; line-height: 1; flex-shrink: 0; background: var(--paw-faint); padding: .55rem .6rem; border-radius: 14px; }
+.co-svc-name { font-weight: 800; font-size: .97rem; color: var(--night); margin-bottom: 2px; font-family: 'Syne', sans-serif; }
+.co-svc-sub { font-size: .8rem; color: var(--muted); }
+.co-meta { font-size: .8rem; color: var(--muted); display: flex; gap: .5rem 1rem; flex-wrap: wrap; }
+.co-price-row { display: flex; justify-content: space-between; align-items: center; padding: .45rem 0; font-size: .88rem; color: var(--night); }
+.co-price-row span:last-child { font-weight: 600; }
+.co-divider { border: none; border-top: 1.5px dashed #e5e7eb; margin: .4rem 0; }
+.co-total-row { display: flex; justify-content: space-between; align-items: center; padding-top: .55rem; }
+.co-total-label { font-weight: 700; font-size: .95rem; color: var(--night); }
+.co-total-val { font-weight: 800; font-size: 1.2rem; color: var(--paw2); font-family: 'Syne', sans-serif; }
+.co-pay-opts { display: flex; flex-direction: column; gap: .55rem; }
+.co-pay-opt {
+  display: flex; align-items: center; gap: .8rem; padding: .8rem 1rem;
+  border: 2px solid var(--border); border-radius: 13px; cursor: pointer; transition: all .15s; background: #fff;
+}
+.co-pay-opt:hover { border-color: var(--paw); }
+.co-pay-opt.selected { border-color: var(--paw); background: var(--paw-faint); }
+.co-pay-icon { font-size: 1.3rem; width: 26px; text-align: center; flex-shrink: 0; }
+.co-pay-name { font-weight: 700; font-size: .86rem; color: var(--night); }
+.co-pay-sub { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+.co-pay-check {
+  margin-left: auto; width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border); display: flex; align-items: center;
+  justify-content: center; font-size: .65rem; flex-shrink: 0; color: transparent;
+}
+.co-pay-opt.selected .co-pay-check { background: var(--paw); border-color: var(--paw); color: #fff; }
+.co-footer { padding: 1rem 1.25rem; position: sticky; bottom: 0; background: #fff; border-top: 1px solid #f0f0f0; }
+.co-pay-btn {
+  width: 100%; padding: 14px 20px; background: var(--paw); color: #fff; border: none;
+  border-radius: 100px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: space-between; transition: background .15s;
+}
+.co-pay-btn:hover { background: var(--paw2); }
+.co-pay-btn:disabled { opacity: .6; cursor: not-allowed; }
+.co-pay-btn-label { flex: 1; text-align: center; }
+.co-pay-btn-amt { font-size: 1.05rem; font-weight: 800; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -914,8 +981,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <div class="menu-card">
           <div class="menu-card-img">🍗🥕🥔</div>
           <div class="menu-card-body">
-            <h4>Chicken, Carrots, Beans & Potato</h4>
-            <p>Rice + Chicken 100g + carrots, beans & potato. Approx. 450g. High fibre.</p>
+            <h4>Rice, Carrots, Beans & Potato</h4>
+            <p>Rice + carrots, beans & potato. Approx. 450g. High fibre.</p>
             <div class="menu-price-row"><span class="menu-price">₹75/bowl</span><span class="menu-badge badge-nonveg">🥩 Non-veg</span></div>
           </div>
         </div>
@@ -1121,7 +1188,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Chicken')"><div class="bk-food-emoji">🍚🍗</div><div class="bk-food-name">Rice & Chicken</div><div class="bk-food-price">₹80/bowl · 🥩 Non-veg</div></div>
             <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Raw Egg')"><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Raw Egg</div><div class="bk-food-price">₹75/bowl · 🥩 Non-veg</div></div>
             <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Milk')"><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Milk</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Chicken, Carrots, Beans & Potato')"><div class="bk-food-emoji">🍗🥕🥔</div><div class="bk-food-name">Chicken, Carrots, Beans & Potato</div><div class="bk-food-price">₹75/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice, Carrots, Beans & Potato')"><div class="bk-food-emoji">🍗🥕🥔</div><div class="bk-food-name">Rice, Carrots, Beans & Potato</div><div class="bk-food-price">₹75/bowl · 🌿 Veg</div></div>
             <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Boiled Egg')"><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Boiled Egg</div><div class="bk-food-price">₹40/bowl · 🥩 Non-veg</div></div>
           </div>
         </div>
@@ -1219,17 +1286,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             <input type="email" id="bkEmail" placeholder="you@example.com">
             <span class="bk-err" id="bkerr-email">Please enter a valid email address.</span>
           </div>
-          <div class="bk-group">
-            <label>Payment <span class="bk-req">*</span></label>
-            <select id="bkPayment">
-              <option value="">Select payment method</option>
-              <option value="UPI">💳 UPI (PhonePe / GPay / Paytm)</option>
-              <option value="Card">💳 Debit / Credit Card</option>
-              <option value="Netbanking">🏦 Net Banking</option>
-              <option value="Cash">🏠 Cash on Delivery</option>
-            </select>
-            <span class="bk-err" id="bkerr-payment">Please select a payment method.</span>
-          </div>
+          <select id="bkPayment" style="display:none"></select>
           <div class="bk-group full">
             <label>Special instructions <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
             <textarea id="bkInstructions" rows="2" placeholder="e.g. Bruno gets anxious around loud sounds…"></textarea>
@@ -1315,7 +1372,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
         <div id="bkFoodBottomGroup" style="display:none; margin-top:1.25rem;">
           <div id="bkDeliveryGroup">
-            <span class="bk-step-label" style="margin-bottom:.5rem;display:block;">Delivery distance <span class="bk-req">*</span> <span id="bkDistStatus" style="font-size:.75rem;color:var(--muted);font-weight:400;"></span></span>
+            <span class="bk-step-label" style="margin-bottom:.5rem;display:block;">Delivery distance <span id="bkDistStatus" style="font-size:.75rem;color:var(--muted);font-weight:400;"></span></span>
             <div class="bk-dur-group" id="bkDeliveryOpts">
               <label class="bk-dur-opt" onclick="bkSelectDelivery(this,2900,'0–3 km')">🛵 0–3 km &nbsp;<strong>+₹29</strong></label>
               <label class="bk-dur-opt" onclick="bkSelectDelivery(this,4900,'3–5 km')">🛵 3–5 km &nbsp;<strong>+₹49</strong></label>
@@ -1775,7 +1832,7 @@ let _bkWalkDur = '15', _bkWalkPaise = 8900, _bkSelectedFood = '', _bkFoodPaise =
 
 const FOOD_PRICES = {
   'Rice & Curd': 3000, 'Rice & Chicken': 8000, 'Rice & Raw Egg': 7500,
-  'Rice & Milk': 3000, 'Chicken, Carrots, Beans & Potato': 7500, 'Rice & Boiled Egg': 4000
+  'Rice & Milk': 3000, 'Rice, Carrots, Beans & Potato': 7500, 'Rice & Boiled Egg': 4000
 };
 
 // Urban Paws kitchen — No 20 Nandajyothi, Samaikya Layout, Siddapura, Bengaluru
@@ -1884,7 +1941,6 @@ function bkSubmit() {
     { id:'bkTimeSlot',   err:'bkerr-timeSlot',    check: v => v !== '' },
     { id:'bkPhone',      err:'bkerr-phone',       check: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
     { id:'bkEmail',      err:'bkerr-email',       check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
-    { id:'bkPayment',    err:'bkerr-payment',     check: v => v !== '' },
     { id:'bkAllergies',  err:'bkerr-allergies',   check: v => v !== '' },
     { id:'bkLimping',    err:'bkerr-limping',     check: v => v !== '' },
     { id:'bkSurgery',    err:'bkerr-surgery',     check: v => v !== '' },
@@ -1922,7 +1978,7 @@ function bkSubmit() {
     time_slot: document.getElementById('bkTimeSlot').value,
     phone: document.getElementById('bkPhone').value.trim(),
     email: document.getElementById('bkEmail').value.trim(),
-    payment: document.getElementById('bkPayment').value,
+    payment: '',
     instructions: document.getElementById('bkInstructions').value.trim(),
     allergies: document.getElementById('bkAllergies').value,
     limping: document.getElementById('bkLimping').value,
@@ -1933,35 +1989,23 @@ function bkSubmit() {
     other_issues: document.getElementById('bkOtherIssues').value.trim()
   };
 
-  const btn = document.getElementById('bkConfirmBtn');
-  if (data.payment === 'Cash') { bkSave(data, btn); return; }
-
   const amountPaise = isWalk ? _bkWalkPaise : (_bkFoodPaise + _bkDeliveryPaise);
-  btn.disabled = true; btn.textContent = '⏳ Opening payment…';
-  const rzp = new Razorpay({
-    key: 'rzp_live_T5XRSkWC2aoLPU',
-    amount: amountPaise, currency: 'INR',
-    name: 'Urban Paws', description: svc + ' for ' + data.pet_name,
-    prefill: { name: data.pet_name + "'s parent", email: data.email, contact: data.phone.replace(/\D/g,'').slice(-10) },
-    theme: { color: '#6C6FD4' },
-    handler: function(resp) { bkSave({ ...data, payment: data.payment + ' | Pay ID: ' + resp.razorpay_payment_id }, btn); },
-    modal: { ondismiss: function() { btn.disabled=false; btn.textContent='Confirm Booking →'; showToast('Payment cancelled.'); } }
-  });
-  rzp.open();
+  showCheckout(data, amountPaise, isWalk);
 }
 
 const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
 
 function bkSave(data, btn) {
+  const origText = btn.textContent;
   btn.disabled = true; btn.textContent = '⏳ Saving booking…';
   db.from('bookings').insert(data).select().then(({ data: rows, error }) => {
     btn.disabled = false;
-    if (error) { btn.textContent = 'Confirm Booking →'; showToast('❌ Something went wrong. Please try again.'); return; }
+    if (error) { btn.textContent = origText; showToast('❌ Something went wrong. Please try again.'); return; }
     const booking = rows && rows[0];
     const id = booking ? booking.booking_id : '';
     showToast('🐾 Booking confirmed! ID: #' + id + ' — check your email.', 'success');
     btn.textContent = '✅ Booking Confirmed!';
-    setTimeout(() => { btn.textContent = 'Confirm Booking →'; }, 15000);
+    setTimeout(() => { btn.textContent = origText; }, 8000);
 
     // Send email notification + Google Sheets backup
     const fd = new FormData();
@@ -1990,6 +2034,97 @@ function bkSave(data, btn) {
     ['bkPetName','bkAddress','bkInstructions','bkOtherIssues'].forEach(i => document.getElementById(i).value = '');
     ['bkBreed','bkPetAge','bkGender','bkTimeSlot','bkPayment','bkAllergies','bkLimping','bkSurgery','bkEating','bkVaccinated','bkTemperament'].forEach(i => document.getElementById(i).selectedIndex = 0);
   });
+}
+
+/* ── Checkout ── */
+let _checkoutData = null, _checkoutAmountPaise = 0, _checkoutIsWalk = true, _checkoutPayment = 'UPI';
+
+function showCheckout(data, amountPaise, isWalk) {
+  _checkoutData = data;
+  _checkoutAmountPaise = amountPaise;
+  _checkoutIsWalk = isWalk;
+  _checkoutPayment = 'UPI';
+
+  document.getElementById('coSvcIcon').textContent = isWalk ? '🦮' : '🍲';
+  document.getElementById('coSvcName').textContent = data.service;
+  document.getElementById('coSvcSub').textContent  = data.pet_name + ' · ' + data.breed + ' · ' + data.time_slot;
+
+  const d = new Date(data.booking_date + 'T00:00:00');
+  const dateStr = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  document.getElementById('coMeta').innerHTML = '📅 ' + dateStr + ' &nbsp;·&nbsp; 📍 ' + data.address;
+
+  let rows = '';
+  if (isWalk) {
+    rows = `<div class="co-price-row"><span>${data.service}</span><span>₹${_bkWalkPaise/100}</span></div>`;
+  } else {
+    rows = `<div class="co-price-row"><span>🍲 ${_bkSelectedFood}</span><span>₹${_bkFoodPaise/100}</span></div>
+            <div class="co-price-row"><span>🛵 Delivery (${_bkDeliveryLabel})</span><span>₹${_bkDeliveryPaise/100}</span></div>`;
+  }
+  document.getElementById('coPriceRows').innerHTML = rows;
+
+  const total = '₹' + amountPaise / 100;
+  document.getElementById('coGrandTotal').textContent  = total;
+  document.getElementById('coPayBtnAmt').textContent   = total;
+
+  document.querySelectorAll('.co-pay-opt').forEach(o => o.classList.remove('selected'));
+  document.querySelector('.co-pay-opt').classList.add('selected');
+
+  const overlay = document.getElementById('bkCheckoutOverlay');
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('bkCheckoutSheet').scrollTop = 0;
+}
+
+function closeCheckout() {
+  document.getElementById('bkCheckoutOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function coOverlayClick(e) {
+  if (e.target === document.getElementById('bkCheckoutOverlay')) closeCheckout();
+}
+
+function coSelectPayment(el, method) {
+  document.querySelectorAll('.co-pay-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  _checkoutPayment = method;
+  const label = method === 'Cash' ? 'Place Order' : 'Pay';
+  document.querySelector('#coPayBtn .co-pay-btn-label').textContent = label;
+}
+
+function checkoutPay() {
+  if (!_checkoutData) return;
+  const data = { ..._checkoutData, payment: _checkoutPayment };
+  const coBtn = document.getElementById('coPayBtn');
+
+  if (_checkoutPayment === 'Cash') {
+    closeCheckout();
+    bkSave(data, document.getElementById('bkConfirmBtn'));
+    return;
+  }
+
+  coBtn.disabled = true;
+  document.querySelector('#coPayBtn .co-pay-btn-label').textContent = '⏳';
+
+  const rzp = new Razorpay({
+    key: 'rzp_live_T5XRSkWC2aoLPU',
+    amount: _checkoutAmountPaise, currency: 'INR',
+    name: 'Urban Paws', description: data.service + ' for ' + data.pet_name,
+    prefill: { name: data.pet_name + "'s parent", email: data.email, contact: data.phone.replace(/\D/g,'').slice(-10) },
+    theme: { color: '#6C6FD4' },
+    handler: function(resp) {
+      closeCheckout();
+      bkSave({ ...data, payment: _checkoutPayment + ' | Pay ID: ' + resp.razorpay_payment_id }, document.getElementById('bkConfirmBtn'));
+    },
+    modal: {
+      ondismiss: function() {
+        coBtn.disabled = false;
+        document.querySelector('#coPayBtn .co-pay-btn-label').textContent = 'Pay';
+        showToast('Payment cancelled.');
+      }
+    }
+  });
+  rzp.open();
 }
 
 function showToast(msg, type) {
@@ -2033,5 +2168,69 @@ db.auth.onAuthStateChange((_event, session) => {
   }
 });
 </script>
+
+<!-- CHECKOUT OVERLAY -->
+<div id="bkCheckoutOverlay" style="display:none;" onclick="coOverlayClick(event)">
+  <div class="co-sheet" id="bkCheckoutSheet">
+    <div class="co-header">
+      <button class="co-close" onclick="closeCheckout()">✕</button>
+      <span class="co-header-title">Review & Pay</span>
+    </div>
+
+    <div class="co-section">
+      <div class="co-svc-row">
+        <div class="co-svc-icon" id="coSvcIcon">🦮</div>
+        <div>
+          <div class="co-svc-name" id="coSvcName">—</div>
+          <div class="co-svc-sub" id="coSvcSub">—</div>
+        </div>
+      </div>
+      <div class="co-meta" id="coMeta">—</div>
+    </div>
+
+    <div class="co-section">
+      <div class="co-section-label">Price Breakdown</div>
+      <div id="coPriceRows"></div>
+      <hr class="co-divider">
+      <div class="co-total-row">
+        <span class="co-total-label">Total</span>
+        <span class="co-total-val" id="coGrandTotal">—</span>
+      </div>
+    </div>
+
+    <div class="co-section">
+      <div class="co-section-label">Pay With</div>
+      <div class="co-pay-opts">
+        <div class="co-pay-opt selected" onclick="coSelectPayment(this,'UPI')">
+          <span class="co-pay-icon">📲</span>
+          <div><div class="co-pay-name">UPI</div><div class="co-pay-sub">GPay · PhonePe · Paytm</div></div>
+          <span class="co-pay-check">✓</span>
+        </div>
+        <div class="co-pay-opt" onclick="coSelectPayment(this,'Card')">
+          <span class="co-pay-icon">💳</span>
+          <div><div class="co-pay-name">Debit / Credit Card</div><div class="co-pay-sub">Visa · Mastercard · RuPay</div></div>
+          <span class="co-pay-check">✓</span>
+        </div>
+        <div class="co-pay-opt" onclick="coSelectPayment(this,'Netbanking')">
+          <span class="co-pay-icon">🏦</span>
+          <div><div class="co-pay-name">Net Banking</div><div class="co-pay-sub">All major banks</div></div>
+          <span class="co-pay-check">✓</span>
+        </div>
+        <div class="co-pay-opt" onclick="coSelectPayment(this,'Cash')">
+          <span class="co-pay-icon">💵</span>
+          <div><div class="co-pay-name">Cash on Delivery</div><div class="co-pay-sub">Pay when we arrive</div></div>
+          <span class="co-pay-check">✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="co-footer">
+      <button class="co-pay-btn" id="coPayBtn" onclick="checkoutPay()">
+        <span class="co-pay-btn-label">Place Order</span>
+        <span class="co-pay-btn-amt" id="coPayBtnAmt">₹—</span>
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
