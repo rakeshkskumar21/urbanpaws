@@ -640,7 +640,7 @@
     document.getElementById('usersBody').innerHTML = '<tr><td colspan="10" class="loading">Loading users…</td></tr>';
     // Load profiles + booking counts in parallel
     const [profilesRes, bookingsRes] = await Promise.all([
-      db.from('profiles').select('*, plan_paid_amount, plan_payment_id, plan_payment_method').order('created_at', { ascending: false }),
+      db.from('profiles').select('*').order('created_at', { ascending: false }),
       db.from('bookings').select('email, payment')
     ]);
     if (profilesRes.error) {
@@ -699,13 +699,9 @@
       const plan  = (planLabel[u.plan] ? u.plan : null) || 'starter';
       const since = u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
       let paidSummary = u.payment_summary
-        ? Object.entries(u.payment_summary).map(([pm, n]) => `<span style="display:inline-block;padding:2px 8px;background:var(--paw-soft);border-radius:100px;font-size:0.72rem;font-weight:600;color:var(--paw2);margin:1px">${pm} ×${n}</span>`).join(' ')
+        ? Object.entries(u.payment_summary).map(([pm, n]) => `<span style="display:inline-block;padding:2px 8px;background:rgba(108,111,212,.15);border-radius:100px;font-size:0.72rem;font-weight:600;color:var(--accent);margin:1px">${pm} ×${n}</span>`).join(' ')
         : '';
-      if (u.plan_paid_amount) {
-        paidSummary += `<div style="margin-top:3px;font-size:0.72rem;color:#16a34a;font-weight:700">📋 Plan: ₹${u.plan_paid_amount/100} via ${u.plan_payment_method||'Razorpay'}</div>`;
-        if (u.plan_payment_id) paidSummary += `<div style="font-size:0.68rem;color:var(--muted)">${u.plan_payment_id}</div>`;
-      }
-      if (!paidSummary) paidSummary = '<span style="color:#ccc;font-size:0.78rem">—</span>';
+      if (!paidSummary) paidSummary = '<span style="color:var(--muted2);font-size:0.78rem">—</span>';
       return `<tr>
         <td style="color:var(--muted);font-size:0.78rem">${i+1}</td>
         <td><strong>${u.full_name || '—'}</strong></td>
