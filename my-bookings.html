@@ -1494,6 +1494,11 @@ async function loadProfile(user) {
   document.getElementById('pfName').value    = name;
   document.getElementById('pfEmail').value   = user.email;
   document.getElementById('pfPhone').value   = (p&&p.phone)||'';
+  // Pre-fill booking form with known user details
+  const bkEmailEl = document.getElementById('bkEmail');
+  const bkPhoneEl = document.getElementById('bkPhone');
+  if (bkEmailEl && !bkEmailEl.value) bkEmailEl.value = user.email || '';
+  if (bkPhoneEl && !bkPhoneEl.value) bkPhoneEl.value = (p&&p.phone) || '';
   document.getElementById('pfAddress').value = (p&&p.address)||'';
   loadHealthInfo();
   renderPricingCTAs(plan);
@@ -1833,16 +1838,44 @@ function bkSubmit() {
   rzp.open();
 }
 
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
+
 function bkSave(data, btn) {
   btn.disabled = true; btn.textContent = '⏳ Saving booking…';
   db.from('bookings').insert(data).select().then(({ data: rows, error }) => {
     btn.disabled = false;
     if (error) { btn.textContent = 'Confirm Booking →'; showToast('❌ Something went wrong. Please try again.'); return; }
-    const id = rows && rows[0] ? rows[0].booking_id : '';
-    showToast('🐾 Booking confirmed! ID: #' + id, 'success');
+    const booking = rows && rows[0];
+    const id = booking ? booking.booking_id : '';
+    showToast('🐾 Booking confirmed! ID: #' + id + ' — check your email.', 'success');
     btn.textContent = '✅ Booking Confirmed!';
     setTimeout(() => { btn.textContent = 'Confirm Booking →'; }, 15000);
-    ['bkPetName','bkAddress','bkPhone','bkEmail','bkInstructions','bkOtherIssues'].forEach(i => document.getElementById(i).value = '');
+
+    // Send email notification + Google Sheets backup
+    const fd = new FormData();
+    fd.append('bookingId',    id);
+    fd.append('service',      data.service);
+    fd.append('petName',      data.pet_name);
+    fd.append('breed',        data.breed);
+    fd.append('petAge',       data.pet_age);
+    fd.append('gender',       data.gender);
+    fd.append('address',      data.address);
+    fd.append('date',         data.booking_date);
+    fd.append('timeSlot',     data.time_slot);
+    fd.append('phone',        data.phone);
+    fd.append('email',        data.email);
+    fd.append('payment',      data.payment);
+    fd.append('instructions', data.instructions);
+    fd.append('allergies',    data.allergies);
+    fd.append('limping',      data.limping);
+    fd.append('recentSurgery',data.recent_surgery);
+    fd.append('eatingHabits', data.eating_habits);
+    fd.append('vaccinated',   data.vaccinated);
+    fd.append('temperament',  data.temperament);
+    fd.append('otherIssues',  data.other_issues);
+    fetch(SHEET_ENDPOINT, { method: 'POST', body: fd }).catch(() => {});
+
+    ['bkPetName','bkAddress','bkInstructions','bkOtherIssues'].forEach(i => document.getElementById(i).value = '');
     ['bkBreed','bkPetAge','bkGender','bkTimeSlot','bkPayment','bkAllergies','bkLimping','bkSurgery','bkEating','bkVaccinated','bkTemperament'].forEach(i => document.getElementById(i).selectedIndex = 0);
   });
 }
