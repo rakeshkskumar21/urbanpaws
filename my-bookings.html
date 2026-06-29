@@ -1676,6 +1676,15 @@ function loadHealthInfo() {
   document.getElementById('pfVaccinated').value  = h.vaccinated||'';
   document.getElementById('pfTemperament').value = h.temperament||'';
   document.getElementById('pfOtherIssues').value = h.other_issues||'';
+  // Pre-fill booking form pet details
+  const bkPetNameEl = document.getElementById('bkPetName');
+  const bkBreedEl   = document.getElementById('bkBreed');
+  const bkPetAgeEl  = document.getElementById('bkPetAge');
+  const bkGenderEl  = document.getElementById('bkGender');
+  if (bkPetNameEl && !bkPetNameEl.value) bkPetNameEl.value = h.pet_name||'';
+  if (bkBreedEl   && !bkBreedEl.value)   bkBreedEl.value   = h.breed||'';
+  if (bkPetAgeEl  && !bkPetAgeEl.value)  bkPetAgeEl.value  = h.pet_age||'';
+  if (bkGenderEl  && !bkGenderEl.value)  bkGenderEl.value  = h.gender||'';
 }
 
 const _healthFields = ['pfPetName','pfBreed','pfPetAge','pfGender','pfAllergies','pfLimping','pfSurgery','pfEating','pfVaccinated','pfTemperament','pfOtherIssues'];
