@@ -1370,30 +1370,6 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
         </div>
 
-        <div id="bkFoodBottomGroup" style="display:none; margin-top:1.25rem;">
-          <div id="bkDeliveryGroup">
-            <span class="bk-step-label" style="margin-bottom:.5rem;display:block;">Delivery distance <span id="bkDistStatus" style="font-size:.75rem;color:var(--muted);font-weight:400;"></span></span>
-            <div class="bk-dur-group" id="bkDeliveryOpts">
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,2900,'0–3 km')">🛵 0–3 km &nbsp;<strong>+₹29</strong></label>
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,4900,'3–5 km')">🛵 3–5 km &nbsp;<strong>+₹49</strong></label>
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,7900,'5–10 km')">🛵 5–10 km &nbsp;<strong>+₹79</strong></label>
-              <label class="bk-dur-opt" onclick="bkSelectDelivery(this,9900,'10+ km')">🛵 10+ km &nbsp;<strong>+₹99</strong></label>
-            </div>
-            <span class="bk-err" id="bkerr-delivery">Please select your delivery distance.</span>
-          </div>
-          <div id="bkFoodSummary" style="display:none;margin-top:1rem;background:var(--paw-faint);border-radius:12px;padding:.85rem 1rem;font-size:.85rem;">
-            <div style="display:flex;justify-content:space-between;color:var(--muted);margin-bottom:.3rem;">
-              <span>Meal</span><span id="bkSummaryMeal">—</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;color:var(--muted);margin-bottom:.5rem;">
-              <span>Delivery fee</span><span id="bkSummaryDelivery">—</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-weight:700;color:var(--paw2);border-top:1px solid var(--border);padding-top:.5rem;">
-              <span>Total payable</span><span id="bkSummaryTotal">—</span>
-            </div>
-          </div>
-        </div>
-
         <button class="bk-submit" id="bkConfirmBtn" onclick="bkSubmit()">Confirm Booking →</button>
       </div>
     </div>
@@ -1815,6 +1791,7 @@ function initApp(user) {
   loadProfile(user);
   loadBookings(user.email);
   subscribeRealtime(user.email);
+  bkSetupValidationClears();
   const params = new URLSearchParams(location.search);
   const p = params.get('p'), plan = params.get('plan'), svc = params.get('svc');
   if (p === 'onboarding') { showPage('onboarding'); obInit(plan || 'starter'); }
@@ -1828,6 +1805,43 @@ function initApp(user) {
 function signOut() { db.auth.signOut().then(() => window.location.replace('index.html')); }
 
 /* ── Book a Service page ── */
+function bkSetupValidationClears() {
+  const fields = [
+    { id:'bkPetName',   err:'bkerr-petName',   ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkBreed',     err:'bkerr-breed',      ev:'change', ok: v => v !== '' },
+    { id:'bkPetAge',    err:'bkerr-petAge',     ev:'change', ok: v => v !== '' },
+    { id:'bkGender',    err:'bkerr-gender',     ev:'change', ok: v => v !== '' },
+    { id:'bkAddress',   err:'bkerr-address',    ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkDate',      err:'bkerr-date',       ev:'change', ok: v => v !== '' },
+    { id:'bkTimeSlot',  err:'bkerr-timeSlot',   ev:'change', ok: v => v !== '' },
+    { id:'bkPhone',     err:'bkerr-phone',      ev:'input',  ok: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
+    { id:'bkEmail',     err:'bkerr-email',      ev:'input',  ok: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+    { id:'bkAllergies', err:'bkerr-allergies',  ev:'change', ok: v => v !== '' },
+    { id:'bkLimping',   err:'bkerr-limping',    ev:'change', ok: v => v !== '' },
+    { id:'bkSurgery',   err:'bkerr-surgery',    ev:'change', ok: v => v !== '' },
+    { id:'bkEating',    err:'bkerr-eating',     ev:'change', ok: v => v !== '' },
+    { id:'bkVaccinated',err:'bkerr-vaccinated', ev:'change', ok: v => v !== '' },
+    { id:'bkTemperament',err:'bkerr-temperament',ev:'change',ok: v => v !== '' },
+  ];
+  fields.forEach(({ id, err, ev, ok }) => {
+    const el = document.getElementById(id);
+    const errEl = document.getElementById(err);
+    if (!el || !errEl) return;
+    el.addEventListener(ev, () => {
+      if (ok(el.value)) { el.classList.remove('invalid'); errEl.classList.remove('visible'); }
+    });
+  });
+  // Re-detect delivery distance when address changes
+  const addrEl = document.getElementById('bkAddress');
+  if (addrEl) {
+    let _addrTimer;
+    addrEl.addEventListener('input', () => {
+      clearTimeout(_addrTimer);
+      _addrTimer = setTimeout(() => { if (addrEl.value.trim()) autoSelectDelivery(addrEl.value.trim()); }, 800);
+    });
+  }
+}
+
 let _bkWalkDur = '15', _bkWalkPaise = 8900, _bkSelectedFood = '', _bkFoodPaise = 0, _bkDeliveryPaise = 0, _bkDeliveryLabel = '';
 
 const FOOD_PRICES = {
@@ -1880,7 +1894,6 @@ function bkSelectService(el) {
   const isWalk = el.textContent.toLowerCase().includes('walk');
   document.getElementById('bkDurGroup').style.display = isWalk ? '' : 'none';
   document.getElementById('bkFoodGroup').style.display = isWalk ? 'none' : '';
-  document.getElementById('bkFoodBottomGroup').style.display = isWalk ? 'none' : '';
   document.getElementById('bkStep3Label').textContent = 'Step 3 — Fill in the details';
 }
 
@@ -1889,26 +1902,11 @@ function bkSelectFood(el, name) {
   el.classList.add('selected');
   _bkSelectedFood = name;
   _bkFoodPaise = FOOD_PRICES[name] || 3000;
-  updateFoodSummary();
 }
 
 function bkSelectDelivery(el, paise, label) {
-  document.querySelectorAll('#bkDeliveryGroup .bk-dur-opt').forEach(l => l.classList.remove('selected'));
-  el.classList.add('selected');
   _bkDeliveryPaise = paise;
   _bkDeliveryLabel = label;
-  document.getElementById('bkerr-delivery').classList.remove('visible');
-  updateFoodSummary();
-}
-
-function updateFoodSummary() {
-  const el = document.getElementById('bkFoodSummary');
-  if (!_bkFoodPaise || !_bkDeliveryPaise) { el.style.display = 'none'; return; }
-  const fmt = p => '₹' + (p / 100);
-  document.getElementById('bkSummaryMeal').textContent = fmt(_bkFoodPaise);
-  document.getElementById('bkSummaryDelivery').textContent = fmt(_bkDeliveryPaise);
-  document.getElementById('bkSummaryTotal').textContent = fmt(_bkFoodPaise + _bkDeliveryPaise);
-  el.style.display = '';
 }
 
 function bkSelectDur(el, mins, paise) {
@@ -1922,11 +1920,8 @@ function bkSubmit() {
   const activeTab = document.querySelector('.bk-tab.active');
   const isWalk = activeTab && activeTab.textContent.toLowerCase().includes('walk');
   if (!isWalk && !_bkSelectedFood) { showToast('❌ Please select a meal'); return; }
-  if (!isWalk && !_bkDeliveryPaise) {
-    document.getElementById('bkerr-delivery').classList.add('visible');
-    document.getElementById('bkDeliveryGroup').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
+  // Fallback delivery tier if auto-detection hasn't run yet
+  if (!isWalk && !_bkDeliveryPaise) { _bkDeliveryPaise = 2900; _bkDeliveryLabel = '0–3 km'; }
   const svc = isWalk
     ? (activeTab.textContent.trim() + ' – ' + _bkWalkDur + ' min')
     : ('🍲 Food – ' + _bkSelectedFood + ' · ' + _bkDeliveryLabel + ' delivery');
@@ -2057,8 +2052,10 @@ function showCheckout(data, amountPaise, isWalk) {
   if (isWalk) {
     rows = `<div class="co-price-row"><span>${data.service}</span><span>₹${_bkWalkPaise/100}</span></div>`;
   } else {
+    const distStatus = document.getElementById('bkDistStatus') ? document.getElementById('bkDistStatus').textContent : '';
+    const distNote = distStatus ? `<span style="font-size:.7rem;color:var(--muted);margin-left:4px;">${distStatus}</span>` : '';
     rows = `<div class="co-price-row"><span>🍲 ${_bkSelectedFood}</span><span>₹${_bkFoodPaise/100}</span></div>
-            <div class="co-price-row"><span>🛵 Delivery (${_bkDeliveryLabel})</span><span>₹${_bkDeliveryPaise/100}</span></div>`;
+            <div class="co-price-row"><span>🛵 Delivery &nbsp;<span style="font-size:.78rem;color:var(--muted);">${_bkDeliveryLabel}</span>${distNote}</span><span>₹${_bkDeliveryPaise/100}</span></div>`;
   }
   document.getElementById('coPriceRows').innerHTML = rows;
 
