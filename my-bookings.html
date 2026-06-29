@@ -137,6 +137,10 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   justify-content: center; flex-direction: column; gap: 4px; padding: 8px;
 }
 .tb-hamburger span { width: 18px; height: 2px; background: var(--night); display: block; border-radius: 2px; }
+.tb-profile-ring { position: relative; width: 36px; height: 36px; flex-shrink: 0; cursor: pointer; margin-left: 4px; }
+.tb-ring-svg { position: absolute; top: 0; left: 0; width: 36px; height: 36px; transform: rotate(-90deg); }
+.tb-ring-fill { fill: none; stroke: #22c55e; stroke-linecap: round; stroke-dasharray: 87.96; stroke-dashoffset: 87.96; transition: stroke-dashoffset .7s cubic-bezier(.4,0,.2,1), stroke .4s; }
+.tb-ring-avatar { position: absolute; top: 4px; left: 4px; width: 28px; height: 28px; border-radius: 50%; background: var(--paw); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 800; }
 .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 95; }
 .sb-overlay.open { display: block; }
 
@@ -676,6 +680,13 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <input class="tb-search" id="tbSearch" type="text" placeholder="Search…" oninput="tbSearchInput(this)" onfocus="tbSearchInput(this)" autocomplete="off">
       <button class="tb-search-clear" id="tbSearchClear" onclick="tbSearchClear()">✕</button>
       <div class="tb-search-results" id="tbSearchResults"></div>
+    </div>
+    <div class="tb-profile-ring" onclick="showPage('profile')" title="My Profile">
+      <svg class="tb-ring-svg" viewBox="0 0 36 36">
+        <circle class="cb-ring-bg"   cx="18" cy="18" r="14" stroke-width="3"/>
+        <circle class="tb-ring-fill" id="tbRingFill" cx="18" cy="18" r="14" stroke-width="3"/>
+      </svg>
+      <div class="tb-ring-avatar" id="tbAvatar">?</div>
     </div>
   </div>
   <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
@@ -1565,27 +1576,14 @@ function showPage(id) {
 
 function cbSearchInput(inputEl) {
   const q = inputEl.value.trim().toLowerCase();
-  const results = document.getElementById('cbSearchResults');
-  const clearBtn = document.getElementById('cbSearchClear');
+  const resultsEl = document.getElementById('cbSearchResults');
+  const clearBtn  = document.getElementById('cbSearchClear');
   if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
-  if (!q) { results.classList.remove('open'); return; }
-  const pageMatches = PAGES_INDEX.filter(p =>
-    p.label.toLowerCase().includes(q) || p.sub.toLowerCase().includes(q)
-  );
-  const bkMatches = allBookings.filter(b =>
-    (b.service||'').toLowerCase().includes(q) ||
-    (b.pet_name||'').toLowerCase().includes(q) ||
-    (b.booking_id||'').toLowerCase().includes(q) ||
-    (b.booking_date||'').includes(q)
-  ).slice(0, 5);
-  if (!pageMatches.length && !bkMatches.length) {
-    results.innerHTML = '<div class="tb-sr-item" style="color:var(--muted);cursor:default">No results found</div>';
-    results.classList.add('open'); return;
-  }
-  results.innerHTML =
-    pageMatches.map(p => `<div class="tb-sr-item" onclick="showPage('${p.id}');cbSearchClear()"><div class="tb-sr-icon">${p.icon}</div><div><div class="tb-sr-label">${p.label}</div><div class="tb-sr-sub">${p.sub}</div></div></div>`).join('') +
-    bkMatches.map(b => `<div class="tb-sr-item" onclick="showPage('bookings');cbSearchClear()"><div class="tb-sr-icon">${svcIcon(b.service)}</div><div><div class="tb-sr-label">${b.service||'—'}</div><div class="tb-sr-sub">#${b.booking_id||''} · ${b.pet_name||''} · ${b.booking_date||''}</div></div></div>`).join('');
-  results.classList.add('open');
+  if (!q) { resultsEl.classList.remove('open'); return; }
+  const html = buildResultsHtml(runSearch(q), 'cbSearchClear');
+  if (!html) { resultsEl.innerHTML = '<div class="tb-sr-item" style="color:var(--muted);cursor:default">No results found</div>'; }
+  else { resultsEl.innerHTML = html; }
+  resultsEl.classList.add('open');
 }
 function cbSearchClear() {
   const el = document.getElementById('cbSearch');
@@ -1726,6 +1724,7 @@ async function loadProfile(user) {
   document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||'Starter Plan';
   const cbAv = document.getElementById('cbAvatar'); if (cbAv) cbAv.textContent = initials(name);
   const cbNm = document.getElementById('cbName'); if (cbNm) cbNm.textContent = name.split(' ')[0];
+  const tbAv = document.getElementById('tbAvatar'); if (tbAv) tbAv.textContent = initials(name);
   const firstName = name.split(' ')[0];
   const hour = new Date().getHours();
   const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -1794,13 +1793,15 @@ function checkProfileCompletion(p, userId) {
 }
 
 function updateProfileRing(pct) {
-  const circumference = 2 * Math.PI * 18; // r=18
-  const offset = circumference * (1 - pct / 100);
-  const color  = pct === 100 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#ef4444';
-  const fill = document.getElementById('cbRingFill');
-  if (fill) { fill.style.strokeDashoffset = offset; fill.style.stroke = color; }
+  const color = pct === 100 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#ef4444';
+  // Desktop ring (r=18, circumference≈113.1)
+  const cbFill = document.getElementById('cbRingFill');
+  if (cbFill) { cbFill.style.strokeDashoffset = 2*Math.PI*18*(1-pct/100); cbFill.style.stroke = color; }
   const pctEl = document.getElementById('cbRingPct');
   if (pctEl) { pctEl.textContent = pct + '%'; pctEl.style.color = color; }
+  // Mobile ring (r=14, circumference≈87.96)
+  const tbFill = document.getElementById('tbRingFill');
+  if (tbFill) { tbFill.style.strokeDashoffset = 2*Math.PI*14*(1-pct/100); tbFill.style.stroke = color; }
 }
 
 function showProfilePrompt(checks) {
@@ -2473,33 +2474,66 @@ const PAGES_INDEX = [
   { id:'faq',        label:'FAQs',            icon:'❓', sub:'Frequently asked questions' },
 ];
 
-function tbSearchInput(inputEl) {
-  const q = inputEl.value.trim().toLowerCase();
-  const resultsId = inputEl.closest('.sb-search-box') ? 'sbSearchResults' : 'tbSearchResults';
-  const results = document.getElementById(resultsId);
-  const clearBtn = document.getElementById('tbSearchClear');
-  if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
-  if (!q) { results.classList.remove('open'); return; }
+const SHOP_INDEX = [
+  { label:'Food & Water Bowl',  icon:'🥣', sub:'Stainless steel, anti-tip',          page:'shop' },
+  { label:'Retractable Leash',  icon:'🦮', sub:'5m, reflective, padded handle',       page:'shop' },
+  { label:'Paw Balm',           icon:'🐾', sub:'Soothes cracked paws',                page:'shop' },
+  { label:'ID Tag',             icon:'🏷️', sub:'Laser engraved, custom',              page:'shop' },
+  { label:'Pet Shampoo',        icon:'🧴', sub:'Hypoallergenic, vet-approved',        page:'shop' },
+  { label:'Pet Soap',           icon:'🧼', sub:'Oatmeal & aloe vera',                 page:'shop' },
+  { label:'Grooming Brush',     icon:'🪮', sub:'Dematting & detangling',              page:'shop' },
+  { label:'Pet Shoes',          icon:'👟', sub:'Anti-slip, waterproof 4-pack',        page:'shop' },
+];
 
+const FOOD_INDEX = [
+  { label:'Rice & Curd',                    icon:'🍚', sub:'Pet food delivery',  meal:'Rice & Curd' },
+  { label:'Rice & Chicken',                 icon:'🍗', sub:'Pet food delivery',  meal:'Rice & Chicken' },
+  { label:'Rice & Raw Egg',                 icon:'🥚', sub:'Pet food delivery',  meal:'Rice & Raw Egg' },
+  { label:'Rice & Milk',                    icon:'🥛', sub:'Pet food delivery',  meal:'Rice & Milk' },
+  { label:'Rice, Carrots, Beans & Potato',  icon:'🥕', sub:'Pet food delivery',  meal:'Rice, Carrots, Beans & Potato' },
+  { label:'Rice & Boiled Egg',              icon:'🍳', sub:'Pet food delivery',  meal:'Rice & Boiled Egg' },
+];
+
+function runSearch(q) {
   const pageMatches = PAGES_INDEX.filter(p =>
     p.label.toLowerCase().includes(q) || p.sub.toLowerCase().includes(q)
   );
+  const shopMatches = SHOP_INDEX.filter(s =>
+    s.label.toLowerCase().includes(q) || s.sub.toLowerCase().includes(q)
+  ).slice(0, 4);
+  const foodMatches = FOOD_INDEX.filter(f =>
+    f.label.toLowerCase().includes(q) || f.sub.toLowerCase().includes(q)
+  ).slice(0, 4);
   const bkMatches = allBookings.filter(b =>
     (b.service||'').toLowerCase().includes(q) ||
     (b.pet_name||'').toLowerCase().includes(q) ||
     (b.booking_id||'').toLowerCase().includes(q) ||
     (b.booking_date||'').includes(q)
-  ).slice(0, 5);
+  ).slice(0, 4);
+  return { pageMatches, shopMatches, foodMatches, bkMatches };
+}
 
-  if (!pageMatches.length && !bkMatches.length) {
-    results.innerHTML = '<div class="tb-sr-item" style="color:var(--muted);cursor:default">No results found</div>';
-    results.classList.add('open'); return;
-  }
+function buildResultsHtml(results, clearFn) {
+  const { pageMatches, shopMatches, foodMatches, bkMatches } = results;
+  if (!pageMatches.length && !shopMatches.length && !foodMatches.length && !bkMatches.length) return null;
+  const shopHtml   = shopMatches.map(s => `<div class="tb-sr-item" onclick="showPage('shop');${clearFn}()"><div class="tb-sr-icon">${s.icon}</div><div><div class="tb-sr-label">${s.label}</div><div class="tb-sr-sub">🛒 Pet Supplies · ${s.sub}</div></div></div>`).join('');
+  const foodHtml   = foodMatches.map(f => `<div class="tb-sr-item" onclick="bookWith('food','${f.meal}');${clearFn}()"><div class="tb-sr-icon">${f.icon}</div><div><div class="tb-sr-label">${f.label}</div><div class="tb-sr-sub">🍲 Pet Food · ${f.sub}</div></div></div>`).join('');
+  const pageHtml   = pageMatches.map(p => `<div class="tb-sr-item" onclick="showPage('${p.id}');${clearFn}()"><div class="tb-sr-icon">${p.icon}</div><div><div class="tb-sr-label">${p.label}</div><div class="tb-sr-sub">${p.sub}</div></div></div>`).join('');
+  const bkHtml     = bkMatches.map(b => `<div class="tb-sr-item" onclick="showPage('bookings');${clearFn}()"><div class="tb-sr-icon">${svcIcon(b.service)}</div><div><div class="tb-sr-label">${b.service||'—'}</div><div class="tb-sr-sub">#${b.booking_id||''} · ${b.pet_name||''} · ${b.booking_date||''}</div></div></div>`).join('');
+  return shopHtml + foodHtml + pageHtml + bkHtml;
+}
 
-  results.innerHTML =
-    pageMatches.map(p => `<div class="tb-sr-item" onclick="showPage('${p.id}');tbSearchClear()"><div class="tb-sr-icon">${p.icon}</div><div><div class="tb-sr-label">${p.label}</div><div class="tb-sr-sub">${p.sub}</div></div></div>`).join('') +
-    bkMatches.map(b => `<div class="tb-sr-item" onclick="showPage('bookings');tbSearchClear()"><div class="tb-sr-icon">${svcIcon(b.service)}</div><div><div class="tb-sr-label">${b.service||'—'}</div><div class="tb-sr-sub">#${b.booking_id||''} · ${b.pet_name||''} · ${b.booking_date||''}</div></div></div>`).join('');
-  results.classList.add('open');
+function tbSearchInput(inputEl) {
+  const q = inputEl.value.trim().toLowerCase();
+  const resultsId = 'tbSearchResults';
+  const resultsEl = document.getElementById(resultsId);
+  const clearBtn  = document.getElementById('tbSearchClear');
+  if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+  if (!q) { resultsEl.classList.remove('open'); return; }
+  const html = buildResultsHtml(runSearch(q), 'tbSearchClear');
+  if (!html) { resultsEl.innerHTML = '<div class="tb-sr-item" style="color:var(--muted);cursor:default">No results found</div>'; }
+  else { resultsEl.innerHTML = html; }
+  resultsEl.classList.add('open');
 }
 
 function tbSearchClear() {
