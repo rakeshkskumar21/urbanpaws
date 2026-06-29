@@ -371,7 +371,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   font-size: .88rem; font-weight: 600; z-index: 9999;
   transition: transform .3s, opacity .3s;
   transform: translateY(-80px); opacity: 0;
-  max-width: 320px; white-space: nowrap;
+  max-width: min(320px, calc(100vw - 2rem)); white-space: normal; word-break: break-word;
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.success { background: var(--green); }
@@ -1834,45 +1834,76 @@ async function loadProfile(user) {
 
 /* ── Profile completion ring & prompt ── */
 const PROFILE_FIELDS = [
-  { key: 'name',    label: 'Full Name' },
-  { key: 'phone',   label: 'Phone Number' },
-  { key: 'address', label: 'Address' },
-  { key: 'petName', label: 'Pet Name' },
+  { key: 'name',        label: 'Full Name' },
+  { key: 'email',       label: 'Email Address' },
+  { key: 'phone',       label: 'Phone Number' },
+  { key: 'address',     label: 'Address' },
+  { key: 'petName',     label: 'Pet Name' },
+  { key: 'breed',       label: 'Breed' },
+  { key: 'petAge',      label: 'Pet Age' },
+  { key: 'gender',      label: 'Gender' },
+  { key: 'allergies',   label: 'Known Allergies' },
+  { key: 'limping',     label: 'Limping/Walking' },
+  { key: 'surgery',     label: 'Recent Surgery' },
+  { key: 'eating',      label: 'Eating Habits' },
+  { key: 'vaccinated',  label: 'Vaccination' },
+  { key: 'temperament', label: 'Temperament' },
 ];
 
 function recomputeRingFromFields() {
   const val = id => (document.getElementById(id)||{}).value || '';
   const checks = {
-    name:    val('pfName').trim() !== '' && !val('pfName').includes('@'),
-    phone:   val('pfPhone').trim() !== '',
-    address: val('pfAddress').trim() !== '',
-    petName: val('pfPetName').trim() !== '',
+    name:        val('pfName').trim() !== '' && !val('pfName').includes('@'),
+    email:       val('pfEmail').trim() !== '',
+    phone:       val('pfPhone').trim() !== '',
+    address:     val('pfAddress').trim() !== '',
+    petName:     val('pfPetName').trim() !== '',
+    breed:       val('pfBreed').trim() !== '',
+    petAge:      val('pfPetAge').trim() !== '',
+    gender:      val('pfGender').trim() !== '',
+    allergies:   val('pfAllergies').trim() !== '',
+    limping:     val('pfLimping').trim() !== '',
+    surgery:     val('pfSurgery').trim() !== '',
+    eating:      val('pfEating').trim() !== '',
+    vaccinated:  val('pfVaccinated').trim() !== '',
+    temperament: val('pfTemperament').trim() !== '',
   };
   const pct = Math.round(Object.values(checks).filter(Boolean).length / PROFILE_FIELDS.length * 100);
   updateProfileRing(pct);
-  // also refresh prompt tags if prompt is visible
   const prompt = document.getElementById('profilePrompt');
   if (prompt && prompt.classList.contains('show')) showProfilePrompt(checks);
 }
 
 function checkProfileCompletion(p, userId) {
   const health = JSON.parse(localStorage.getItem('urbanpaws_health_' + userId) || '{}');
+  const uEmail = (currentUser && currentUser.email) ? currentUser.email.trim() : '';
   const checks = {
-    name:    !!(p && p.full_name && !p.full_name.includes('@')),
-    phone:   !!(p && p.phone && p.phone.trim()),
-    address: !!(p && p.address && p.address.trim()),
-    petName: !!(health.pet_name && health.pet_name.trim()),
+    name:        !!(p && p.full_name && !p.full_name.includes('@')),
+    email:       !!(uEmail),
+    phone:       !!(p && p.phone && p.phone.trim()),
+    address:     !!(p && p.address && p.address.trim()),
+    petName:     !!(health.pet_name && health.pet_name.trim()),
+    breed:       !!(health.breed && health.breed.trim()),
+    petAge:      !!(health.pet_age && health.pet_age.trim()),
+    gender:      !!(health.gender && health.gender.trim()),
+    allergies:   !!(health.allergies && health.allergies.trim()),
+    limping:     !!(health.limping && health.limping.trim()),
+    surgery:     !!(health.surgery && health.surgery.trim()),
+    eating:      !!(health.eating && health.eating.trim()),
+    vaccinated:  !!(health.vaccinated && health.vaccinated.trim()),
+    temperament: !!(health.temperament && health.temperament.trim()),
   };
   const pct = Math.round(Object.values(checks).filter(Boolean).length / PROFILE_FIELDS.length * 100);
   updateProfileRing(pct);
   if (pct < 100 && !sessionStorage.getItem('ppDismissed')) {
     setTimeout(() => showProfilePrompt(checks), 1800);
   }
-  // Attach live listeners once fields are populated
-  ['pfName','pfPhone','pfAddress','pfPetName'].forEach(id => {
+  const allIds = ['pfName','pfEmail','pfPhone','pfAddress','pfPetName','pfBreed','pfPetAge','pfGender','pfAllergies','pfLimping','pfSurgery','pfEating','pfVaccinated','pfTemperament'];
+  allIds.forEach(id => {
     const el = document.getElementById(id);
     if (el && !el._ringListenerAttached) {
       el.addEventListener('input', recomputeRingFromFields);
+      el.addEventListener('change', recomputeRingFromFields);
       el._ringListenerAttached = true;
     }
   });
@@ -2102,15 +2133,18 @@ function loadHealthInfo() {
   document.getElementById('pfVaccinated').value  = h.vaccinated||'';
   document.getElementById('pfTemperament').value = h.temperament||'';
   document.getElementById('pfOtherIssues').value = h.other_issues||'';
-  // Pre-fill booking form pet details
-  const bkPetNameEl = document.getElementById('bkPetName');
-  const bkBreedEl   = document.getElementById('bkBreed');
-  const bkPetAgeEl  = document.getElementById('bkPetAge');
-  const bkGenderEl  = document.getElementById('bkGender');
-  if (bkPetNameEl && !bkPetNameEl.value) bkPetNameEl.value = h.pet_name||'';
-  if (bkBreedEl   && !bkBreedEl.value)   bkBreedEl.value   = h.breed||'';
-  if (bkPetAgeEl  && !bkPetAgeEl.value)  bkPetAgeEl.value  = h.pet_age||'';
-  if (bkGenderEl  && !bkGenderEl.value)  bkGenderEl.value  = h.gender||'';
+  // Pre-fill booking form with all health details
+  const bk = id => document.getElementById(id);
+  if (bk('bkPetName')    && !bk('bkPetName').value)    bk('bkPetName').value    = h.pet_name||'';
+  if (bk('bkBreed')      && !bk('bkBreed').value)      bk('bkBreed').value      = h.breed||'';
+  if (bk('bkPetAge')     && !bk('bkPetAge').value)     bk('bkPetAge').value     = h.pet_age||'';
+  if (bk('bkGender')     && !bk('bkGender').value)     bk('bkGender').value     = h.gender||'';
+  if (bk('bkAllergies')  && !bk('bkAllergies').value)  bk('bkAllergies').value  = h.allergies||'';
+  if (bk('bkLimping')    && !bk('bkLimping').value)    bk('bkLimping').value    = h.limping||'';
+  if (bk('bkSurgery')    && !bk('bkSurgery').value)    bk('bkSurgery').value    = h.surgery||'';
+  if (bk('bkEating')     && !bk('bkEating').value)     bk('bkEating').value     = h.eating||'';
+  if (bk('bkVaccinated') && !bk('bkVaccinated').value) bk('bkVaccinated').value = h.vaccinated||'';
+  if (bk('bkTemperament')&& !bk('bkTemperament').value)bk('bkTemperament').value= h.temperament||'';
 }
 
 const _healthFields = ['pfPetName','pfBreed','pfPetAge','pfGender','pfAllergies','pfLimping','pfSurgery','pfEating','pfVaccinated','pfTemperament','pfOtherIssues'];
@@ -2144,6 +2178,7 @@ function saveHealthInfo() {
   };
   localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
   showToast('✅ Pet info saved!', 'success');
+  loadHealthInfo();
   recomputeRingFromFields();
   pfCancelHealthEdit();
 }
@@ -2523,7 +2558,7 @@ function checkoutPay() {
 
   if (_checkoutPayment === 'Cash') {
     closeCheckout();
-    bkSave(data, document.getElementById('bkConfirmBtn'));
+    bkSave({ ...data, amount_paise: _checkoutAmountPaise }, document.getElementById('bkConfirmBtn'));
     return;
   }
 
@@ -2538,7 +2573,7 @@ function checkoutPay() {
     theme: { color: '#6C6FD4' },
     handler: function(resp) {
       closeCheckout();
-      bkSave({ ...data, payment: _checkoutPayment + ' | Pay ID: ' + resp.razorpay_payment_id }, document.getElementById('bkConfirmBtn'));
+      bkSave({ ...data, payment: _checkoutPayment + ' | Pay ID: ' + resp.razorpay_payment_id, amount_paise: _checkoutAmountPaise }, document.getElementById('bkConfirmBtn'));
     },
     modal: {
       ondismiss: function() {

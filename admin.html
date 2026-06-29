@@ -343,12 +343,13 @@
               <th>Phone</th>
               <th>Address</th>
               <th>Health Flags</th>
-              <th>Payment</th>
+              <th>Paid Via</th>
+              <th>Amount Paid</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody id="bookingsBody">
-            <tr><td colspan="11" class="loading">Loading bookings…</td></tr>
+            <tr><td colspan="12" class="loading">Loading bookings…</td></tr>
           </tbody>
         </table>
       </div>
@@ -463,7 +464,7 @@
   // ── Load bookings ──
   async function loadBookings() {
     document.getElementById('bookingsBody').innerHTML =
-      '<tr><td colspan="11" class="loading">Loading…</td></tr>';
+      '<tr><td colspan="12" class="loading">Loading…</td></tr>';
 
     const { data, error } = await db
       .from('bookings')
@@ -473,7 +474,7 @@
 
     if (error) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="11" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
+        '<tr><td colspan="12" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
       return;
     }
 
@@ -531,7 +532,7 @@
   function renderTable(bookings) {
     if (!bookings.length) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="11" class="empty">No bookings found.</td></tr>';
+        '<tr><td colspan="12" class="empty">No bookings found.</td></tr>';
       return;
     }
 
@@ -540,6 +541,10 @@
       const dtObj = b.created_at ? new Date(b.created_at) : null;
       const dtDate = dtObj ? dtObj.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
       const dtTime = dtObj ? dtObj.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12: true }) : '';
+      const paidVia = b.payment ? b.payment.split(' |')[0].trim() : '—';
+      const amtCell = b.amount_paise
+        ? `<div style="font-size:.92rem;font-weight:800;color:var(--green)">₹${(b.amount_paise/100).toLocaleString('en-IN')}</div>`
+        : '<span style="color:#aaa;font-size:.78rem">—</span>';
       return `<tr>
         <td><strong>${b.booking_id || '—'}</strong><br><span style="font-size:0.72rem;color:#aaa">${dtDate}</span><br><span style="font-size:0.72rem;color:var(--paw);font-weight:600">${dtTime}</span></td>
         <td>${b.booking_date || '—'}<br><span style="color:var(--muted);font-size:0.78rem">${b.time_slot || ''}</span></td>
@@ -550,7 +555,8 @@
         <td>${b.phone || '—'}</td>
         <td style="max-width:160px;word-break:break-word;font-size:0.78rem">${b.address || '—'}</td>
         <td>${flags || '<span style="color:#ccc">None</span>'}</td>
-        <td style="font-size:0.78rem">${b.payment || '—'}</td>
+        <td style="font-size:0.82rem;font-weight:600">${paidVia}</td>
+        <td>${amtCell}</td>
         <td>
           <select class="status-select" onchange="updateStatus('${b.id}', this.value)">
             <option value="pending"   ${b.status==='pending'   ? 'selected':''}>⏳ Pending</option>

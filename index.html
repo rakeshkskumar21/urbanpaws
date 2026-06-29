@@ -1208,6 +1208,11 @@
   @media (max-width: 640px) { .nav-auth { display: none; } }
 
   /* MOBILE: burger left, auth right */
+  .mob-brand { display: none; font-family: 'Metropolis', 'Syne', sans-serif; font-weight: 800; font-size: .88rem; color: var(--night); letter-spacing: .01em; white-space: nowrap; }
+  @media (max-width: 768px) {
+    .logo { display: none; }
+    .mob-brand { display: inline; }
+  }
   .mob-burger-left { display: none; }
   .mob-auth-pill {
     display: none; align-items: center; gap: 5px;
@@ -1447,6 +1452,7 @@
 
   <!-- Mobile controls: search + auth (right side) -->
   <div class="mob-controls">
+    <span class="mob-brand">🐾 Urban Paws</span>
     <button class="mob-icon-btn" id="mobSearchBtn" onclick="toggleMobSearch()" aria-label="Search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
