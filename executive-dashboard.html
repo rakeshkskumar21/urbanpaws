@@ -113,6 +113,13 @@
     .pf-field input:focus, .pf-field select:focus, .pf-field textarea:focus { border-color: var(--paw); }
     .pf-field input:disabled, .pf-field select:disabled, .pf-field textarea:disabled { background: #f8f8f6; color: var(--muted); cursor: not-allowed; }
     .pf-field textarea { resize: vertical; min-height: 80px; }
+    .pf-section { border-top: 1.5px solid var(--border); margin: 1.35rem 0 1rem; padding-top: 1.25rem; }
+    .pf-section-title { font-size: .72rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: .85rem; display: flex; align-items: center; gap: 7px; }
+    .pf-note { font-size: .73rem; color: var(--muted); margin-bottom: .9rem; background: var(--paw-soft); border-radius: 8px; padding: 8px 12px; line-height: 1.5; }
+    .resume-link { color: var(--paw); font-weight: 700; font-size: .88rem; text-decoration: none; }
+    .resume-link:hover { text-decoration: underline; }
+    .upload-row { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
+    .upload-row input[type="file"] { flex: 1; min-width: 0; font-size: .82rem; padding: 8px 0; }
     .pf-avatar-block { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
     .pf-avatar-big { width: 72px; height: 72px; border-radius: 50%; background: var(--paw); color: #fff; font-size: 1.5rem; font-weight: 800; font-family: 'Syne', sans-serif; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 16px rgba(108,111,212,.25); }
     .pf-meta { font-size: .82rem; color: var(--muted); }
@@ -146,6 +153,30 @@
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { background: var(--green); }
     .toast.error   { background: var(--red); }
+
+    /* ── QUICK ACTIONS ── */
+    .quick-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .qa-btn { display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: #fff; border: 1.5px solid var(--border); border-radius: 12px; font-size: .83rem; font-weight: 700; color: var(--night); cursor: pointer; font-family: inherit; transition: all .15s; text-decoration: none; }
+    .qa-btn:hover { border-color: var(--paw); color: var(--paw); background: var(--paw-soft); }
+    .qa-btn .qa-icon { font-size: 1rem; }
+
+    /* ── UPCOMING ── */
+    .upcoming-empty { color: var(--muted); font-size: .85rem; padding: .5rem 0; }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: .65rem; max-width: 760px; }
+    .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; background: none; border: none; font-size: .9rem; font-weight: 700; color: var(--night); cursor: pointer; font-family: inherit; text-align: left; gap: 1rem; }
+    .faq-q:hover { color: var(--paw); }
+    .faq-chevron { font-size: .75rem; color: var(--muted); flex-shrink: 0; transition: transform .2s; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a { display: none; padding: 0 1.2rem 1rem; font-size: .86rem; color: var(--muted); line-height: 1.7; border-top: 1px solid var(--border); }
+    .faq-item.open .faq-a { display: block; padding-top: .85rem; }
+    .faq-section-label { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 1.25rem 0 .5rem; }
+    .faq-contact-card { background: linear-gradient(135deg, var(--paw) 0%, var(--paw2) 100%); border-radius: 14px; padding: 1.35rem 1.5rem; color: #fff; max-width: 760px; margin-top: 1.25rem; }
+    .faq-contact-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: .35rem; }
+    .faq-contact-card p { font-size: .84rem; opacity: .88; line-height: 1.6; }
+    .faq-contact-card a { color: #fff; font-weight: 700; }
 
     /* ── PENDING GATE ── */
     .pending-gate { text-align: center; padding: 4rem 2rem; max-width: 400px; margin: 0 auto; }
@@ -185,6 +216,7 @@
       <div class="sb-name" id="sbName">Loading…</div>
       <div class="sb-role" id="sbRole">—</div>
       <div class="sb-status-chip chip-pending" id="sbStatusChip">pending</div>
+      <div id="sbExecId" style="font-size:.68rem;color:var(--paw);font-weight:800;margin-top:4px;letter-spacing:.04em;background:var(--paw-soft);display:none;padding:2px 8px;border-radius:6px"></div>
     </div>
   </div>
   <nav class="sb-nav">
@@ -192,6 +224,7 @@
     <a href="#" id="nav-mybookings" onclick="showPage('mybookings',this)"><span class="nav-icon">📋</span> My Bookings</a>
     <a href="#" id="nav-earnings" onclick="showPage('earnings',this)"><span class="nav-icon">💰</span> My Earnings</a>
     <a href="#" id="nav-profile" onclick="showPage('profile',this)"><span class="nav-icon">👤</span> My Profile</a>
+    <a href="#" id="nav-faq" onclick="showPage('faq',this)"><span class="nav-icon">❓</span> FAQ & Help</a>
     <hr class="sb-nav-divider">
     <a href="#" onclick="signOut()" style="color:var(--red)"><span class="nav-icon">🚪</span> Sign Out</a>
   </nav>
@@ -209,26 +242,55 @@
 
   <!-- DASHBOARD PAGE -->
   <div class="page active" id="page-dashboard">
-    <div class="page-title">Dashboard <span class="page-subtitle" id="dashGreet"></span></div>
-
-    <div class="stats-row" id="dashStats">
-      <div class="stat-card"><div class="stat-label">Total Assigned</div><div class="stat-val" id="statTotal">—</div><div class="stat-sub">all time</div></div>
-      <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-val green" id="statCompleted">—</div><div class="stat-sub">all time</div></div>
-      <div class="stat-card"><div class="stat-label">Pending / Active</div><div class="stat-val amber" id="statPending">—</div><div class="stat-sub">needs action</div></div>
-      <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-val blue" id="statMonthEarn">₹—</div><div class="stat-sub">earnings</div></div>
+    <div class="page-title">Dashboard <span class="page-subtitle" id="dashGreet"></span>
+      <span id="dashExecId" style="display:none;margin-left:.75rem;background:var(--paw-soft);color:var(--paw2);font-size:.75rem;font-weight:800;padding:4px 12px;border-radius:100px;letter-spacing:.04em;vertical-align:middle"></span>
     </div>
 
+    <!-- Executive ID Banner -->
+    <div id="execIdBanner" style="display:none;background:linear-gradient(135deg,var(--paw),var(--paw2));border-radius:14px;padding:14px 20px;margin-bottom:1.2rem;align-items:center;gap:14px">
+      <div style="font-size:1.6rem">🪪</div>
+      <div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.75);font-weight:600;text-transform:uppercase;letter-spacing:.06em">Your Executive ID</div>
+        <div id="bannerExecId" style="font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:.1em;line-height:1.1">—</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.7);margin-top:2px">Share this ID with customers for easy identification</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="qa-btn" onclick="showPage('mybookings',document.getElementById('nav-mybookings'))"><span class="qa-icon">📋</span> My Bookings</button>
+      <button class="qa-btn" onclick="showPage('earnings',document.getElementById('nav-earnings'))"><span class="qa-icon">💰</span> My Earnings</button>
+      <button class="qa-btn" onclick="showPage('profile',document.getElementById('nav-profile'))"><span class="qa-icon">👤</span> Update Profile</button>
+      <button class="qa-btn" onclick="showPage('faq',document.getElementById('nav-faq'))"><span class="qa-icon">❓</span> FAQ & Help</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">Total Assigned</div><div class="stat-val" id="statTotal">—</div><div class="stat-sub">all time</div></div>
+      <div class="stat-card"><div class="stat-label">Completed Jobs</div><div class="stat-val green" id="statCompleted">—</div><div class="stat-sub">all time</div></div>
+      <div class="stat-card"><div class="stat-label">Pending / Active</div><div class="stat-val amber" id="statPending">—</div><div class="stat-sub">needs action</div></div>
+      <div class="stat-card"><div class="stat-label">Earnings This Month</div><div class="stat-val blue" id="statMonthEarn">₹—</div><div class="stat-sub">completed jobs</div></div>
+    </div>
+
+    <!-- Today's Schedule -->
     <div class="card">
       <div class="card-title">📅 Today's Schedule</div>
-      <div id="todayList"><div class="empty-msg">No tasks assigned for today.</div></div>
+      <div id="todayList"><div class="empty-msg">No tasks assigned for today. Enjoy your day!</div></div>
     </div>
 
+    <!-- Upcoming (next 7 days) -->
     <div class="card">
-      <div class="card-title">⏳ Recent Bookings</div>
+      <div class="card-title">🗓️ Upcoming This Week</div>
+      <div id="upcomingList"><div class="upcoming-empty">No upcoming bookings in the next 7 days.</div></div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="card">
+      <div class="card-title">🕐 Recent Activity</div>
       <div class="bk-table-wrap">
         <table class="bk-table">
-          <thead><tr><th>Booking ID</th><th>Date</th><th>Service</th><th>Pet</th><th>Status</th></tr></thead>
-          <tbody id="dashRecentBody"><tr><td colspan="5" class="empty-msg">No bookings yet.</td></tr></tbody>
+          <thead><tr><th>Booking ID</th><th>Date</th><th>Service</th><th>Pet</th><th>Customer</th><th>Status</th></tr></thead>
+          <tbody id="dashRecentBody"><tr><td colspan="6" class="empty-msg">No bookings yet.</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -238,11 +300,14 @@
   <div class="page" id="page-mybookings">
     <div class="page-title">My Bookings</div>
     <div class="card">
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+      <div id="needsActionBanner" style="display:none;background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.35);border-radius:12px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;font-weight:700;color:#b45309">
+        🔔 <span id="needsActionCount">0</span> booking(s) need your response — Accept or Decline below.
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;" id="bkFilterRow">
         <button class="btn-primary" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('all')">All</button>
-        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('pending')">Pending</button>
-        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('confirmed')">Confirmed</button>
-        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('completed')">Completed</button>
+        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;position:relative" onclick="filterBk('assigned')" id="bkFilterAssigned">🔔 Needs Action</button>
+        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('confirmed')">✅ Confirmed</button>
+        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('completed')">🎉 Completed</button>
       </div>
       <div class="bk-table-wrap">
         <table class="bk-table">
@@ -251,14 +316,16 @@
               <th>Booking ID</th>
               <th>Date & Time</th>
               <th>Service</th>
-              <th>Pet</th>
+              <th>Pet Details</th>
               <th>Address</th>
               <th>Customer Phone</th>
+              <th>Health Notes</th>
               <th>Amount</th>
               <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody id="bkListBody"><tr><td colspan="8" class="empty-msg">Loading…</td></tr></tbody>
+          <tbody id="bkListBody"><tr><td colspan="10" class="empty-msg">Loading…</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -302,6 +369,15 @@
           <strong id="pfNameDisplay">—</strong>
           <span id="pfRoleDisplay">—</span><br>
           <div class="sb-status-chip chip-pending" id="pfStatusChip" style="display:inline-block;margin-top:4px;">pending</div>
+          <div id="pfExecIdBadge" style="display:inline-block;margin-top:6px;margin-left:6px;background:var(--paw-soft);color:var(--paw2);font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:.04em"></div>
+        </div>
+      </div>
+
+      <div class="pf-grid">
+        <div class="pf-field full" style="background:var(--paw-soft);border-radius:12px;padding:10px 14px;margin-bottom:.5rem">
+          <label style="font-size:.65rem;margin-bottom:2px">Your Executive ID</label>
+          <div id="pfExecIdDisplay" style="font-size:1.1rem;font-weight:800;color:var(--paw2);letter-spacing:.05em">—</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">Share this ID with customers and admin for easy identification.</div>
         </div>
       </div>
 
@@ -341,6 +417,96 @@
         </div>
       </div>
 
+      <!-- IDENTITY DOCUMENTS -->
+      <div class="pf-section">
+        <div class="pf-section-title">🪪 Identity Documents</div>
+        <p class="pf-note">Stored securely. Only visible to the Urban Paws admin team — never shared publicly.</p>
+        <div class="pf-grid">
+          <div class="pf-field">
+            <label>Aadhaar Number</label>
+            <input type="text" id="pfAadhaar" placeholder="XXXX XXXX XXXX" maxlength="14" disabled>
+          </div>
+          <div class="pf-field">
+            <label>PAN Number</label>
+            <input type="text" id="pfPan" placeholder="ABCDE1234F" maxlength="10" disabled>
+          </div>
+          <div class="pf-field full">
+            <label>Driving Licence Number</label>
+            <input type="text" id="pfDL" placeholder="e.g. KA01-XXXX-XXXXXXXXXX" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDUCATION DETAILS -->
+      <div class="pf-section">
+        <div class="pf-section-title">🎓 Education Details</div>
+        <div class="pf-grid">
+          <div class="pf-field">
+            <label>Highest Education</label>
+            <select id="pfEduLevel" disabled>
+              <option value="">Select…</option>
+              <option value="10th">10th (SSLC)</option>
+              <option value="12th">12th (PUC / HSC)</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Graduate">Graduate (UG)</option>
+              <option value="Post-Graduate">Post-Graduate (PG)</option>
+            </select>
+          </div>
+          <div class="pf-field">
+            <label>Institution / School / College</label>
+            <input type="text" id="pfInstitution" placeholder="e.g. Kendriya Vidyalaya, Bengaluru" disabled>
+          </div>
+          <div class="pf-field">
+            <label>Year of Completion</label>
+            <input type="text" id="pfPassYear" placeholder="e.g. 2020" maxlength="4" disabled>
+          </div>
+          <div class="pf-field">
+            <label>SSLC Board / Marks / CGPA</label>
+            <input type="text" id="pfMarks" placeholder="e.g. CBSE — 82% or 8.5 CGPA" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK EXPERIENCE -->
+      <div class="pf-section">
+        <div class="pf-section-title">💼 Work Experience</div>
+        <div class="pf-grid">
+          <div class="pf-field">
+            <label>Previous Employer</label>
+            <input type="text" id="pfPrevEmployer" placeholder="e.g. Happy Paws Kennel" disabled>
+          </div>
+          <div class="pf-field">
+            <label>Duration Worked</label>
+            <input type="text" id="pfWorkDuration" placeholder="e.g. Jan 2022 – Mar 2024" disabled>
+          </div>
+          <div class="pf-field full">
+            <label>Work Description / Responsibilities</label>
+            <textarea id="pfWorkDesc" rows="3" placeholder="Describe your role, daily tasks, and key responsibilities…" disabled></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUME & DOCUMENTS -->
+      <div class="pf-section">
+        <div class="pf-section-title">📄 Resume & Documents</div>
+        <div class="pf-field full" id="pfResumeViewBlock">
+          <label>Current Resume</label>
+          <div id="pfResumeView"><span style="color:var(--muted);font-size:.86rem">No resume uploaded yet.</span></div>
+        </div>
+        <div class="pf-field full" id="pfResumeEditBlock" style="display:none">
+          <label>Upload Resume (PDF / DOC / DOCX — max 5 MB)</label>
+          <div class="upload-row">
+            <input type="file" id="pfResumeFile" accept=".pdf,.doc,.docx">
+            <button class="btn-ghost" onclick="uploadResume()" id="resumeUploadBtn" type="button" style="white-space:nowrap">↑ Upload</button>
+          </div>
+          <div id="resumeUploadStatus" style="font-size:.78rem;margin-top:5px;color:var(--muted)"></div>
+        </div>
+        <div class="pf-field full" style="margin-top:.65rem">
+          <label>Or paste a public link (Google Drive / Dropbox)</label>
+          <input type="url" id="pfResumeUrl" placeholder="https://drive.google.com/…" disabled>
+        </div>
+      </div>
+
       <div class="action-row" id="pfActions">
         <button class="btn-primary" onclick="pfEnableEdit()">✏️ Edit Profile</button>
       </div>
@@ -349,6 +515,88 @@
         <button class="btn-ghost" onclick="pfCancelEdit()">Cancel</button>
       </div>
       <div id="pfSaveOk" style="display:none;margin-top:.75rem;font-size:.82rem;color:var(--green);font-weight:700;">✅ Profile saved!</div>
+    </div>
+  </div>
+
+  <!-- FAQ PAGE -->
+  <div class="page" id="page-faq">
+    <div class="page-title">FAQ & Help</div>
+
+    <div class="faq-section-label">🚀 Getting Started</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How will I receive my assigned bookings? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Once the Urban Paws admin team assigns a booking to you, it will appear in your <strong>My Bookings</strong> page automatically. You'll see the customer's pet details, address, service type, date, and time slot. Make sure your profile is up to date so admins can assign the right jobs to you.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I mark a booking as completed? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Go to <strong>My Bookings</strong>, find the booking, and use the status dropdown to change it from <em>Confirmed</em> to <em>Completed</em>. Only mark it completed after you've finished the service. The customer and admin will be notified automatically.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What if a customer isn't home when I arrive? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Wait at least 10 minutes and try calling the customer using the phone number shown in the booking. If there's no response, contact the Urban Paws support team immediately. Do not leave without confirmation. Mark the booking status as <em>Pending</em> until resolved.</div>
+      </div>
+    </div>
+
+    <div class="faq-section-label">💰 Earnings & Payments</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How and when do I get paid? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Earnings are calculated based on completed bookings. Payouts are processed by the Urban Paws admin team, typically on a weekly or bi-weekly basis. You can track your total and monthly earnings in the <strong>My Earnings</strong> section. For any payout queries, reach out to our support team.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How is my payout amount calculated? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Your earnings are based on the booking amount for each completed job. The amount shown in <strong>My Earnings</strong> is the full booking value. The Urban Paws admin team may apply a platform fee depending on your agreement. Contact support for your specific commission structure.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Will I be paid for cancelled bookings? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Cancelled bookings are generally not eligible for payment. However, if the cancellation occurs after you've arrived at the customer's location, please contact the Urban Paws team — late cancellations may qualify for a partial fee at the admin's discretion.</div>
+      </div>
+    </div>
+
+    <div class="faq-section-label">⭐ Performance & Rating</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How is my rating calculated? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Your rating is based on customer feedback after each completed session. Customers rate their experience out of 5 stars. High ratings lead to more assignments and better job opportunities. Always be punctual, professional, and caring with the pets to maintain a high rating.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What can lower my rating? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Late arrivals, poor pet care, incomplete tasks, rude behaviour, or failure to follow the customer's instructions can lower your rating. Urban Paws monitors executive ratings regularly — consistently low ratings may result in fewer assignments or removal from the platform.</div>
+      </div>
+    </div>
+
+    <div class="faq-section-label">📅 Schedule & Availability</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I set my working hours and availability? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Yes! Update your availability in <strong>My Profile → Availability</strong> (e.g., "Mon–Sat, 7am–7pm"). The admin team uses your availability to assign bookings that fit your schedule. Keep this updated, especially if you take time off.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What do I do if I can't complete an assigned booking? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Contact the Urban Paws admin team as early as possible — ideally at least 24 hours before the booking. Do not simply ignore or miss a confirmed booking. Repeated no-shows can result in deactivation from the platform.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I choose which areas or locations I work in? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Mention your preferred service area in your <strong>Bio</strong> or <strong>Availability</strong> field in My Profile. The admin team will do their best to assign bookings near your location. If you're assigned a booking too far away, contact support to discuss reassignment.</div>
+      </div>
+    </div>
+
+    <div class="faq-section-label">🪪 Documents & Profile</div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Why do I need to upload my Aadhaar, PAN, and other documents? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Urban Paws is committed to the safety of pets and customers. Identity verification is mandatory for all executives. Your documents are stored securely and are only visible to the Urban Paws admin team — they are never shared publicly or with customers.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What happens if my profile is incomplete? <span class="faq-chevron">▼</span></button>
+        <div class="faq-a">Executives with incomplete profiles may receive fewer or no booking assignments until the profile is fully filled in. Go to <strong>My Profile</strong> and fill in your personal info, identity documents, education details, and upload your resume to improve your chances of getting assignments.</div>
+      </div>
+    </div>
+
+    <div class="faq-contact-card">
+      <h3>📞 Still have questions?</h3>
+      <p>Reach out to the Urban Paws support team at <a href="mailto:support@urbanpaws.app">support@urbanpaws.app</a> or WhatsApp us at <strong>+91 XXXXX XXXXX</strong>. We're available Mon–Sat, 9am–6pm.</p>
     </div>
   </div>
 
@@ -394,6 +642,7 @@ function showPage(id, navEl) {
   if (id === 'mybookings') renderMyBookings();
   if (id === 'earnings') renderEarnings();
   if (id === 'profile') renderProfile();
+  // faq is static — no render call needed
 }
 
 function toggleSidebar() {
@@ -450,6 +699,17 @@ async function init() {
   const name = exec.full_name || user.email;
   document.getElementById('sbName').textContent = name;
   document.getElementById('sbRole').textContent = roleLabel(exec.services);
+  const sbExecEl = document.getElementById('sbExecId');
+  if (sbExecEl) { sbExecEl.textContent = exec.exec_id || 'ID pending'; sbExecEl.style.display = 'inline-block'; }
+  const dashIdEl = document.getElementById('dashExecId');
+  if (dashIdEl && exec.exec_id) { dashIdEl.textContent = exec.exec_id; dashIdEl.style.display = 'inline-block'; }
+  // Prominent ID banner on dashboard
+  if (exec.exec_id) {
+    const banner = document.getElementById('execIdBanner');
+    const bannerTxt = document.getElementById('bannerExecId');
+    if (banner && bannerTxt) { bannerTxt.textContent = exec.exec_id; banner.style.display = 'flex'; }
+    showToast('Welcome! Your Executive ID is ' + exec.exec_id, 'success');
+  }
   setAvatars(name);
   setStatus(exec.status);
 
@@ -502,7 +762,31 @@ function renderDashboard() {
       </div>`).join('');
   }
 
-  // Recent bookings table
+  // Upcoming (next 7 days, excluding today)
+  const upcomingEl = document.getElementById('upcomingList');
+  const nextWeek = new Date(); nextWeek.setDate(nextWeek.getDate() + 7);
+  const upcoming = allBookings
+    .filter(b => b.booking_date && b.booking_date > today && b.booking_date <= nextWeek.toISOString().split('T')[0])
+    .sort((a,b) => a.booking_date.localeCompare(b.booking_date));
+  if (!upcoming.length) {
+    upcomingEl.innerHTML = '<div class="upcoming-empty">No upcoming bookings in the next 7 days.</div>';
+  } else {
+    upcomingEl.innerHTML = upcoming.map(b => {
+      const d = new Date(b.booking_date);
+      const dayStr = d.toLocaleDateString('en-IN', { weekday:'short', day:'2-digit', month:'short' });
+      return `<div class="today-item">
+        <div class="today-time" style="min-width:68px;font-size:.72rem">${dayStr}</div>
+        <div>
+          <div class="today-svc">${b.service||'—'} <span style="font-weight:400;color:var(--muted)">${b.time_slot||''}</span></div>
+          <div class="today-pet">🐾 ${b.pet_name||'—'} · ${b.breed||''} ${b.pet_age?'· '+b.pet_age:''}</div>
+          <div class="today-addr">📍 ${b.address||'—'}</div>
+        </div>
+        <div style="margin-left:auto"><span class="s-badge s-${b.status||'pending'}">${b.status||'pending'}</span></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Recent activity table (last 6 bookings)
   const recent = allBookings.slice(0, 6);
   document.getElementById('dashRecentBody').innerHTML = recent.length
     ? recent.map(b => `<tr>
@@ -510,45 +794,91 @@ function renderDashboard() {
         <td>${b.booking_date||'—'}</td>
         <td>${b.service||'—'}</td>
         <td>${b.pet_name||'—'}</td>
+        <td style="font-size:.78rem;color:var(--muted)">${b.owner_name||b.name||'—'}</td>
         <td><span class="s-badge s-${b.status||'pending'}">${b.status||'pending'}</span></td>
       </tr>`).join('')
-    : '<tr><td colspan="5" class="empty-msg">No bookings assigned yet.</td></tr>';
+    : '<tr><td colspan="6" class="empty-msg">No bookings assigned yet.</td></tr>';
 }
 
 // ── MY BOOKINGS ──
 function filterBk(f) {
   bkFilter = f;
   renderMyBookings();
-  document.querySelectorAll('#page-mybookings button').forEach((btn,i) => {
-    btn.className = i === ['all','pending','confirmed','completed'].indexOf(f) ? 'btn-primary' : 'btn-ghost';
+  const filters = ['all','assigned','confirmed','completed'];
+  document.querySelectorAll('#bkFilterRow button').forEach((btn, i) => {
+    btn.className = i === filters.indexOf(f) ? 'btn-primary' : 'btn-ghost';
     btn.style.fontSize = '.78rem'; btn.style.padding = '6px 14px';
+    if (i === 1) btn.style.position = 'relative'; // Needs Action
   });
 }
 
+function healthNotes(b) {
+  const notes = [];
+  if (b.allergies   && b.allergies.trim())    notes.push('🤧 ' + b.allergies);
+  if (b.limping     && b.limping.trim())      notes.push('🦵 ' + b.limping);
+  if (b.recent_surgery && b.recent_surgery.trim()) notes.push('🏥 ' + b.recent_surgery);
+  if (b.eating_habits  && b.eating_habits.trim())  notes.push('🍽 ' + b.eating_habits);
+  if (b.vaccinated  && b.vaccinated.trim())   notes.push('💉 ' + b.vaccinated);
+  if (b.temperament && b.temperament.trim())  notes.push('🧠 ' + b.temperament);
+  return notes.length ? notes.join('<br>') : '<span style="color:var(--muted);font-size:.75rem">No notes</span>';
+}
+
 function renderMyBookings() {
+  const assignedCount = allBookings.filter(b => b.status === 'assigned').length;
+  const banner = document.getElementById('needsActionBanner');
+  const countEl = document.getElementById('needsActionCount');
+  if (banner) { banner.style.display = assignedCount ? '' : 'none'; if (countEl) countEl.textContent = assignedCount; }
+
   const filtered = bkFilter === 'all' ? allBookings : allBookings.filter(b => b.status === bkFilter);
   document.getElementById('bkListBody').innerHTML = filtered.length
     ? filtered.map(b => {
         const amt = parseAmount(b.payment);
-        return `<tr>
+        const isAssigned = b.status === 'assigned';
+        const actionCell = isAssigned
+          ? `<div style="display:flex;flex-direction:column;gap:5px">
+               <button onclick="acceptBooking('${b.id}')" style="background:rgba(34,197,94,.15);color:#15803d;border:1.5px solid rgba(34,197,94,.4);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">✅ Accept</button>
+               <button onclick="declineBooking('${b.id}')" style="background:rgba(239,68,68,.1);color:#b91c1c;border:1.5px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">❌ Decline</button>
+             </div>`
+          : b.status === 'confirmed'
+            ? `<button onclick="updateBkStatus('${b.id}','completed')" style="background:rgba(59,130,246,.12);color:#1d4ed8;border:none;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer">🎉 Mark Done</button>`
+            : `<span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>`;
+        return `<tr style="${isAssigned ? 'background:rgba(245,158,11,.06);' : ''}">
           <td class="bid">${b.booking_id||'—'}</td>
           <td>${b.booking_date||'—'}<div class="bsub">${b.time_slot||''}</div></td>
           <td>${b.service||'—'}</td>
-          <td><strong>${b.pet_name||'—'}</strong><div class="bsub">${b.breed||''} ${b.pet_age?'· '+b.pet_age:''}</div></td>
+          <td>
+            <strong>${b.pet_name||'—'}</strong>
+            <div class="bsub">${b.breed||''} ${b.gender?'· '+b.gender:''} ${b.pet_age?'· '+b.pet_age:''}</div>
+          </td>
           <td style="max-width:140px;word-break:break-word;font-size:.78rem">${b.address||'—'}</td>
           <td style="font-size:.78rem">${b.phone||'—'}</td>
+          <td style="font-size:.75rem;line-height:1.5">${healthNotes(b)}</td>
           <td style="font-weight:700;color:var(--green)">${amt ? '₹'+amt : '—'}</td>
-          <td>
-            <select class="status-sel" onchange="updateBkStatus('${b.id}',this.value)">
-              <option value="pending"   ${b.status==='pending'   ?'selected':''}>⏳ Pending</option>
-              <option value="confirmed" ${b.status==='confirmed' ?'selected':''}>✅ Confirmed</option>
-              <option value="completed" ${b.status==='completed' ?'selected':''}>🎉 Completed</option>
-              <option value="cancelled" ${b.status==='cancelled' ?'selected':''}>❌ Cancelled</option>
-            </select>
-          </td>
+          <td><span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span></td>
+          <td>${actionCell}</td>
         </tr>`;
       }).join('')
-    : `<tr><td colspan="8" class="empty-msg">No ${bkFilter === 'all' ? '' : bkFilter} bookings.</td></tr>`;
+    : `<tr><td colspan="10" class="empty-msg">No ${bkFilter === 'all' ? '' : bkFilter} bookings.</td></tr>`;
+}
+
+async function acceptBooking(id) {
+  const { error } = await db.from('bookings').update({ status: 'confirmed' }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  const bk = allBookings.find(b => String(b.id) === String(id));
+  if (bk) bk.status = 'confirmed';
+  renderMyBookings(); renderDashboard();
+  showToast('✅ Booking accepted! Customer will be notified.', 'success');
+}
+
+async function declineBooking(id) {
+  if (!confirm('Decline this booking? It will be returned to admin for reassignment.')) return;
+  const { error } = await db.from('bookings').update({
+    status: 'pending', executive_id: null, executive_name: null, executive_exec_id: null
+  }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  allBookings = allBookings.filter(b => String(b.id) !== String(id));
+  renderMyBookings(); renderDashboard();
+  showToast('Booking declined and returned to admin.', '');
 }
 
 async function updateBkStatus(id, status) {
@@ -557,8 +887,7 @@ async function updateBkStatus(id, status) {
   const bk = allBookings.find(b => String(b.id) === String(id));
   if (bk) bk.status = status;
   showToast('✅ Status updated to ' + status, 'success');
-  renderMyBookings();
-  renderDashboard();
+  renderMyBookings(); renderDashboard();
 }
 
 // ── EARNINGS ──
@@ -600,40 +929,107 @@ function renderProfile() {
   document.getElementById('pfAvail').value   = p.availability || 'Mon–Sat, 6am–8pm';
   document.getElementById('pfRating').value  = (p.rating || 5.0) + ' ★';
   document.getElementById('pfBio').value     = p.bio || '';
+  // Identity
+  document.getElementById('pfAadhaar').value      = p.aadhaar_number || '';
+  document.getElementById('pfPan').value           = p.pan_number || '';
+  document.getElementById('pfDL').value            = p.driving_licence || '';
+  // Education
+  document.getElementById('pfEduLevel').value      = p.education_level || '';
+  document.getElementById('pfInstitution').value   = p.institution_name || '';
+  document.getElementById('pfPassYear').value      = p.pass_year || '';
+  document.getElementById('pfMarks').value         = p.marks_percentage || '';
+  // Work
+  document.getElementById('pfPrevEmployer').value  = p.prev_employer || '';
+  document.getElementById('pfWorkDuration').value  = p.work_duration || '';
+  document.getElementById('pfWorkDesc').value      = p.work_description || '';
+  // Resume
+  const resumeUrl = p.resume_url || '';
+  document.getElementById('pfResumeUrl').value = resumeUrl;
+  const view = document.getElementById('pfResumeView');
+  view.innerHTML = resumeUrl
+    ? `<a href="${resumeUrl}" target="_blank" rel="noopener" class="resume-link">📄 View Resume →</a>`
+    : '<span style="color:var(--muted);font-size:.86rem">No resume uploaded yet.</span>';
+  // Header
   document.getElementById('pfNameDisplay').textContent = p.full_name || '—';
   document.getElementById('pfRoleDisplay').textContent = roleLabel(p.services);
   const chipCls = 'sb-status-chip chip-' + (p.status||'pending');
   const chip = document.getElementById('pfStatusChip');
   chip.className = chipCls; chip.textContent = p.status || 'pending';
+  // Exec ID
+  const eid = p.exec_id || '—';
+  document.getElementById('pfExecIdDisplay').textContent = eid;
+  document.getElementById('pfExecIdBadge').textContent = eid !== '—' ? eid : '';
 }
 
+const PF_EDITABLE = ['pfName','pfPhone','pfCity','pfServices','pfExp','pfAvail','pfBio',
+  'pfAadhaar','pfPan','pfDL',
+  'pfEduLevel','pfInstitution','pfPassYear','pfMarks',
+  'pfPrevEmployer','pfWorkDuration','pfWorkDesc','pfResumeUrl'];
+
 function pfEnableEdit() {
-  ['pfName','pfPhone','pfCity','pfServices','pfExp','pfAvail','pfBio'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.disabled = false;
-  });
+  PF_EDITABLE.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = false; });
   document.getElementById('pfActions').style.display = 'none';
   document.getElementById('pfEditActions').style.display = 'flex';
   document.getElementById('pfSaveOk').style.display = 'none';
+  document.getElementById('pfResumeEditBlock').style.display = '';
+  document.getElementById('resumeUploadStatus').textContent = '';
 }
 
 function pfCancelEdit() {
-  ['pfName','pfPhone','pfCity','pfServices','pfExp','pfAvail','pfBio'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.disabled = true;
-  });
+  PF_EDITABLE.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = true; });
   document.getElementById('pfActions').style.display = 'flex';
   document.getElementById('pfEditActions').style.display = 'none';
+  document.getElementById('pfResumeEditBlock').style.display = 'none';
   renderProfile();
+}
+
+async function uploadResume() {
+  const fileInput = document.getElementById('pfResumeFile');
+  const statusEl  = document.getElementById('resumeUploadStatus');
+  const file = fileInput.files[0];
+  if (!file) { statusEl.style.color = 'var(--muted)'; statusEl.textContent = 'Please select a file first.'; return; }
+  if (file.size > 5 * 1024 * 1024) { statusEl.style.color = 'var(--red)'; statusEl.textContent = 'File too large — max 5 MB.'; return; }
+  const btn = document.getElementById('resumeUploadBtn');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+  statusEl.style.color = 'var(--muted)'; statusEl.textContent = 'Uploading…';
+  const ext = file.name.split('.').pop();
+  const fileName = `${currentUser.id}/resume_${Date.now()}.${ext}`;
+  const { error: upErr } = await db.storage.from('executive-resumes').upload(fileName, file, { upsert: true });
+  if (upErr) {
+    statusEl.style.color = 'var(--red)'; statusEl.textContent = '❌ Upload failed: ' + upErr.message;
+    btn.disabled = false; btn.textContent = '↑ Upload'; return;
+  }
+  const { data: urlData } = db.storage.from('executive-resumes').getPublicUrl(fileName);
+  const url = urlData.publicUrl;
+  document.getElementById('pfResumeUrl').value = url;
+  await db.from('executives').update({ resume_url: url }).eq('id', currentUser.id);
+  if (execProfile) execProfile.resume_url = url;
+  document.getElementById('pfResumeView').innerHTML = `<a href="${url}" target="_blank" rel="noopener" class="resume-link">📄 View Resume →</a>`;
+  statusEl.style.color = 'var(--green)'; statusEl.textContent = '✅ Uploaded successfully!';
+  btn.disabled = false; btn.textContent = '↑ Upload';
+  fileInput.value = '';
 }
 
 async function saveProfile() {
   const upd = {
-    full_name:    document.getElementById('pfName').value.trim(),
-    phone:        document.getElementById('pfPhone').value.trim(),
-    city:         document.getElementById('pfCity').value.trim(),
-    services:     document.getElementById('pfServices').value,
-    experience:   document.getElementById('pfExp').value,
-    availability: document.getElementById('pfAvail').value.trim(),
-    bio:          document.getElementById('pfBio').value.trim(),
+    full_name:        document.getElementById('pfName').value.trim(),
+    phone:            document.getElementById('pfPhone').value.trim(),
+    city:             document.getElementById('pfCity').value.trim(),
+    services:         document.getElementById('pfServices').value,
+    experience:       document.getElementById('pfExp').value,
+    availability:     document.getElementById('pfAvail').value.trim(),
+    bio:              document.getElementById('pfBio').value.trim(),
+    aadhaar_number:   document.getElementById('pfAadhaar').value.trim(),
+    pan_number:       document.getElementById('pfPan').value.trim().toUpperCase(),
+    driving_licence:  document.getElementById('pfDL').value.trim(),
+    education_level:  document.getElementById('pfEduLevel').value,
+    institution_name: document.getElementById('pfInstitution').value.trim(),
+    pass_year:        document.getElementById('pfPassYear').value.trim(),
+    marks_percentage: document.getElementById('pfMarks').value.trim(),
+    prev_employer:    document.getElementById('pfPrevEmployer').value.trim(),
+    work_duration:    document.getElementById('pfWorkDuration').value.trim(),
+    work_description: document.getElementById('pfWorkDesc').value.trim(),
+    resume_url:       document.getElementById('pfResumeUrl').value.trim(),
   };
   const { error } = await db.from('executives').update(upd).eq('id', currentUser.id);
   if (error) { showToast('❌ ' + error.message, 'error'); return; }
@@ -650,9 +1046,14 @@ async function saveProfile() {
   setTimeout(() => document.getElementById('pfSaveOk').style.display = 'none', 3000);
 }
 
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  item.classList.toggle('open');
+}
+
 async function signOut() {
   await db.auth.signOut();
-  window.location.href = 'executive-login.html';
+  window.location.href = 'index.html#join-executive';
 }
 
 init();

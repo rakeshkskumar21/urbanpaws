@@ -219,6 +219,25 @@
     .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .filters { flex-direction: column; align-items: stretch; }
   }
+  /* EXEC DETAIL MODAL */
+  .em-overlay { display:none; position:fixed; inset:0; z-index:600; background:rgba(0,0,0,.7); align-items:center; justify-content:center; padding:1rem; }
+  .em-overlay.open { display:flex; }
+  .em-box { background:var(--surface); border-radius:16px; max-width:700px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,.5); border:1px solid var(--border); }
+  .em-head { display:flex; align-items:center; justify-content:space-between; padding:1.1rem 1.5rem; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); z-index:1; }
+  .em-title { font-size:.98rem; font-weight:800; color:var(--text); }
+  .em-close { background:none; border:none; color:var(--muted); font-size:1.25rem; cursor:pointer; line-height:1; padding:4px; }
+  .em-body { padding:1.4rem 1.5rem; }
+  .em-section { margin-bottom:1.35rem; }
+  .em-section-title { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:.75rem; padding-bottom:.4rem; border-bottom:1px solid var(--border2); }
+  .em-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem 1rem; }
+  .em-field { display:flex; flex-direction:column; gap:3px; }
+  .em-field.full { grid-column:1/-1; }
+  .em-label { font-size:.65rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  .em-val { font-size:.84rem; color:var(--text2); word-break:break-word; }
+  .em-val.highlight { color:var(--text); font-weight:700; }
+  .em-resume { display:flex; align-items:center; gap:.65rem; }
+  .em-resume a { color:var(--accent); font-weight:700; font-size:.85rem; text-decoration:none; }
+  .em-resume a:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -315,10 +334,11 @@
       </select>
       <select id="filterStatus" onchange="applyFilters()">
         <option value="">All Status</option>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
+        <option value="pending">⏳ Pending</option>
+        <option value="assigned">📋 Assigned</option>
+        <option value="confirmed">✅ Confirmed</option>
+        <option value="completed">🎉 Completed</option>
+        <option value="cancelled">❌ Cancelled</option>
       </select>
       <input type="date" id="filterDate" onchange="applyFilters()" />
       <input type="text" id="filterSearch" placeholder="Search name / phone…" oninput="applyFilters()" style="min-width:180px;" />
@@ -457,6 +477,7 @@
             <thead>
               <tr>
                 <th>#</th>
+                <th>Exec ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -470,7 +491,7 @@
               </tr>
             </thead>
             <tbody id="execsBody">
-              <tr><td colspan="11" class="loading">Loading executives…</td></tr>
+              <tr><td colspan="12" class="loading">Loading executives…</td></tr>
             </tbody>
           </table>
         </div>
@@ -615,14 +636,21 @@
         <td style="font-size:0.82rem;font-weight:600">${paidVia}</td>
         <td>${amtCell}</td>
         <td>
-          <select class="status-select exec-assign-sel" style="min-width:130px" data-current="${b.executive_id||''}" onchange="assignExec('${b.id}', this)">
+          <select class="status-select exec-assign-sel" style="min-width:150px" data-booking-id="${b.id}" data-current="${b.executive_id||''}" data-email="${b.email||''}" data-name="${b.name||b.owner_name||''}" data-bid="${b.booking_id||''}" data-service="${b.service||''}" data-date="${b.booking_date||''}" data-time="${b.time_slot||''}" onchange="assignExec('${b.id}', this)">
             <option value="">— Unassigned —</option>
           </select>
-          ${b.executive_name ? `<div style="font-size:.72rem;color:var(--accent);margin-top:3px;font-weight:600">✓ ${b.executive_name}</div>` : ''}
+          ${b.executive_name
+            ? `<div style="font-size:.7rem;color:var(--accent);margin-top:4px;font-weight:700">✓ ${b.executive_name}</div>
+               ${b.executive_exec_id ? `<span style="background:rgba(129,140,248,.15);color:var(--accent);font-size:.68rem;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:.04em">${b.executive_exec_id}</span>` : ''}`
+            : ''}
+          ${b.status==='assigned'
+            ? `<button onclick="notifyCustomer('${b.id}')" title="Send email to customer" style="margin-top:5px;background:rgba(34,197,94,.15);color:#15803d;border:none;border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">📧 Notify Customer</button>`
+            : ''}
         </td>
         <td>
           <select class="status-select" onchange="updateStatus('${b.id}', this.value)">
             <option value="pending"   ${b.status==='pending'   ? 'selected':''}>⏳ Pending</option>
+            <option value="assigned"  ${b.status==='assigned'  ? 'selected':''}>📋 Assigned</option>
             <option value="confirmed" ${b.status==='confirmed' ? 'selected':''}>✅ Confirmed</option>
             <option value="completed" ${b.status==='completed' ? 'selected':''}>🎉 Completed</option>
             <option value="cancelled" ${b.status==='cancelled' ? 'selected':''}>❌ Cancelled</option>
@@ -736,6 +764,7 @@
     };
     document.getElementById('execsBody').innerHTML = filtered.length ? filtered.map((e,i) => `<tr>
       <td style="color:var(--muted);font-size:.78rem">${i+1}</td>
+      <td><span style="background:rgba(129,140,248,.18);color:var(--accent);padding:3px 9px;border-radius:8px;font-size:.72rem;font-weight:800;letter-spacing:.04em;white-space:nowrap">${e.exec_id||'—'}</span></td>
       <td><strong style="color:var(--text)">${e.full_name||'—'}</strong></td>
       <td style="font-size:.78rem;color:var(--muted2)">${e.email||'—'}</td>
       <td style="font-size:.78rem">${e.phone||'—'}</td>
@@ -747,6 +776,7 @@
       <td style="font-size:.72rem;color:var(--muted)">${e.created_at ? new Date(e.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}</td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button onclick="viewExecDetails('${e.id}')" style="background:rgba(129,140,248,.15);color:var(--accent);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">👁 Details</button>
           ${e.status==='pending' ? `<button onclick="updateExecStatus('${e.id}','approved')" style="background:var(--green-bg);color:var(--green);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">✅ Approve</button>
           <button onclick="updateExecStatus('${e.id}','inactive')" style="background:var(--red-bg);color:var(--red);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">❌ Reject</button>` : ''}
           ${e.status==='approved' ? `<button onclick="updateExecStatus('${e.id}','active')" style="background:var(--green-bg);color:var(--green);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">🟢 Set Active</button>` : ''}
@@ -754,7 +784,7 @@
           ${e.status==='inactive' ? `<button onclick="updateExecStatus('${e.id}','approved')" style="background:rgba(129,140,248,.15);color:var(--accent);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">↩ Reactivate</button>` : ''}
         </div>
       </td>
-    </tr>`).join('') : '<tr><td colspan="11" class="empty">No executives found.</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="12" class="empty">No executives found.</td></tr>';
   }
 
   async function updateExecStatus(id, status) {
@@ -776,20 +806,72 @@
     document.querySelectorAll('.exec-assign-sel').forEach(sel => {
       const current = sel.dataset.current || '';
       const opts = `<option value="">— Unassigned —</option>` +
-        approvedExecs.map(e => `<option value="${e.id}|${e.full_name}" ${current===e.id?'selected':''}>${e.full_name} (${e.city||'—'})</option>`).join('');
+        approvedExecs.map(e => {
+          const label = `${e.exec_id ? '['+e.exec_id+'] ' : ''}${e.full_name} — ${e.city||'—'} · ${e.services||''}`;
+          return `<option value="${e.id}|${e.full_name}|${e.exec_id||''}" ${current===e.id?'selected':''}>${label}</option>`;
+        }).join('');
       sel.innerHTML = opts;
     });
   }
 
   async function assignExec(bookingId, sel) {
     const val = sel.value;
-    const [execId, execName] = val ? val.split('|') : ['', ''];
-    const { error } = await db.from('bookings').update({ executive_id: execId||null, executive_name: execName||null }).eq('id', bookingId);
+    const parts = val ? val.split('|') : ['', '', ''];
+    const execUuid    = parts[0] || '';
+    const execName    = parts[1] || '';
+    const execPublicId = parts[2] || '';
+    const bk = allBookings.find(b => String(b.id) === String(bookingId));
+    const upd = {
+      executive_id:      execUuid || null,
+      executive_name:    execName || null,
+      executive_exec_id: execPublicId || null,
+    };
+    // Only move to 'assigned' if currently pending; don't overwrite confirmed/completed
+    if (execUuid && bk && (bk.status === 'pending' || !bk.status)) upd.status = 'assigned';
+    if (!execUuid && bk && bk.status === 'assigned') upd.status = 'pending';
+    const { error } = await db.from('bookings').update(upd).eq('id', bookingId);
     if (error) { alert('Error: ' + error.message); sel.value = ''; return; }
-    const bk = allBookings.find(b => String(b.id)===String(bookingId));
-    if (bk) { bk.executive_id = execId; bk.executive_name = execName; }
-    // Refresh bookings table to show name
+    if (bk) Object.assign(bk, upd);
     applyFilters();
+  }
+
+  function notifyCustomer(bookingId) {
+    const b = allBookings.find(x => String(x.id) === String(bookingId));
+    if (!b) return;
+    const execName  = b.executive_name || 'your assigned executive';
+    const execPubId = b.executive_exec_id || '—';
+    const custEmail = b.email || '';
+    const subject = encodeURIComponent(`Your booking is confirmed — Executive ${execPubId} assigned | Urban Paws`);
+    const body = encodeURIComponent(
+`Hi there,
+
+Great news! Your Urban Paws booking has been assigned to a verified executive.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  BOOKING DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Booking ID : ${b.booking_id || '—'}
+  Service    : ${b.service || '—'}
+  Date       : ${b.booking_date || '—'}
+  Time       : ${b.time_slot || '—'}
+  Pet        : ${b.pet_name || '—'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  YOUR ASSIGNED EXECUTIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Executive ID   : ${execPubId}
+  Executive Name : ${execName}
+
+Your executive (${execPubId}) has been notified and will confirm your booking shortly.
+
+If you need to verify your executive, quote the Executive ID (${execPubId}) when you contact us.
+
+For any queries: support@urbanpaws.app
+
+Thank you for choosing Urban Paws! 🐾
+urbanpaws.app`
+    );
+    window.open(`mailto:${custEmail}?subject=${subject}&body=${body}`, '_blank');
   }
 
   // ── Users ──
@@ -881,6 +963,83 @@
       </tr>`;
     }).join('');
   }
+
+  // ── EXEC DETAIL MODAL ──
+  function viewExecDetails(id) {
+    const e = allExecs.find(x => x.id === id);
+    if (!e) return;
+    const or = v => v && v.trim() ? v : '<span style="color:var(--muted2);font-style:italic">Not provided</span>';
+    const roleMap = { walker:'🦮 Dog Walker', feeder:'🍲 Pet Feeder', both:'🐾 Walker + Feeder' };
+    const statusClr = { pending:'var(--yellow)', approved:'var(--accent)', active:'var(--green)', inactive:'var(--red)' };
+    const sc = statusClr[e.status] || 'var(--muted)';
+    document.getElementById('emName').innerHTML = `${e.full_name || 'Executive Details'} ${e.exec_id ? `<span style="background:rgba(129,140,248,.2);color:var(--accent);font-size:.75rem;padding:3px 10px;border-radius:100px;font-weight:800;letter-spacing:.04em;vertical-align:middle;margin-left:8px">${e.exec_id}</span>` : ''}`;
+    document.getElementById('execModalBody').innerHTML = `
+      <div class="em-section">
+        <div class="em-section-title">👤 Basic Info</div>
+        <div class="em-grid">
+          <div class="em-field"><div class="em-label">Executive ID</div><div class="em-val" style="font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:.05em">${e.exec_id || '<span style=color:var(--muted2)>Not assigned</span>'}</div></div>
+          <div class="em-field"><div class="em-label">Full Name</div><div class="em-val highlight">${or(e.full_name)}</div></div>
+          <div class="em-field"><div class="em-label">Email</div><div class="em-val">${or(e.email)}</div></div>
+          <div class="em-field"><div class="em-label">Phone</div><div class="em-val">${or(e.phone)}</div></div>
+          <div class="em-field"><div class="em-label">City</div><div class="em-val">${or(e.city)}</div></div>
+          <div class="em-field"><div class="em-label">Role</div><div class="em-val">${roleMap[e.services]||or(e.services)}</div></div>
+          <div class="em-field"><div class="em-label">Experience</div><div class="em-val">${or(e.experience)}</div></div>
+          <div class="em-field"><div class="em-label">Status</div><div class="em-val"><span style="background:${sc}22;color:${sc};padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:700">${e.status||'pending'}</span></div></div>
+          <div class="em-field"><div class="em-label">Rating</div><div class="em-val">${(e.rating||5.0)} ★</div></div>
+          <div class="em-field"><div class="em-label">Joined</div><div class="em-val">${e.created_at ? new Date(e.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}</div></div>
+          <div class="em-field"><div class="em-label">Approved On</div><div class="em-val">${e.approved_at ? new Date(e.approved_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}</div></div>
+          <div class="em-field full"><div class="em-label">Bio</div><div class="em-val" style="line-height:1.55">${or(e.bio)}</div></div>
+        </div>
+      </div>
+      <div class="em-section">
+        <div class="em-section-title">🪪 Identity Documents</div>
+        <div class="em-grid">
+          <div class="em-field"><div class="em-label">Aadhaar Number</div><div class="em-val">${or(e.aadhaar_number)}</div></div>
+          <div class="em-field"><div class="em-label">PAN Number</div><div class="em-val">${or(e.pan_number)}</div></div>
+          <div class="em-field full"><div class="em-label">Driving Licence Number</div><div class="em-val">${or(e.driving_licence)}</div></div>
+        </div>
+      </div>
+      <div class="em-section">
+        <div class="em-section-title">🎓 Education Details</div>
+        <div class="em-grid">
+          <div class="em-field"><div class="em-label">Highest Education</div><div class="em-val">${or(e.education_level)}</div></div>
+          <div class="em-field"><div class="em-label">Institution</div><div class="em-val">${or(e.institution_name)}</div></div>
+          <div class="em-field"><div class="em-label">Year of Completion</div><div class="em-val">${or(e.pass_year)}</div></div>
+          <div class="em-field"><div class="em-label">Marks / SSLC / CGPA</div><div class="em-val">${or(e.marks_percentage)}</div></div>
+        </div>
+      </div>
+      <div class="em-section">
+        <div class="em-section-title">💼 Work Experience</div>
+        <div class="em-grid">
+          <div class="em-field"><div class="em-label">Previous Employer</div><div class="em-val">${or(e.prev_employer)}</div></div>
+          <div class="em-field"><div class="em-label">Duration</div><div class="em-val">${or(e.work_duration)}</div></div>
+          <div class="em-field full"><div class="em-label">Work Description</div><div class="em-val" style="line-height:1.55">${or(e.work_description)}</div></div>
+        </div>
+      </div>
+      <div class="em-section">
+        <div class="em-section-title">📄 Resume</div>
+        <div class="em-resume">
+          ${e.resume_url ? `<a href="${e.resume_url}" target="_blank" rel="noopener">📄 View / Download Resume →</a>` : '<span style="color:var(--muted2);font-style:italic;font-size:.84rem">No resume uploaded.</span>'}
+        </div>
+      </div>
+    `;
+    document.getElementById('execModal').classList.add('open');
+  }
+
+  function closeExecModal() {
+    document.getElementById('execModal').classList.remove('open');
+  }
 </script>
+
+<!-- EXEC DETAIL MODAL -->
+<div class="em-overlay" id="execModal" onclick="if(event.target===this)closeExecModal()">
+  <div class="em-box">
+    <div class="em-head">
+      <div class="em-title" id="emName">Executive Details</div>
+      <button class="em-close" onclick="closeExecModal()">✕</button>
+    </div>
+    <div class="em-body" id="execModalBody"></div>
+  </div>
+</div>
 </body>
 </html>
