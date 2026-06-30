@@ -276,7 +276,7 @@
     <div class="tab-bar">
       <button class="tab-btn active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
       <button class="tab-btn" id="tabUsers" onclick="switchAdminTab('users')">👥 Users</button>
-      <button class="tab-btn" id="tabExecs" onclick="switchAdminTab('executives')">👔 Executives</button>
+      <button class="tab-btn" id="tabExecutives" onclick="switchAdminTab('executives')">👔 Executives</button>
     </div>
 
     <!-- BOOKINGS TAB -->
@@ -513,6 +513,7 @@
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadBookings();
+    loadExecs();
   }
 
   // ── Load bookings ──
@@ -691,9 +692,11 @@
 
   // ── Admin tab switching ──
   function switchAdminTab(tab) {
-    ['bookings','users','executives'].forEach(t => {
-      document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active', tab===t);
-      const el = document.getElementById(t+'Tab'); if (el) el.style.display = tab===t ? '' : 'none';
+    const tabIds = { bookings: 'tabBookings', users: 'tabUsers', executives: 'tabExecutives' };
+    const divIds = { bookings: 'bookingsTab', users: 'usersTab', executives: 'executivesTab' };
+    Object.keys(tabIds).forEach(t => {
+      const btn = document.getElementById(tabIds[t]); if (btn) btn.classList.toggle('active', tab===t);
+      const div = document.getElementById(divIds[t]); if (div) div.style.display = tab===t ? '' : 'none';
     });
     if (tab==='users') { document.getElementById('uFilterSearch').value=''; if (!window._usersLoaded) loadUsers(); }
     if (tab==='executives') { if (!window._execsLoaded) loadExecs(); }
