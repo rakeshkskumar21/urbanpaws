@@ -913,8 +913,17 @@
     display: flex; align-items: center; gap: 8px;
   }
   .plan-feature::before { content: '✓'; color: var(--paw); font-weight: 700; }
+  .pricing-card.plan-selected {
+    outline: 3px solid var(--paw);
+    box-shadow: 0 0 0 7px rgba(108,111,212,0.13), 0 8px 32px rgba(108,111,212,0.18);
+    transform: scale(1.015);
+    transition: all 0.35s ease;
+    z-index: 2;
+    position: relative;
+  }
+  .pricing-card.featured.plan-selected { outline-color: #a5b4fc; }
 
- 
+
   /* FOOTER */
   footer {
     background: var(--night);
@@ -1810,7 +1819,7 @@
   <p class="section-sub" style="white-space:nowrap;">Pay per use, or subscribe for families with multiple pets and daily needs.</p>
 
   <div class="pricing-grid">
-    <div class="pricing-card">
+    <div class="pricing-card" data-plan="starter">
       <h3>Starter (Pay as you go)</h3>
       <div class="plan-desc">No subscription, no commitment. Book anytime.</div>
       <ul class="plan-features">
@@ -1824,7 +1833,7 @@
       <button class="btn-outline" style="width:100%;" onclick="openBooking()">Get started</button>
     </div>
 
-    <div class="pricing-card featured">
+    <div class="pricing-card featured" data-plan="casual">
       <div class="plan-badge">Most popular</div>
       <h3>Casual</h3>
       <div class="plan-price">₹3,178 <span>/month</span></div>
@@ -1840,7 +1849,7 @@
       <button class="btn-primary" style="width:100%;" onclick="openPlan('casual')">Get Started</button>
     </div>
 
-    <div class="pricing-card">
+    <div class="pricing-card" data-plan="standard">
       <h3>Standard Pro</h3>
       <div class="plan-price">₹4,489 <span>/month</span></div>
       <div class="plan-anchor-row"><s class="plan-anchor">₹4,999</s><span class="plan-save">Save 10%</span></div>
@@ -1858,7 +1867,7 @@
       <button class="btn-outline" style="width:100%;" onclick="openPlan('standard')">Get started</button>
     </div>
     <div>
-      <div class="pricing-card">
+      <div class="pricing-card" data-plan="carnival">
         <h3>Carnival</h3>
         <div class="plan-price">₹5,889 <span>/month</span></div>
         <div class="plan-anchor-row"><s class="plan-anchor">₹6,999</s><span class="plan-save">Save 16%</span></div>
@@ -2241,15 +2250,83 @@
     });
   }
 
+  // ── Plan metadata (amount in paise) ──
+  const PLAN_META = {
+    casual:   { label: 'Casual Plan — 22 walks/month',               amount: 317800 },
+    standard: { label: 'Standard Pro — 30 walks/month',              amount: 448900 },
+    carnival: { label: 'Carnival Plan — 30 walks for 2 pets/month',  amount: 588900 },
+  };
+
   function openPlan(plan) {
     db.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'my-bookings.html?p=onboarding&plan=' + plan;
+        triggerPlanPayment(plan);
       } else {
-        sessionStorage.setItem('postLoginPlan', plan);
+        localStorage.setItem('postLoginPlan', plan);
         openAuthModal();
+        setTimeout(() => switchAuthTab('signup'), 30);
       }
     });
+  }
+
+  function triggerPlanPayment(plan) {
+    const meta = PLAN_META[plan];
+    if (!meta) { openBooking(); return; } // Starter → regular booking flow
+
+    // Highlight the card
+    document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('plan-selected'));
+    const card = document.querySelector(`.pricing-card[data-plan="${plan}"]`);
+    if (card) { card.classList.add('plan-selected'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+
+    // Open Razorpay after the scroll settles
+    setTimeout(() => openPlanCheckout(plan, meta), 950);
+  }
+
+  async function openPlanCheckout(plan, meta) {
+    const { data: { user } } = await db.auth.getUser();
+    let profile = null;
+    if (user) {
+      const { data: p } = await db.from('profiles').select('full_name,phone').eq('id', user.id).single();
+      profile = p;
+    }
+    const rzpOpts = {
+      key:         RZP_KEY,
+      amount:      meta.amount,
+      currency:    'INR',
+      name:        'Urban Paws',
+      description: meta.label,
+      image:       'https://urbanpaws.app/favicon.png',
+      prefill: {
+        name:    profile?.full_name || '',
+        email:   user?.email || '',
+        contact: (profile?.phone || '').replace(/\D/g,'').slice(-10)
+      },
+      notes: { plan },
+      theme: { color: '#6C6FD4' },
+      handler: async function(response) {
+        if (user) await db.from('profiles').update({ plan }).eq('id', user.id);
+        document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('plan-selected'));
+        const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+        showToast('🎉 Welcome to ' + planName + '! Your subscription is active.', 'success');
+        setTimeout(() => window.location.href = 'my-bookings.html', 2000);
+      },
+      modal: {
+        ondismiss: function() {
+          document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('plan-selected'));
+          showToast('Payment cancelled — your plan was not activated.', '');
+        }
+      }
+    };
+    try {
+      const rzp = new Razorpay(rzpOpts);
+      rzp.on('payment.failed', function(resp) {
+        document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('plan-selected'));
+        showToast('❌ Payment failed: ' + resp.error.description, 'error');
+      });
+      rzp.open();
+    } catch(e) {
+      showToast('❌ Could not open payment. Please try again.', 'error');
+    }
   }
 
   function openFood() {
@@ -2815,11 +2892,13 @@
   db.auth.onAuthStateChange((_event, session) => {
     const user = session ? session.user : null;
     if (user) {
-      const planIntent = sessionStorage.getItem('postLoginPlan');
-      const foodIntent = sessionStorage.getItem('postLoginFood');
-      if (planIntent) {
-        sessionStorage.removeItem('postLoginPlan');
-        window.location.href = 'my-bookings.html?p=onboarding&plan=' + planIntent;
+      const planIntent  = localStorage.getItem('postLoginPlan');
+      const foodIntent  = sessionStorage.getItem('postLoginFood');
+      // Only consume plan intent on a fresh sign-in (not on page-load session restore)
+      if (planIntent && (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED')) {
+        localStorage.removeItem('postLoginPlan');
+        closeAuthModal();
+        triggerPlanPayment(planIntent);
       } else if (foodIntent) {
         sessionStorage.removeItem('postLoginFood');
         window.location.href = 'my-bookings.html?p=book&svc=food';
