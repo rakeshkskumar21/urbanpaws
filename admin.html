@@ -769,7 +769,7 @@
     if (error) { document.getElementById('execsBody').innerHTML = '<tr><td colspan="11" class="empty">Error: ' + error.message + '</td></tr>'; return; }
     allExecs = data || [];
     // Update exec selects in bookings table too
-    populateExecSelects();
+    // exec picker is on-demand — no select dropdowns to populate
     applyExecFilters();
     document.getElementById('eStatTotal').textContent   = allExecs.length;
     document.getElementById('eStatPending').textContent = allExecs.filter(e => e.status==='pending').length;
@@ -826,7 +826,7 @@
     document.getElementById('eStatPending').textContent = allExecs.filter(e => e.status==='pending').length;
     document.getElementById('eStatActive').textContent  = allExecs.filter(e => e.status==='active').length;
     document.getElementById('eStatApproved').textContent= allExecs.filter(e => e.status==='approved').length;
-    populateExecSelects();
+    // exec picker is on-demand — no select dropdowns to populate
   }
 
   // Populate executive dropdowns in bookings table
