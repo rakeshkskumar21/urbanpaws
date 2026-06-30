@@ -219,6 +219,30 @@
     .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .filters { flex-direction: column; align-items: stretch; }
   }
+  /* EXEC PICKER MODAL */
+  .ep-overlay { display:none; position:fixed; inset:0; z-index:700; background:rgba(0,0,0,.75); align-items:center; justify-content:center; padding:1rem; }
+  .ep-overlay.open { display:flex; }
+  .ep-box { background:var(--surface); border-radius:16px; width:100%; max-width:640px; max-height:86vh; display:flex; flex-direction:column; box-shadow:0 24px 64px rgba(0,0,0,.6); border:1px solid var(--border); }
+  .ep-head { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.4rem; border-bottom:1px solid var(--border); }
+  .ep-title { font-size:.95rem; font-weight:800; color:var(--text); }
+  .ep-sub { font-size:.72rem; color:var(--muted); margin-top:2px; }
+  .ep-search { padding:.6rem 1.4rem; border-bottom:1px solid var(--border2); }
+  .ep-search input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-size:.83rem; outline:none; }
+  .ep-search input:focus { border-color:var(--accent); }
+  .ep-list { overflow-y:auto; padding:.75rem 1rem; display:flex; flex-direction:column; gap:.5rem; flex:1; }
+  .ep-card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:.8rem 1rem; display:flex; align-items:center; gap:.85rem; cursor:pointer; transition:border-color .15s,background .15s; }
+  .ep-card:hover { border-color:var(--accent); background:var(--surface3); }
+  .ep-card.ep-selected { border-color:var(--accent); background:rgba(129,140,248,.1); }
+  .ep-avatar { width:40px; height:40px; border-radius:50%; background:var(--paw); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.95rem; flex-shrink:0; }
+  .ep-info { flex:1; min-width:0; }
+  .ep-name { font-size:.88rem; font-weight:700; color:var(--text); }
+  .ep-meta { font-size:.72rem; color:var(--muted); margin-top:2px; }
+  .ep-id-pill { background:rgba(129,140,248,.18); color:var(--accent); font-size:.68rem; font-weight:800; padding:2px 8px; border-radius:6px; letter-spacing:.04em; white-space:nowrap; }
+  .ep-assign-btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:.78rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .ep-assign-btn:hover { background:var(--paw2); }
+  .ep-empty { text-align:center; color:var(--muted); padding:2rem; font-size:.85rem; }
+  .ep-unassign { background:var(--red-bg); color:var(--red); border:none; border-radius:8px; padding:5px 12px; font-size:.74rem; font-weight:700; cursor:pointer; margin:.5rem 1rem; display:none; }
+
   /* EXEC DETAIL MODAL */
   .em-overlay { display:none; position:fixed; inset:0; z-index:600; background:rgba(0,0,0,.7); align-items:center; justify-content:center; padding:1rem; }
   .em-overlay.open { display:flex; }
@@ -635,16 +659,21 @@
         <td>${flags || '<span style="color:#ccc">None</span>'}</td>
         <td style="font-size:0.82rem;font-weight:600">${paidVia}</td>
         <td>${amtCell}</td>
-        <td>
-          <select class="status-select exec-assign-sel" style="min-width:150px" data-booking-id="${b.id}" data-current="${b.executive_id||''}" data-email="${b.email||''}" data-name="${b.name||b.owner_name||''}" data-bid="${b.booking_id||''}" data-service="${b.service||''}" data-date="${b.booking_date||''}" data-time="${b.time_slot||''}" onchange="assignExec('${b.id}', this)">
-            <option value="">— Unassigned —</option>
-          </select>
-          ${b.executive_name
-            ? `<div style="font-size:.7rem;color:var(--accent);margin-top:4px;font-weight:700">✓ ${b.executive_name}</div>
-               ${b.executive_exec_id ? `<span style="background:rgba(129,140,248,.15);color:var(--accent);font-size:.68rem;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:.04em">${b.executive_exec_id}</span>` : ''}`
-            : ''}
+        <td style="min-width:170px">
+          ${b.executive_name ? `
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--paw);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0">${(b.executive_name||'?')[0].toUpperCase()}</div>
+              <div>
+                <div style="font-size:.78rem;font-weight:700;color:var(--text)">${b.executive_name}</div>
+                ${b.executive_exec_id ? `<span style="background:rgba(129,140,248,.18);color:var(--accent);font-size:.65rem;font-weight:800;padding:1px 6px;border-radius:5px;letter-spacing:.04em">${b.executive_exec_id}</span>` : ''}
+              </div>
+            </div>
+            <button onclick="openExecPicker('${b.id}')" style="background:var(--surface3);color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:3px 8px;font-size:.66rem;font-weight:600;cursor:pointer;margin-bottom:4px">✎ Change</button>
+          ` : `
+            <button onclick="openExecPicker('${b.id}')" style="background:rgba(129,140,248,.15);color:var(--accent);border:1px solid rgba(129,140,248,.3);border-radius:8px;padding:5px 10px;font-size:.74rem;font-weight:700;cursor:pointer;width:100%">+ Assign Executive</button>
+          `}
           ${b.status==='assigned'
-            ? `<button data-notify-id="${b.id}" onclick="notifyCustomer('${b.id}')" title="Send email to customer from hello@urbanpaws.app" style="margin-top:5px;background:rgba(34,197,94,.15);color:#15803d;border:none;border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">📧 Notify Customer</button>`
+            ? `<button data-notify-id="${b.id}" onclick="notifyCustomer('${b.id}')" title="Send email to customer from hello@urbanpaws.app" style="margin-top:3px;background:rgba(34,197,94,.15);color:#15803d;border:1px solid rgba(34,197,94,.25);border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;width:100%">📧 Notify Customer</button>`
             : ''}
         </td>
         <td>
@@ -801,36 +830,81 @@
   }
 
   // Populate executive dropdowns in bookings table
-  function populateExecSelects() {
-    const approvedExecs = allExecs.filter(e => e.status==='approved' || e.status==='active');
-    document.querySelectorAll('.exec-assign-sel').forEach(sel => {
-      const current = sel.dataset.current || '';
-      const opts = `<option value="">— Unassigned —</option>` +
-        approvedExecs.map(e => {
-          const label = `${e.exec_id ? '['+e.exec_id+'] ' : ''}${e.full_name} — ${e.city||'—'} · ${e.services||''}`;
-          return `<option value="${e.id}|${e.full_name}|${e.exec_id||''}" ${current===e.id?'selected':''}>${label}</option>`;
-        }).join('');
-      sel.innerHTML = opts;
-    });
+  // ── Exec Picker ──
+  let _epBookingId = null;
+
+  function openExecPicker(bookingId) {
+    _epBookingId = bookingId;
+    const bk = allBookings.find(b => String(b.id) === String(bookingId));
+    const sub = bk ? `Booking ${bk.booking_id || '#'+bookingId} · ${bk.service || ''} · ${bk.pet_name || ''}` : '';
+    document.getElementById('epSubtitle').textContent = sub;
+    document.getElementById('epSearch').value = '';
+    // Show "Remove" button only if already assigned
+    document.getElementById('epUnassignBtn').style.display = (bk && bk.executive_id) ? 'block' : 'none';
+    renderExecPicker();
+    document.getElementById('epOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('epSearch').focus();
   }
 
-  async function assignExec(bookingId, sel) {
-    const val = sel.value;
-    const parts = val ? val.split('|') : ['', '', ''];
-    const execUuid    = parts[0] || '';
-    const execName    = parts[1] || '';
-    const execPublicId = parts[2] || '';
+  function closeExecPicker() {
+    document.getElementById('epOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    _epBookingId = null;
+  }
+
+  function renderExecPicker() {
+    const q = (document.getElementById('epSearch').value || '').toLowerCase();
+    const active = allExecs.filter(e => e.status === 'active' || e.status === 'approved');
+    const filtered = q ? active.filter(e =>
+      (e.full_name||'').toLowerCase().includes(q) ||
+      (e.city||'').toLowerCase().includes(q) ||
+      (e.services||'').toLowerCase().includes(q) ||
+      (e.exec_id||'').toLowerCase().includes(q)
+    ) : active;
+
+    const bk = allBookings.find(b => String(b.id) === String(_epBookingId));
+    const currentId = bk?.executive_id || '';
+
+    const list = document.getElementById('epList');
+    if (!filtered.length) {
+      list.innerHTML = '<div class="ep-empty">No active executives found.<br><span style="font-size:.72rem">Approve executives from the Executives tab first.</span></div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(e => {
+      const initials = (e.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const isSelected = e.id === currentId;
+      const svcLabel = { walker:'🦮 Dog Walker', feeder:'🍲 Pet Feeder', both:'🐾 Walker + Feeder' }[e.services] || e.services || '—';
+      const rating = e.rating ? '⭐ ' + Number(e.rating).toFixed(1) : '';
+      return `<div class="ep-card ${isSelected ? 'ep-selected' : ''}" onclick="assignFromPicker('${e.id}','${(e.full_name||'').replace(/'/g,"\\'")}','${e.exec_id||''}')">
+        <div class="ep-avatar">${initials}</div>
+        <div class="ep-info">
+          <div class="ep-name">${e.full_name || '—'} ${isSelected ? '<span style="color:var(--green);font-size:.7rem">● Current</span>' : ''}</div>
+          <div class="ep-meta">${svcLabel} · ${e.city||'—'} ${rating}</div>
+        </div>
+        ${e.exec_id ? `<div class="ep-id-pill">${e.exec_id}</div>` : ''}
+        <button class="ep-assign-btn" onclick="event.stopPropagation();assignFromPicker('${e.id}','${(e.full_name||'').replace(/'/g,"\\'")}','${e.exec_id||''}')">${isSelected ? '✓ Assigned' : 'Assign'}</button>
+      </div>`;
+    }).join('');
+  }
+
+  async function assignFromPicker(execId, execName, execPublicId) {
+    const bookingId = _epBookingId;
+    if (!bookingId) return;
+    closeExecPicker();
+
     const bk = allBookings.find(b => String(b.id) === String(bookingId));
     const upd = {
-      executive_id:      execUuid || null,
+      executive_id:      execId   || null,
       executive_name:    execName || null,
       executive_exec_id: execPublicId || null,
     };
-    // Only move to 'assigned' if currently pending; don't overwrite confirmed/completed
-    if (execUuid && bk && (bk.status === 'pending' || !bk.status)) upd.status = 'assigned';
-    if (!execUuid && bk && bk.status === 'assigned') upd.status = 'pending';
+    if (execId && bk && (bk.status === 'pending' || !bk.status)) upd.status = 'assigned';
+    if (!execId && bk && bk.status === 'assigned') upd.status = 'pending';
+
     const { error } = await db.from('bookings').update(upd).eq('id', bookingId);
-    if (error) { alert('Error: ' + error.message); sel.value = ''; return; }
+    if (error) { alert('Assignment failed: ' + error.message); return; }
     if (bk) Object.assign(bk, upd);
     applyFilters();
   }
@@ -1113,6 +1187,24 @@ urbanpaws.app`;
       <button class="em-close" onclick="closeExecModal()">✕</button>
     </div>
     <div class="em-body" id="execModalBody"></div>
+  </div>
+</div>
+
+<!-- EXEC PICKER MODAL -->
+<div class="ep-overlay" id="epOverlay" onclick="if(event.target===this)closeExecPicker()">
+  <div class="ep-box">
+    <div class="ep-head">
+      <div>
+        <div class="ep-title">Assign Executive</div>
+        <div class="ep-sub" id="epSubtitle">Select an active executive for this booking</div>
+      </div>
+      <button class="em-close" onclick="closeExecPicker()">✕</button>
+    </div>
+    <div class="ep-search">
+      <input type="text" id="epSearch" placeholder="Search by name, city, service or ID…" oninput="renderExecPicker()">
+    </div>
+    <button class="ep-unassign" id="epUnassignBtn" onclick="assignFromPicker(null)">✕ Remove Assignment</button>
+    <div class="ep-list" id="epList"></div>
   </div>
 </div>
 </body>

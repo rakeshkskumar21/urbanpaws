@@ -79,6 +79,14 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
+    // ── Executive assignment notification to customer (from admin "Notify Customer" button) ──
+    if (p.action === 'notifyCustomer') {
+      sendAssignmentEmail(p);
+      return ContentService
+        .createTextOutput(JSON.stringify({ result: 'ok' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
 
     // Add a header row once, if the sheet is empty
@@ -448,6 +456,33 @@ function statusRow(label, value) {
     '<td style="font-weight:600;white-space:nowrap;padding:4px 12px 4px 0;font-size:13px;color:#555;width:140px">' + label + '</td>' +
     '<td style="padding:4px 0;font-size:14px;color:#222">' + value + '</td>' +
   '</tr>';
+}
+
+// Sends executive-assignment notification to the customer (triggered by admin "Notify Customer" button).
+function sendAssignmentEmail(p) {
+  p = p || {};
+  var to = (p.email || '').trim();
+  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return;
+
+  var subject = p.subject || ('Your booking is confirmed — Executive ' + (p.execId || '') + ' assigned | Urban Paws');
+  var htmlBody = p.htmlBody || '';
+  var plain    = p.plainBody || ('Your booking has been assigned to executive ' + (p.execId || '') + '. For queries: hello@urbanpaws.app');
+
+  try {
+    MailApp.sendEmail({
+      to:       to,
+      subject:  subject,
+      body:     plain,
+      htmlBody: htmlBody,
+      from:     FROM_EMAIL,
+      name:     FROM_NAME,
+      replyTo:  FROM_EMAIL
+    });
+    console.log('Assignment email sent to ' + to + ' — exec ' + p.execId + ' for booking ' + p.bookingId);
+  } catch (err) {
+    console.error('Assignment email failed: ' + err);
+    throw err; // re-throw so doPost returns an error JSON
+  }
 }
 
 // Run this once from the editor to test your email setup.
