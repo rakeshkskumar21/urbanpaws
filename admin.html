@@ -276,6 +276,7 @@
     <div class="tab-bar">
       <button class="tab-btn active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
       <button class="tab-btn" id="tabUsers" onclick="switchAdminTab('users')">👥 Users</button>
+      <button class="tab-btn" id="tabExecs" onclick="switchAdminTab('executives')">👔 Executives</button>
     </div>
 
     <!-- BOOKINGS TAB -->
@@ -345,6 +346,7 @@
               <th>Health Flags</th>
               <th>Paid Via</th>
               <th>Amount Paid</th>
+              <th>Assigned Executive</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -424,6 +426,57 @@
       </div>
     </div><!-- /usersTab -->
 
+    <!-- EXECUTIVES TAB -->
+    <div id="executivesTab" style="display:none">
+      <!-- Stats -->
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card"><div class="stat-number" id="eStatTotal">—</div><div class="stat-label">Total Executives</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--yellow)" id="eStatPending">—</div><div class="stat-label">Pending Applications</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--green)" id="eStatActive">—</div><div class="stat-label">Active Executives</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--accent)" id="eStatApproved">—</div><div class="stat-label">Approved</div></div>
+      </div>
+      <!-- Filter -->
+      <div class="filters-bar" style="margin-bottom:1rem">
+        <select id="eFilterStatus" onchange="applyExecFilters()" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.82rem">
+          <option value="">All Statuses</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="approved">✅ Approved</option>
+          <option value="active">🟢 Active</option>
+          <option value="inactive">⛔ Inactive</option>
+        </select>
+        <input type="text" id="eFilterSearch" placeholder="Search name, email, city…" oninput="applyExecFilters()" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.82rem;min-width:200px">
+        <button class="refresh-btn" onclick="loadExecs()">↻ Refresh</button>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Executive Team</div>
+          <div class="table-count" id="eTableCount"></div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>City</th>
+                <th>Role</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Rating</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="execsBody">
+              <tr><td colspan="11" class="loading">Loading executives…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /executivesTab -->
+
   </main>
 </div>
 
@@ -447,6 +500,7 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       loadBookings();
+      loadExecs();
     } else {
       document.getElementById('loginErr').style.display = 'block';
     }
@@ -464,7 +518,7 @@
   // ── Load bookings ──
   async function loadBookings() {
     document.getElementById('bookingsBody').innerHTML =
-      '<tr><td colspan="12" class="loading">Loading…</td></tr>';
+      '<tr><td colspan="13" class="loading">Loading…</td></tr>';
 
     const { data, error } = await db
       .from('bookings')
@@ -474,7 +528,7 @@
 
     if (error) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="12" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
+        '<tr><td colspan="13" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
       return;
     }
 
@@ -532,7 +586,7 @@
   function renderTable(bookings) {
     if (!bookings.length) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="12" class="empty">No bookings found.</td></tr>';
+        '<tr><td colspan="13" class="empty">No bookings found.</td></tr>';
       return;
     }
 
@@ -559,6 +613,12 @@
         <td>${flags || '<span style="color:#ccc">None</span>'}</td>
         <td style="font-size:0.82rem;font-weight:600">${paidVia}</td>
         <td>${amtCell}</td>
+        <td>
+          <select class="status-select exec-assign-sel" style="min-width:130px" data-current="${b.executive_id||''}" onchange="assignExec('${b.id}', this)">
+            <option value="">— Unassigned —</option>
+          </select>
+          ${b.executive_name ? `<div style="font-size:.72rem;color:var(--accent);margin-top:3px;font-weight:600">✓ ${b.executive_name}</div>` : ''}
+        </td>
         <td>
           <select class="status-select" onchange="updateStatus('${b.id}', this.value)">
             <option value="pending"   ${b.status==='pending'   ? 'selected':''}>⏳ Pending</option>
@@ -631,14 +691,102 @@
 
   // ── Admin tab switching ──
   function switchAdminTab(tab) {
-    document.getElementById('tabBookings').classList.toggle('active', tab==='bookings');
-    document.getElementById('tabUsers').classList.toggle('active', tab==='users');
-    document.getElementById('bookingsTab').style.display = tab==='bookings' ? '' : 'none';
-    document.getElementById('usersTab').style.display   = tab==='users'    ? '' : 'none';
-    if (tab==='users') {
-      document.getElementById('uFilterSearch').value = '';
-      if (!window._usersLoaded) loadUsers();
-    }
+    ['bookings','users','executives'].forEach(t => {
+      document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active', tab===t);
+      const el = document.getElementById(t+'Tab'); if (el) el.style.display = tab===t ? '' : 'none';
+    });
+    if (tab==='users') { document.getElementById('uFilterSearch').value=''; if (!window._usersLoaded) loadUsers(); }
+    if (tab==='executives') { if (!window._execsLoaded) loadExecs(); }
+  }
+
+  // ── Executives ──
+  let allExecs = [];
+
+  async function loadExecs() {
+    window._execsLoaded = true;
+    document.getElementById('execsBody').innerHTML = '<tr><td colspan="11" class="loading">Loading executives…</td></tr>';
+    const { data, error } = await db.from('executives').select('*').order('created_at', { ascending: false });
+    if (error) { document.getElementById('execsBody').innerHTML = '<tr><td colspan="11" class="empty">Error: ' + error.message + '</td></tr>'; return; }
+    allExecs = data || [];
+    // Update exec selects in bookings table too
+    populateExecSelects();
+    applyExecFilters();
+    document.getElementById('eStatTotal').textContent   = allExecs.length;
+    document.getElementById('eStatPending').textContent = allExecs.filter(e => e.status==='pending').length;
+    document.getElementById('eStatActive').textContent  = allExecs.filter(e => e.status==='active').length;
+    document.getElementById('eStatApproved').textContent= allExecs.filter(e => e.status==='approved').length;
+  }
+
+  function applyExecFilters() {
+    const status = document.getElementById('eFilterStatus').value;
+    const search = (document.getElementById('eFilterSearch').value||'').toLowerCase();
+    const filtered = allExecs.filter(e => {
+      if (status && e.status !== status) return false;
+      if (search && ![(e.full_name||''),(e.email||''),(e.city||'')].join(' ').toLowerCase().includes(search)) return false;
+      return true;
+    });
+    document.getElementById('eTableCount').textContent = filtered.length + ' executive' + (filtered.length!==1?'s':'');
+    const roleLabel = { walker:'🦮 Walker', feeder:'🍲 Feeder', both:'🐾 Walker+Feeder' };
+    const statusBadge = s => {
+      const cls = { pending:'var(--yellow)', approved:'var(--accent)', active:'var(--green)', inactive:'var(--red)' }[s] || 'var(--muted)';
+      return `<span style="background:${cls}22;color:${cls};padding:3px 10px;border-radius:100px;font-size:.7rem;font-weight:700">${s||'pending'}</span>`;
+    };
+    document.getElementById('execsBody').innerHTML = filtered.length ? filtered.map((e,i) => `<tr>
+      <td style="color:var(--muted);font-size:.78rem">${i+1}</td>
+      <td><strong style="color:var(--text)">${e.full_name||'—'}</strong></td>
+      <td style="font-size:.78rem;color:var(--muted2)">${e.email||'—'}</td>
+      <td style="font-size:.78rem">${e.phone||'—'}</td>
+      <td style="font-size:.78rem">${e.city||'—'}</td>
+      <td>${roleLabel[e.services]||e.services||'—'}</td>
+      <td style="font-size:.78rem">${e.experience||'—'}</td>
+      <td>${statusBadge(e.status)}</td>
+      <td style="font-weight:700;color:var(--accent)">${e.rating||5.0} ★</td>
+      <td style="font-size:.72rem;color:var(--muted)">${e.created_at ? new Date(e.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—'}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${e.status==='pending' ? `<button onclick="updateExecStatus('${e.id}','approved')" style="background:var(--green-bg);color:var(--green);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">✅ Approve</button>
+          <button onclick="updateExecStatus('${e.id}','inactive')" style="background:var(--red-bg);color:var(--red);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">❌ Reject</button>` : ''}
+          ${e.status==='approved' ? `<button onclick="updateExecStatus('${e.id}','active')" style="background:var(--green-bg);color:var(--green);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">🟢 Set Active</button>` : ''}
+          ${e.status==='active' ? `<button onclick="updateExecStatus('${e.id}','inactive')" style="background:var(--red-bg);color:var(--red);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">⛔ Deactivate</button>` : ''}
+          ${e.status==='inactive' ? `<button onclick="updateExecStatus('${e.id}','approved')" style="background:rgba(129,140,248,.15);color:var(--accent);border:none;border-radius:8px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">↩ Reactivate</button>` : ''}
+        </div>
+      </td>
+    </tr>`).join('') : '<tr><td colspan="11" class="empty">No executives found.</td></tr>';
+  }
+
+  async function updateExecStatus(id, status) {
+    const upd = { status };
+    if (status === 'approved' || status === 'active') upd.approved_at = new Date().toISOString();
+    const { error } = await db.from('executives').update(upd).eq('id', id);
+    if (error) { alert('Error: ' + error.message); return; }
+    const e = allExecs.find(x => x.id === id); if (e) { Object.assign(e, upd); }
+    applyExecFilters();
+    document.getElementById('eStatPending').textContent = allExecs.filter(e => e.status==='pending').length;
+    document.getElementById('eStatActive').textContent  = allExecs.filter(e => e.status==='active').length;
+    document.getElementById('eStatApproved').textContent= allExecs.filter(e => e.status==='approved').length;
+    populateExecSelects();
+  }
+
+  // Populate executive dropdowns in bookings table
+  function populateExecSelects() {
+    const approvedExecs = allExecs.filter(e => e.status==='approved' || e.status==='active');
+    document.querySelectorAll('.exec-assign-sel').forEach(sel => {
+      const current = sel.dataset.current || '';
+      const opts = `<option value="">— Unassigned —</option>` +
+        approvedExecs.map(e => `<option value="${e.id}|${e.full_name}" ${current===e.id?'selected':''}>${e.full_name} (${e.city||'—'})</option>`).join('');
+      sel.innerHTML = opts;
+    });
+  }
+
+  async function assignExec(bookingId, sel) {
+    const val = sel.value;
+    const [execId, execName] = val ? val.split('|') : ['', ''];
+    const { error } = await db.from('bookings').update({ executive_id: execId||null, executive_name: execName||null }).eq('id', bookingId);
+    if (error) { alert('Error: ' + error.message); sel.value = ''; return; }
+    const bk = allBookings.find(b => String(b.id)===String(bookingId));
+    if (bk) { bk.executive_id = execId; bk.executive_name = execName; }
+    // Refresh bookings table to show name
+    applyFilters();
   }
 
   // ── Users ──

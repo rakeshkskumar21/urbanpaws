@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Paws — Executive Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paw: #6C6FD4; --paw2: #5254B8; --paw-soft: #EDEEFA;
+      --night: #1a1a2e; --muted: #6b7280; --border: #e5e7eb;
+      --green: #22c55e; --red: #ef4444;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--paw-soft); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+    .card { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(108,111,212,.15); overflow: hidden; }
+    .card-head { background: linear-gradient(135deg, var(--paw) 0%, var(--paw2) 100%); padding: 1.4rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .exec-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: #fff; display: flex; align-items: center; gap: 9px; }
+    .exec-badge { background: rgba(255,255,255,.22); padding: 3px 10px; border-radius: 100px; font-size: .65rem; font-weight: 700; letter-spacing: .05em; color: #fff; }
+    .card-body { padding: 1.75rem 2rem 2rem; }
+    .tabs { display: flex; background: var(--paw-soft); border-radius: 10px; padding: 3px; margin-bottom: 1.5rem; }
+    .tab { flex: 1; padding: 8px 4px; border: none; background: none; border-radius: 8px; font-size: .83rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .15s; font-family: inherit; }
+    .tab.active { background: #fff; color: var(--paw); box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: .9rem; }
+    .field label { font-size: .7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .field input, .field select { width: 100%; padding: 11px 13px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s; background: #fff; color: var(--night); }
+    .field input:focus, .field select:focus { border-color: var(--paw); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 .65rem; }
+    .err { font-size: .8rem; min-height: 1.1rem; margin-bottom: .4rem; }
+    .err.error { color: #dc2626; } .err.success { color: #16a34a; }
+    .btn { width: 100%; padding: 13px; background: var(--paw); color: #fff; border: none; border-radius: 100px; font-size: .95rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; margin-top: .25rem; }
+    .btn:hover { background: var(--paw2); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .btn-ghost { background: var(--paw-soft); color: var(--paw); }
+    .btn-ghost:hover { background: #dde0f7; }
+    .forgot { display: block; text-align: center; margin-top: .65rem; font-size: .79rem; color: var(--muted); cursor: pointer; }
+    .forgot span { color: var(--paw); font-weight: 600; }
+    .back { display: block; text-align: center; margin-top: 1rem; font-size: .8rem; color: var(--muted); }
+    .back a { color: var(--paw); font-weight: 600; text-decoration: none; }
+    /* Status screens */
+    .status-screen { text-align: center; padding: .5rem 0 1rem; }
+    .status-icon { font-size: 2.8rem; margin-bottom: .6rem; }
+    .status-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--night); margin-bottom: .4rem; }
+    .status-chip { display: inline-block; padding: 3px 13px; border-radius: 100px; font-size: .72rem; font-weight: 700; margin-bottom: .85rem; }
+    .chip-pending  { background: rgba(245,158,11,.12); color: #d97706; }
+    .chip-approved { background: rgba(34,197,94,.12); color: #15803d; }
+    .status-sub { font-size: .85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.25rem; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+    .tips { font-size: .78rem; color: var(--muted); background: var(--paw-soft); border-radius: 10px; padding: .75rem 1rem; margin-bottom: 1rem; line-height: 1.6; }
+    .tips strong { color: var(--paw); }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="card-head">
+    <div class="exec-logo">🐾 Urban Paws <span class="exec-badge">EXECUTIVE PORTAL</span></div>
+  </div>
+  <div class="card-body">
+
+    <!-- TABS -->
+    <div class="tabs" id="authTabs">
+      <button class="tab active" id="tabLoginBtn" onclick="switchTab('login')">Log In</button>
+      <button class="tab" id="tabJoinBtn" onclick="switchTab('join')">Join as Executive</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginSection">
+      <div class="tips"><strong>Executives only.</strong> If you're a customer, visit <a href="index.html" style="color:var(--paw);font-weight:700;">Urban Paws →</a></div>
+      <div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="your@email.com" autocomplete="email"></div>
+      <div class="field"><label>Password</label><input type="password" id="lPw" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="err" id="lErr"></div>
+      <button class="btn" id="lBtn" onclick="doLogin()">Log In →</button>
+      <p class="forgot" onclick="doForgot()">Forgot password? <span>Reset here</span></p>
+    </div>
+
+    <!-- JOIN FORM -->
+    <div id="joinSection" style="display:none">
+      <div class="grid2">
+        <div class="field"><label>Full Name *</label><input type="text" id="jName" placeholder="Your full name"></div>
+        <div class="field"><label>Phone *</label><input type="tel" id="jPhone" placeholder="+91 XXXXX XXXXX"></div>
+      </div>
+      <div class="field"><label>Email *</label><input type="email" id="jEmail" placeholder="your@email.com"></div>
+      <div class="grid2">
+        <div class="field"><label>City *</label><input type="text" id="jCity" placeholder="e.g. Bengaluru"></div>
+        <div class="field">
+          <label>Role *</label>
+          <select id="jServices">
+            <option value="">Select role</option>
+            <option value="walker">🦮 Dog Walker</option>
+            <option value="feeder">🍲 Pet Feeder</option>
+            <option value="both">🐾 Walker + Feeder</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Experience with pets *</label>
+        <select id="jExp">
+          <option value="">Select experience</option>
+          <option value="Under 1 year">Under 1 year</option>
+          <option value="1–2 years">1–2 years</option>
+          <option value="2–5 years">2–5 years</option>
+          <option value="5+ years">5+ years</option>
+        </select>
+      </div>
+      <div class="field"><label>Password *</label><input type="password" id="jPw" placeholder="Min 6 characters" autocomplete="new-password"></div>
+      <div class="err" id="jErr"></div>
+      <button class="btn" id="jBtn" onclick="doJoin()">Submit Application →</button>
+    </div>
+
+    <!-- PENDING SCREEN -->
+    <div id="pendingSection" style="display:none">
+      <div class="status-screen">
+        <div class="status-icon">⏳</div>
+        <div class="status-title">Application Under Review</div>
+        <div class="status-chip chip-pending">Pending Approval</div>
+        <p class="status-sub">Thank you for applying to join Urban Paws!<br>Our team will review your application and get back to you within 24–48 hours.</p>
+        <button class="btn btn-ghost" onclick="doSignOut()">← Sign Out</button>
+      </div>
+    </div>
+
+    <!-- APPROVED / REDIRECTING SCREEN -->
+    <div id="redirectSection" style="display:none">
+      <div class="status-screen">
+        <div class="status-icon">✅</div>
+        <div class="status-title">Welcome back!</div>
+        <div class="status-chip chip-approved">Approved Executive</div>
+        <p class="status-sub">Redirecting to your dashboard…</p>
+      </div>
+    </div>
+
+    <p class="back">Looking for customer bookings? <a href="index.html">Urban Paws Home →</a></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const { createClient } = supabase;
+  const db = createClient('https://uyawcevbvxlhfbovntxh.supabase.co', 'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5');
+
+  function switchTab(tab) {
+    document.getElementById('loginSection').style.display = tab === 'login' ? '' : 'none';
+    document.getElementById('joinSection').style.display  = tab === 'join'  ? '' : 'none';
+    document.getElementById('tabLoginBtn').classList.toggle('active', tab === 'login');
+    document.getElementById('tabJoinBtn').classList.toggle('active', tab === 'join');
+  }
+
+  function setErr(id, msg, ok) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'err' + (msg ? (ok ? ' success' : ' error') : '');
+  }
+
+  function hideTabs() {
+    document.getElementById('authTabs').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('joinSection').style.display = 'none';
+  }
+
+  async function checkExecStatus(user) {
+    const { data: exec } = await db.from('executives').select('status').eq('id', user.id).single();
+    if (!exec) {
+      await db.auth.signOut();
+      setErr('lErr', 'No executive account found. Please use the "Join as Executive" tab.');
+      const btn = document.getElementById('lBtn');
+      if (btn) { btn.disabled = false; btn.textContent = 'Log In →'; }
+      return;
+    }
+    if (exec.status === 'pending') {
+      hideTabs(); document.getElementById('pendingSection').style.display = '';
+      return;
+    }
+    hideTabs(); document.getElementById('redirectSection').style.display = '';
+    setTimeout(() => { window.location.href = 'executive-dashboard.html'; }, 900);
+  }
+
+  async function doLogin() {
+    const email = document.getElementById('lEmail').value.trim();
+    const pw    = document.getElementById('lPw').value;
+    if (!email || !pw) { setErr('lErr', 'Please enter email and password.'); return; }
+    const btn = document.getElementById('lBtn');
+    btn.disabled = true; btn.textContent = 'Logging in…';
+    const { data, error } = await db.auth.signInWithPassword({ email, password: pw });
+    if (error) { btn.disabled = false; btn.textContent = 'Log In →'; setErr('lErr', error.message); return; }
+    await checkExecStatus(data.user);
+  }
+
+  async function doJoin() {
+    const name = document.getElementById('jName').value.trim();
+    const phone = document.getElementById('jPhone').value.trim();
+    const email = document.getElementById('jEmail').value.trim();
+    const city  = document.getElementById('jCity').value.trim();
+    const svcs  = document.getElementById('jServices').value;
+    const exp   = document.getElementById('jExp').value;
+    const pw    = document.getElementById('jPw').value;
+    if (!name || !phone || !email || !city || !svcs || !exp) { setErr('jErr', 'Please fill in all required fields.'); return; }
+    if (!pw || pw.length < 6) { setErr('jErr', 'Password must be at least 6 characters.'); return; }
+    const btn = document.getElementById('jBtn');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    const { data, error } = await db.auth.signUp({ email, password: pw });
+    if (error) { btn.disabled = false; btn.textContent = 'Submit Application →'; setErr('jErr', error.message); return; }
+    if (data.user) {
+      const { error: ie } = await db.from('executives').insert({
+        id: data.user.id, email, full_name: name, phone, city, services: svcs, experience: exp, status: 'pending'
+      });
+      if (ie) { setErr('jErr', 'Account created but profile failed: ' + ie.message); btn.disabled = false; btn.textContent = 'Submit Application →'; return; }
+    }
+    hideTabs(); document.getElementById('pendingSection').style.display = '';
+  }
+
+  async function doForgot() {
+    const email = document.getElementById('lEmail').value.trim();
+    if (!email) { setErr('lErr', 'Enter your email first.'); return; }
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset-password.html' });
+    setErr('lErr', error ? error.message : 'Reset email sent! Check your inbox.', !error);
+  }
+
+  async function doSignOut() { await db.auth.signOut(); location.reload(); }
+
+  // Auto-redirect if already logged in
+  db.auth.getSession().then(async ({ data: { session } }) => {
+    if (session) {
+      hideTabs();
+      document.getElementById('lBtn') && (document.getElementById('lBtn').disabled = true);
+      await checkExecStatus(session.user);
+    }
+  });
+</script>
+</body>
+</html>

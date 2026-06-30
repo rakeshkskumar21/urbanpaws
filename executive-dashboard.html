@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Paws — Executive Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --paw: #6C6FD4; --paw2: #5254B8; --paw-soft: #EDEEFA; --paw-faint: #f5f5ff;
+      --night: #1a1a2e; --muted: #6b7280; --border: #e5e7eb; --border2: rgba(0,0,0,.06);
+      --green: #22c55e; --green-soft: rgba(34,197,94,.1);
+      --amber: #f59e0b; --amber-soft: rgba(245,158,11,.1);
+      --red: #ef4444; --red-soft: rgba(239,68,68,.1);
+      --blue: #3b82f6;
+      --sidebar-w: 230px; --topbar-h: 58px;
+    }
+    body { font-family: 'Inter', sans-serif; background: #f8f8fc; color: var(--night); }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+      background: #fff; border-right: 1px solid var(--border); z-index: 50;
+      display: flex; flex-direction: column; overflow-y: auto;
+    }
+    .sb-brand { padding: 1.25rem 1.2rem .9rem; border-bottom: 1px solid var(--border); }
+    .sb-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--paw); display: flex; align-items: center; gap: 7px; }
+    .sb-exec-badge { background: var(--paw-soft); color: var(--paw2); font-size: .6rem; font-weight: 700; padding: 2px 8px; border-radius: 100px; letter-spacing: .04em; }
+    .sb-user { padding: .85rem 1.2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .65rem; }
+    .sb-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--paw); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 800; flex-shrink: 0; }
+    .sb-info { min-width: 0; }
+    .sb-name { font-size: .83rem; font-weight: 700; color: var(--night); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sb-role { font-size: .7rem; color: var(--muted); margin-top: 1px; }
+    .sb-status-chip { display: inline-block; font-size: .62rem; font-weight: 700; padding: 1px 7px; border-radius: 100px; margin-top: 2px; }
+    .chip-active   { background: var(--green-soft);  color: #15803d; }
+    .chip-pending  { background: var(--amber-soft);  color: #b45309; }
+    .chip-approved { background: var(--green-soft);  color: #15803d; }
+    .chip-inactive { background: var(--red-soft);    color: #b91c1c; }
+    nav.sb-nav { flex: 1; padding: .75rem .75rem; display: flex; flex-direction: column; gap: 2px; }
+    .sb-nav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; text-decoration: none; font-size: .84rem; font-weight: 600; color: var(--muted); transition: all .12s; }
+    .sb-nav a:hover { background: var(--paw-soft); color: var(--paw); }
+    .sb-nav a.active { background: var(--paw-soft); color: var(--paw2); font-weight: 800; border-left: 3px solid var(--paw); padding-left: 10px; }
+    .sb-nav .nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+    .sb-nav-divider { border: none; border-top: 1px solid var(--border); margin: .5rem 0; }
+    .sb-bottom { padding: .75rem 1rem 1.25rem; }
+
+    /* ── TOPBAR (mobile) ── */
+    .topbar {
+      display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h);
+      background: #fff; border-bottom: 1px solid var(--border);
+      align-items: center; justify-content: space-between; padding: 0 1rem; z-index: 90;
+    }
+    .tb-burger { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; padding: 8px; flex-shrink: 0; }
+    .tb-burger span { width: 18px; height: 2px; background: var(--night); display: block; border-radius: 2px; }
+    .tb-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: .95rem; color: var(--paw); }
+    .tb-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--paw); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 800; cursor: pointer; }
+
+    /* ── SIDEBAR MOBILE OVERLAY ── */
+    .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 85; }
+    .sb-overlay.open { display: block; }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+    .page { padding: 2rem; max-width: 1050px; display: none; }
+    .page.active { display: block; }
+    .page-title { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; color: var(--night); margin-bottom: 1.5rem; }
+    .page-subtitle { font-size: .85rem; color: var(--muted); margin-top: .25rem; font-weight: 400; font-family: 'Inter', sans-serif; }
+
+    /* ── STATS GRID ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+    .stat-card { background: #fff; border-radius: 14px; padding: 1.1rem 1.2rem; border: 1px solid var(--border); }
+    .stat-label { font-size: .72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--night); }
+    .stat-val.green { color: var(--green); }
+    .stat-val.amber { color: var(--amber); }
+    .stat-val.blue  { color: var(--blue); }
+    .stat-sub { font-size: .72rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── SECTION CARDS ── */
+    .card { background: #fff; border-radius: 16px; border: 1px solid var(--border); padding: 1.4rem 1.5rem; margin-bottom: 1.5rem; }
+    .card-title { font-size: .88rem; font-weight: 800; color: var(--night); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+
+    /* ── BOOKING TABLE ── */
+    .bk-table-wrap { overflow-x: auto; }
+    .bk-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .bk-table th { text-align: left; padding: .55rem .75rem; font-size: .68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    .bk-table td { padding: .65rem .75rem; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+    .bk-table tr:last-child td { border-bottom: none; }
+    .bk-table tr:hover td { background: var(--paw-faint); }
+    .bid { font-weight: 700; color: var(--night); font-size: .8rem; }
+    .bsub { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+    .empty-msg { text-align: center; padding: 2.5rem; color: var(--muted); font-size: .88rem; }
+
+    /* ── STATUS BADGE ── */
+    .s-badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: .7rem; font-weight: 700; }
+    .s-pending   { background: var(--amber-soft); color: #b45309; }
+    .s-confirmed { background: rgba(59,130,246,.1); color: #1d4ed8; }
+    .s-completed { background: var(--green-soft); color: #15803d; }
+    .s-cancelled { background: var(--red-soft); color: #b91c1c; }
+
+    /* ── STATUS SELECT ── */
+    .status-sel { padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: .78rem; font-family: inherit; cursor: pointer; background: #fff; outline: none; }
+    .status-sel:focus { border-color: var(--paw); }
+
+    /* ── PROFILE FORM ── */
+    .pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+    .pf-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
+    .pf-field.full { grid-column: 1/-1; }
+    .pf-field label { font-size: .7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .pf-field input, .pf-field select, .pf-field textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: .88rem; font-family: inherit; outline: none; transition: border-color .15s; background: #fff; color: var(--night); }
+    .pf-field input:focus, .pf-field select:focus, .pf-field textarea:focus { border-color: var(--paw); }
+    .pf-field input:disabled, .pf-field select:disabled, .pf-field textarea:disabled { background: #f8f8f6; color: var(--muted); cursor: not-allowed; }
+    .pf-field textarea { resize: vertical; min-height: 80px; }
+    .pf-avatar-block { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .pf-avatar-big { width: 72px; height: 72px; border-radius: 50%; background: var(--paw); color: #fff; font-size: 1.5rem; font-weight: 800; font-family: 'Syne', sans-serif; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 16px rgba(108,111,212,.25); }
+    .pf-meta { font-size: .82rem; color: var(--muted); }
+    .pf-meta strong { color: var(--night); font-size: .95rem; display: block; margin-bottom: 3px; }
+
+    /* ── ACTIONS ── */
+    .action-row { display: flex; gap: .65rem; flex-wrap: wrap; margin-top: .25rem; }
+    .btn-primary { padding: 10px 22px; background: var(--paw); color: #fff; border: none; border-radius: 100px; font-size: .88rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .btn-primary:hover { background: var(--paw2); }
+    .btn-ghost { padding: 10px 22px; background: var(--paw-soft); color: var(--paw2); border: none; border-radius: 100px; font-size: .88rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .btn-ghost:hover { background: #dde0f7; }
+
+    /* ── EARNINGS ── */
+    .earn-total { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--green); }
+    .earn-label { font-size: .8rem; color: var(--muted); margin-bottom: .25rem; }
+    .earn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .earn-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 1rem 1.2rem; }
+    .earn-card .ev { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--night); margin-top: .2rem; }
+    .earn-card .el { font-size: .72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* ── TODAY SCHEDULE ── */
+    .today-item { display: flex; align-items: flex-start; gap: .85rem; padding: .85rem 0; border-bottom: 1px solid var(--border2); }
+    .today-item:last-child { border-bottom: none; }
+    .today-time { min-width: 55px; font-size: .78rem; font-weight: 700; color: var(--paw); background: var(--paw-soft); padding: 4px 8px; border-radius: 8px; text-align: center; flex-shrink: 0; }
+    .today-svc { font-size: .85rem; font-weight: 700; color: var(--night); }
+    .today-pet { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .today-addr { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── TOAST ── */
+    .toast { position: fixed; top: 1.25rem; right: 1.25rem; background: var(--night); color: #fff; padding: 11px 18px; border-radius: 10px; font-size: .85rem; font-weight: 600; z-index: 9999; transition: transform .3s, opacity .3s; transform: translateY(-80px); opacity: 0; max-width: min(320px, calc(100vw - 2rem)); }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--red); }
+
+    /* ── PENDING GATE ── */
+    .pending-gate { text-align: center; padding: 4rem 2rem; max-width: 400px; margin: 0 auto; }
+    .pending-gate .pg-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .pending-gate h2 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; margin-bottom: .5rem; }
+    .pending-gate p { font-size: .88rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform .25s cubic-bezier(.4,0,.2,1); }
+      .sidebar.open { transform: translateX(0); }
+      .topbar { display: flex; }
+      .main { margin-left: 0; padding-top: var(--topbar-h); }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .earn-grid { grid-template-columns: repeat(2, 1fr); }
+      .pf-grid { grid-template-columns: 1fr; }
+      .page { padding: 1.25rem 1rem; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MOBILE OVERLAY -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">🐾 Urban Paws <span class="sb-exec-badge">EXECUTIVE</span></div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-avatar" id="sbAvatar">?</div>
+    <div class="sb-info">
+      <div class="sb-name" id="sbName">Loading…</div>
+      <div class="sb-role" id="sbRole">—</div>
+      <div class="sb-status-chip chip-pending" id="sbStatusChip">pending</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <a href="#" class="active" id="nav-dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="#" id="nav-mybookings" onclick="showPage('mybookings',this)"><span class="nav-icon">📋</span> My Bookings</a>
+    <a href="#" id="nav-earnings" onclick="showPage('earnings',this)"><span class="nav-icon">💰</span> My Earnings</a>
+    <a href="#" id="nav-profile" onclick="showPage('profile',this)"><span class="nav-icon">👤</span> My Profile</a>
+    <hr class="sb-nav-divider">
+    <a href="#" onclick="signOut()" style="color:var(--red)"><span class="nav-icon">🚪</span> Sign Out</a>
+  </nav>
+</div>
+
+<!-- MOBILE TOPBAR -->
+<div class="topbar">
+  <button class="tb-burger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+  <div class="tb-title">🐾 Executive</div>
+  <div class="tb-avatar" id="tbAvatar" onclick="showPage('profile',null)">?</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-title">Dashboard <span class="page-subtitle" id="dashGreet"></span></div>
+
+    <div class="stats-row" id="dashStats">
+      <div class="stat-card"><div class="stat-label">Total Assigned</div><div class="stat-val" id="statTotal">—</div><div class="stat-sub">all time</div></div>
+      <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-val green" id="statCompleted">—</div><div class="stat-sub">all time</div></div>
+      <div class="stat-card"><div class="stat-label">Pending / Active</div><div class="stat-val amber" id="statPending">—</div><div class="stat-sub">needs action</div></div>
+      <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-val blue" id="statMonthEarn">₹—</div><div class="stat-sub">earnings</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📅 Today's Schedule</div>
+      <div id="todayList"><div class="empty-msg">No tasks assigned for today.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⏳ Recent Bookings</div>
+      <div class="bk-table-wrap">
+        <table class="bk-table">
+          <thead><tr><th>Booking ID</th><th>Date</th><th>Service</th><th>Pet</th><th>Status</th></tr></thead>
+          <tbody id="dashRecentBody"><tr><td colspan="5" class="empty-msg">No bookings yet.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY BOOKINGS PAGE -->
+  <div class="page" id="page-mybookings">
+    <div class="page-title">My Bookings</div>
+    <div class="card">
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="btn-primary" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('all')">All</button>
+        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('pending')">Pending</button>
+        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('confirmed')">Confirmed</button>
+        <button class="btn-ghost" style="font-size:.78rem;padding:6px 14px;" onclick="filterBk('completed')">Completed</button>
+      </div>
+      <div class="bk-table-wrap">
+        <table class="bk-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Date & Time</th>
+              <th>Service</th>
+              <th>Pet</th>
+              <th>Address</th>
+              <th>Customer Phone</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="bkListBody"><tr><td colspan="8" class="empty-msg">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY EARNINGS PAGE -->
+  <div class="page" id="page-earnings">
+    <div class="page-title">My Earnings</div>
+    <div class="earn-grid">
+      <div class="earn-card"><div class="el">Total Earned</div><div class="ev green" id="earnTotal">₹0</div></div>
+      <div class="earn-card"><div class="el">This Month</div><div class="ev" id="earnMonth">₹0</div></div>
+      <div class="earn-card"><div class="el">Completed Jobs</div><div class="ev blue" id="earnJobs">0</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">💳 Earnings Breakdown</div>
+      <div class="bk-table-wrap">
+        <table class="bk-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Date</th>
+              <th>Service</th>
+              <th>Pet</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="earnBody"><tr><td colspan="6" class="empty-msg">No completed bookings yet.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="page-title">My Profile</div>
+    <div class="card">
+      <div class="pf-avatar-block">
+        <div class="pf-avatar-big" id="pfAvatarBig">?</div>
+        <div class="pf-meta">
+          <strong id="pfNameDisplay">—</strong>
+          <span id="pfRoleDisplay">—</span><br>
+          <div class="sb-status-chip chip-pending" id="pfStatusChip" style="display:inline-block;margin-top:4px;">pending</div>
+        </div>
+      </div>
+
+      <div class="pf-grid">
+        <div class="pf-field"><label>Full Name *</label><input type="text" id="pfName" placeholder="Your full name" disabled></div>
+        <div class="pf-field"><label>Phone *</label><input type="tel" id="pfPhone" placeholder="+91 XXXXX XXXXX" disabled></div>
+        <div class="pf-field"><label>Email</label><input type="email" id="pfEmail" disabled></div>
+        <div class="pf-field"><label>City *</label><input type="text" id="pfCity" placeholder="e.g. Bengaluru" disabled></div>
+        <div class="pf-field">
+          <label>Role / Services</label>
+          <select id="pfServices" disabled>
+            <option value="walker">🦮 Dog Walker</option>
+            <option value="feeder">🍲 Pet Feeder</option>
+            <option value="both">🐾 Walker + Feeder</option>
+          </select>
+        </div>
+        <div class="pf-field">
+          <label>Experience</label>
+          <select id="pfExp" disabled>
+            <option value="Under 1 year">Under 1 year</option>
+            <option value="1–2 years">1–2 years</option>
+            <option value="2–5 years">2–5 years</option>
+            <option value="5+ years">5+ years</option>
+          </select>
+        </div>
+        <div class="pf-field">
+          <label>Availability</label>
+          <input type="text" id="pfAvail" placeholder="e.g. Mon–Sat, 6am–8pm" disabled>
+        </div>
+        <div class="pf-field">
+          <label>Rating</label>
+          <input type="text" id="pfRating" disabled>
+        </div>
+        <div class="pf-field full">
+          <label>Bio / About You</label>
+          <textarea id="pfBio" rows="3" placeholder="Tell customers about yourself, your experience, and why you love animals…" disabled></textarea>
+        </div>
+      </div>
+
+      <div class="action-row" id="pfActions">
+        <button class="btn-primary" onclick="pfEnableEdit()">✏️ Edit Profile</button>
+      </div>
+      <div class="action-row" id="pfEditActions" style="display:none">
+        <button class="btn-primary" onclick="saveProfile()">Save Changes →</button>
+        <button class="btn-ghost" onclick="pfCancelEdit()">Cancel</button>
+      </div>
+      <div id="pfSaveOk" style="display:none;margin-top:.75rem;font-size:.82rem;color:var(--green);font-weight:700;">✅ Profile saved!</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const { createClient } = supabase;
+const db = createClient('https://uyawcevbvxlhfbovntxh.supabase.co', 'sb_publishable_5RjxyRY4hp8a4oI10HK5wQ_GqWjLJK5');
+
+let currentUser = null;
+let execProfile = null;
+let allBookings = [];
+let bkFilter = 'all';
+
+function initials(name) {
+  if (!name) return '?';
+  return name.trim().split(/\s+/).map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+
+function parseAmount(payStr) {
+  if (!payStr) return 0;
+  const m = payStr.match(/₹([\d.]+)/);
+  return m ? parseFloat(m[1]) : 0;
+}
+
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show' + (type ? ' '+type : '');
+  setTimeout(() => el.className = 'toast', 3500);
+}
+
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.sb-nav a').forEach(a => a.classList.remove('active'));
+  const nav = navEl || document.getElementById('nav-' + id);
+  if (nav) nav.classList.add('active');
+  closeSidebar();
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'mybookings') renderMyBookings();
+  if (id === 'earnings') renderEarnings();
+  if (id === 'profile') renderProfile();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sbOverlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('open');
+}
+
+function setAvatars(name) {
+  const ini = initials(name);
+  ['sbAvatar','tbAvatar','pfAvatarBig'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.textContent = ini;
+  });
+}
+
+function setStatus(status) {
+  const chipClass = 'chip-' + (status || 'pending');
+  ['sbStatusChip','pfStatusChip'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.className = 'sb-status-chip ' + chipClass; el.textContent = status || 'pending'; }
+  });
+}
+
+function roleLabel(svc) {
+  return { walker: '🦮 Dog Walker', feeder: '🍲 Pet Feeder', both: '🐾 Walker + Feeder' }[svc] || svc || '—';
+}
+
+// ── INIT ──
+async function init() {
+  const { data: { user }, error } = await db.auth.getUser();
+  if (!user || error) { window.location.href = 'executive-login.html'; return; }
+  currentUser = user;
+
+  const { data: exec } = await db.from('executives').select('*').eq('id', user.id).single();
+  if (!exec) { window.location.href = 'executive-login.html'; return; }
+  execProfile = exec;
+
+  // Status gate
+  if (exec.status === 'pending') {
+    document.querySelector('.main').innerHTML = `
+      <div class="pending-gate">
+        <div class="pg-icon">⏳</div>
+        <h2>Application Under Review</h2>
+        <p>Our team is reviewing your application. You'll be notified within 24–48 hours once approved.</p>
+        <button class="btn-primary" onclick="signOut()">Sign Out</button>
+      </div>`;
+    return;
+  }
+
+  // Populate sidebar user info
+  const name = exec.full_name || user.email;
+  document.getElementById('sbName').textContent = name;
+  document.getElementById('sbRole').textContent = roleLabel(exec.services);
+  setAvatars(name);
+  setStatus(exec.status);
+
+  // Load assigned bookings
+  await loadBookings();
+  renderDashboard();
+}
+
+async function loadBookings() {
+  const { data } = await db.from('bookings').select('*').eq('executive_id', currentUser.id).order('booking_date', { ascending: false });
+  allBookings = data || [];
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  if (!execProfile) return;
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('dashGreet').textContent = '— ' + greet + ', ' + (execProfile.full_name||'').split(' ')[0] + '! 👋';
+
+  const today = new Date().toISOString().split('T')[0];
+  const todayBks = allBookings.filter(b => b.booking_date === today);
+  const completed = allBookings.filter(b => b.status === 'completed');
+  const pending   = allBookings.filter(b => b.status === 'pending' || b.status === 'confirmed');
+
+  const thisMonth = new Date().toISOString().slice(0,7);
+  const monthEarn = completed
+    .filter(b => (b.booking_date||'').startsWith(thisMonth))
+    .reduce((s,b) => s + parseAmount(b.payment), 0);
+
+  document.getElementById('statTotal').textContent     = allBookings.length;
+  document.getElementById('statCompleted').textContent = completed.length;
+  document.getElementById('statPending').textContent   = pending.length;
+  document.getElementById('statMonthEarn').textContent = '₹' + monthEarn.toFixed(0);
+
+  // Today's schedule
+  const todayEl = document.getElementById('todayList');
+  if (!todayBks.length) {
+    todayEl.innerHTML = '<div class="empty-msg">🎉 No tasks assigned for today. Enjoy your day!</div>';
+  } else {
+    todayEl.innerHTML = todayBks.map(b => `
+      <div class="today-item">
+        <div class="today-time">${b.time_slot || '—'}</div>
+        <div>
+          <div class="today-svc">${b.service || '—'}</div>
+          <div class="today-pet">🐾 ${b.pet_name || '—'} · ${b.breed || ''} ${b.pet_age ? '· '+b.pet_age : ''}</div>
+          <div class="today-addr">📍 ${b.address || '—'}</div>
+        </div>
+        <div style="margin-left:auto"><span class="s-badge s-${b.status||'pending'}">${b.status||'pending'}</span></div>
+      </div>`).join('');
+  }
+
+  // Recent bookings table
+  const recent = allBookings.slice(0, 6);
+  document.getElementById('dashRecentBody').innerHTML = recent.length
+    ? recent.map(b => `<tr>
+        <td class="bid">${b.booking_id||'—'}</td>
+        <td>${b.booking_date||'—'}</td>
+        <td>${b.service||'—'}</td>
+        <td>${b.pet_name||'—'}</td>
+        <td><span class="s-badge s-${b.status||'pending'}">${b.status||'pending'}</span></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" class="empty-msg">No bookings assigned yet.</td></tr>';
+}
+
+// ── MY BOOKINGS ──
+function filterBk(f) {
+  bkFilter = f;
+  renderMyBookings();
+  document.querySelectorAll('#page-mybookings button').forEach((btn,i) => {
+    btn.className = i === ['all','pending','confirmed','completed'].indexOf(f) ? 'btn-primary' : 'btn-ghost';
+    btn.style.fontSize = '.78rem'; btn.style.padding = '6px 14px';
+  });
+}
+
+function renderMyBookings() {
+  const filtered = bkFilter === 'all' ? allBookings : allBookings.filter(b => b.status === bkFilter);
+  document.getElementById('bkListBody').innerHTML = filtered.length
+    ? filtered.map(b => {
+        const amt = parseAmount(b.payment);
+        return `<tr>
+          <td class="bid">${b.booking_id||'—'}</td>
+          <td>${b.booking_date||'—'}<div class="bsub">${b.time_slot||''}</div></td>
+          <td>${b.service||'—'}</td>
+          <td><strong>${b.pet_name||'—'}</strong><div class="bsub">${b.breed||''} ${b.pet_age?'· '+b.pet_age:''}</div></td>
+          <td style="max-width:140px;word-break:break-word;font-size:.78rem">${b.address||'—'}</td>
+          <td style="font-size:.78rem">${b.phone||'—'}</td>
+          <td style="font-weight:700;color:var(--green)">${amt ? '₹'+amt : '—'}</td>
+          <td>
+            <select class="status-sel" onchange="updateBkStatus('${b.id}',this.value)">
+              <option value="pending"   ${b.status==='pending'   ?'selected':''}>⏳ Pending</option>
+              <option value="confirmed" ${b.status==='confirmed' ?'selected':''}>✅ Confirmed</option>
+              <option value="completed" ${b.status==='completed' ?'selected':''}>🎉 Completed</option>
+              <option value="cancelled" ${b.status==='cancelled' ?'selected':''}>❌ Cancelled</option>
+            </select>
+          </td>
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="8" class="empty-msg">No ${bkFilter === 'all' ? '' : bkFilter} bookings.</td></tr>`;
+}
+
+async function updateBkStatus(id, status) {
+  const { error } = await db.from('bookings').update({ status }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  const bk = allBookings.find(b => String(b.id) === String(id));
+  if (bk) bk.status = status;
+  showToast('✅ Status updated to ' + status, 'success');
+  renderMyBookings();
+  renderDashboard();
+}
+
+// ── EARNINGS ──
+function renderEarnings() {
+  const completed = allBookings.filter(b => b.status === 'completed');
+  const thisMonth = new Date().toISOString().slice(0,7);
+  const total = completed.reduce((s,b) => s + parseAmount(b.payment), 0);
+  const month = completed.filter(b => (b.booking_date||'').startsWith(thisMonth)).reduce((s,b) => s + parseAmount(b.payment), 0);
+
+  document.getElementById('earnTotal').textContent = '₹' + total.toFixed(0);
+  document.getElementById('earnMonth').textContent = '₹' + month.toFixed(0);
+  document.getElementById('earnJobs').textContent  = completed.length;
+
+  document.getElementById('earnBody').innerHTML = completed.length
+    ? completed.map(b => {
+        const amt = parseAmount(b.payment);
+        return `<tr>
+          <td class="bid">${b.booking_id||'—'}</td>
+          <td>${b.booking_date||'—'}</td>
+          <td>${b.service||'—'}</td>
+          <td>${b.pet_name||'—'}</td>
+          <td style="font-weight:800;color:var(--green)">${amt ? '₹'+amt : '—'}</td>
+          <td><span class="s-badge s-completed">completed</span></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="6" class="empty-msg">Complete bookings to see earnings here.</td></tr>';
+}
+
+// ── PROFILE ──
+function renderProfile() {
+  if (!execProfile) return;
+  const p = execProfile;
+  document.getElementById('pfName').value    = p.full_name || '';
+  document.getElementById('pfPhone').value   = p.phone || '';
+  document.getElementById('pfEmail').value   = p.email || currentUser.email;
+  document.getElementById('pfCity').value    = p.city || '';
+  document.getElementById('pfServices').value= p.services || 'walker';
+  document.getElementById('pfExp').value     = p.experience || '';
+  document.getElementById('pfAvail').value   = p.availability || 'Mon–Sat, 6am–8pm';
+  document.getElementById('pfRating').value  = (p.rating || 5.0) + ' ★';
+  document.getElementById('pfBio').value     = p.bio || '';
+  document.getElementById('pfNameDisplay').textContent = p.full_name || '—';
+  document.getElementById('pfRoleDisplay').textContent = roleLabel(p.services);
+  const chipCls = 'sb-status-chip chip-' + (p.status||'pending');
+  const chip = document.getElementById('pfStatusChip');
+  chip.className = chipCls; chip.textContent = p.status || 'pending';
+}
+
+function pfEnableEdit() {
+  ['pfName','pfPhone','pfCity','pfServices','pfExp','pfAvail','pfBio'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.disabled = false;
+  });
+  document.getElementById('pfActions').style.display = 'none';
+  document.getElementById('pfEditActions').style.display = 'flex';
+  document.getElementById('pfSaveOk').style.display = 'none';
+}
+
+function pfCancelEdit() {
+  ['pfName','pfPhone','pfCity','pfServices','pfExp','pfAvail','pfBio'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.disabled = true;
+  });
+  document.getElementById('pfActions').style.display = 'flex';
+  document.getElementById('pfEditActions').style.display = 'none';
+  renderProfile();
+}
+
+async function saveProfile() {
+  const upd = {
+    full_name:    document.getElementById('pfName').value.trim(),
+    phone:        document.getElementById('pfPhone').value.trim(),
+    city:         document.getElementById('pfCity').value.trim(),
+    services:     document.getElementById('pfServices').value,
+    experience:   document.getElementById('pfExp').value,
+    availability: document.getElementById('pfAvail').value.trim(),
+    bio:          document.getElementById('pfBio').value.trim(),
+  };
+  const { error } = await db.from('executives').update(upd).eq('id', currentUser.id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  Object.assign(execProfile, upd);
+  const name = upd.full_name || currentUser.email;
+  setAvatars(name);
+  document.getElementById('sbName').textContent = name;
+  document.getElementById('sbRole').textContent = roleLabel(upd.services);
+  document.getElementById('pfNameDisplay').textContent = name;
+  document.getElementById('pfRoleDisplay').textContent = roleLabel(upd.services);
+  pfCancelEdit();
+  document.getElementById('pfSaveOk').style.display = '';
+  showToast('✅ Profile saved!', 'success');
+  setTimeout(() => document.getElementById('pfSaveOk').style.display = 'none', 3000);
+}
+
+async function signOut() {
+  await db.auth.signOut();
+  window.location.href = 'executive-login.html';
+}
+
+init();
+</script>
+</body>
+</html>
