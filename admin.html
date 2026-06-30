@@ -644,7 +644,7 @@
                ${b.executive_exec_id ? `<span style="background:rgba(129,140,248,.15);color:var(--accent);font-size:.68rem;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:.04em">${b.executive_exec_id}</span>` : ''}`
             : ''}
           ${b.status==='assigned'
-            ? `<button onclick="notifyCustomer('${b.id}')" title="Send email to customer" style="margin-top:5px;background:rgba(34,197,94,.15);color:#15803d;border:none;border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">📧 Notify Customer</button>`
+            ? `<button data-notify-id="${b.id}" onclick="notifyCustomer('${b.id}')" title="Send email to customer from hello@urbanpaws.app" style="margin-top:5px;background:rgba(34,197,94,.15);color:#15803d;border:none;border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">📧 Notify Customer</button>`
             : ''}
         </td>
         <td>
@@ -835,43 +835,117 @@
     applyFilters();
   }
 
-  function notifyCustomer(bookingId) {
+  async function notifyCustomer(bookingId) {
     const b = allBookings.find(x => String(x.id) === String(bookingId));
     if (!b) return;
-    const execName  = b.executive_name || 'your assigned executive';
-    const execPubId = b.executive_exec_id || '—';
     const custEmail = b.email || '';
-    const subject = encodeURIComponent(`Your booking is confirmed — Executive ${execPubId} assigned | Urban Paws`);
-    const body = encodeURIComponent(
+    if (!custEmail) { alert('No customer email found for this booking.'); return; }
+
+    const execName  = b.executive_name  || 'your assigned executive';
+    const execPubId = b.executive_exec_id || '—';
+    const subject   = `Your booking is confirmed — Executive ${execPubId} assigned | Urban Paws`;
+
+    // Find the notify button and show loading state
+    const btn = document.querySelector(`[data-notify-id="${bookingId}"]`);
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Sending…'; }
+
+    const htmlBody = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+<div style="max-width:540px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.07)">
+  <div style="background:linear-gradient(135deg,#6C6FD4,#5254B8);padding:32px 32px 24px;text-align:center">
+    <div style="font-size:32px;margin-bottom:8px">🐾</div>
+    <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:-.3px">Urban Paws</div>
+    <div style="color:rgba(255,255,255,.75);font-size:13px;margin-top:4px">Your booking is confirmed!</div>
+  </div>
+  <div style="padding:28px 32px">
+    <p style="margin:0 0 20px;font-size:15px;color:#374151">Hi there 👋,</p>
+    <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.6">Great news! Your Urban Paws booking has been assigned to a verified executive who will take great care of your pet.</p>
+
+    <div style="background:#f9fafb;border-radius:12px;padding:20px 24px;margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:14px">Booking Details</div>
+      <table style="width:100%;border-collapse:collapse">
+        <tr><td style="padding:6px 0;font-size:13px;color:#6b7280;width:38%">Booking ID</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#111827">${b.booking_id || '—'}</td></tr>
+        <tr><td style="padding:6px 0;font-size:13px;color:#6b7280">Service</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#111827">${b.service || '—'}</td></tr>
+        <tr><td style="padding:6px 0;font-size:13px;color:#6b7280">Date</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#111827">${b.booking_date || '—'}</td></tr>
+        <tr><td style="padding:6px 0;font-size:13px;color:#6b7280">Time Slot</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#111827">${b.time_slot || '—'}</td></tr>
+        <tr><td style="padding:6px 0;font-size:13px;color:#6b7280">Pet</td><td style="padding:6px 0;font-size:13px;font-weight:600;color:#111827">${b.pet_name || '—'}</td></tr>
+      </table>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#EDEEFA,#e8e9ff);border-radius:12px;padding:20px 24px;margin-bottom:24px;border:1.5px solid #c7c9f4">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#5254B8;margin-bottom:14px">Your Assigned Executive</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="background:#6C6FD4;color:#fff;border-radius:10px;padding:8px 14px;font-size:18px;font-weight:900;letter-spacing:.06em">${execPubId}</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1a1a2e">${execName}</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:2px">Verified Urban Paws Executive</div>
+        </div>
+      </div>
+      <p style="margin:14px 0 0;font-size:13px;color:#5254B8;line-height:1.5">Your executive will confirm the booking shortly. If you need to verify, quote <strong>${execPubId}</strong> when contacting us.</p>
+    </div>
+
+    <p style="margin:0 0 24px;font-size:13px;color:#6b7280;line-height:1.6">For any questions, reply to this email or reach us at <a href="mailto:hello@urbanpaws.app" style="color:#6C6FD4;text-decoration:none">hello@urbanpaws.app</a></p>
+
+    <div style="text-align:center">
+      <a href="https://urbanpaws.app/my-bookings.html" style="display:inline-block;background:#6C6FD4;color:#fff;text-decoration:none;padding:12px 28px;border-radius:100px;font-size:14px;font-weight:700">View My Bookings →</a>
+    </div>
+  </div>
+  <div style="background:#f9fafb;padding:16px 32px;text-align:center;border-top:1px solid #e5e7eb">
+    <div style="font-size:12px;color:#9ca3af">Urban Paws · Whitefield, Bengaluru · <a href="https://urbanpaws.app" style="color:#6C6FD4;text-decoration:none">urbanpaws.app</a></div>
+  </div>
+</div></body></html>`;
+
+    const plainBody =
 `Hi there,
 
 Great news! Your Urban Paws booking has been assigned to a verified executive.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  BOOKING DETAILS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Booking ID : ${b.booking_id || '—'}
-  Service    : ${b.service || '—'}
-  Date       : ${b.booking_date || '—'}
-  Time       : ${b.time_slot || '—'}
-  Pet        : ${b.pet_name || '—'}
+BOOKING DETAILS
+━━━━━━━━━━━━━━
+Booking ID : ${b.booking_id || '—'}
+Service    : ${b.service || '—'}
+Date       : ${b.booking_date || '—'}
+Time       : ${b.time_slot || '—'}
+Pet        : ${b.pet_name || '—'}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  YOUR ASSIGNED EXECUTIVE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Executive ID   : ${execPubId}
-  Executive Name : ${execName}
+YOUR ASSIGNED EXECUTIVE
+━━━━━━━━━━━━━━━━━━━━━━
+Executive ID   : ${execPubId}
+Executive Name : ${execName}
 
-Your executive (${execPubId}) has been notified and will confirm your booking shortly.
+Your executive (${execPubId}) will confirm your booking shortly.
+Quote the Executive ID (${execPubId}) when contacting us for verification.
 
-If you need to verify your executive, quote the Executive ID (${execPubId}) when you contact us.
+Questions? hello@urbanpaws.app
+urbanpaws.app`;
 
-For any queries: support@urbanpaws.app
+    try {
+      const fd = new FormData();
+      fd.append('action',    'notifyCustomer');
+      fd.append('email',     custEmail);
+      fd.append('subject',   subject);
+      fd.append('htmlBody',  htmlBody);
+      fd.append('plainBody', plainBody);
+      fd.append('bookingId', b.booking_id || bookingId);
+      fd.append('execId',    execPubId);
+      fd.append('execName',  execName);
 
-Thank you for choosing Urban Paws! 🐾
-urbanpaws.app`
-    );
-    window.open(`mailto:${custEmail}?subject=${subject}&body=${body}`, '_blank');
+      const res = await fetch(SHEET_ENDPOINT, { method: 'POST', body: fd });
+      const txt = await res.text();
+      let ok = res.ok;
+      try { const j = JSON.parse(txt); if (j.status === 'error') ok = false; } catch(e) {}
+
+      if (ok) {
+        if (btn) { btn.disabled = false; btn.style.background = 'rgba(34,197,94,.18)'; btn.style.color = '#15803d'; btn.textContent = '✅ Email Sent'; }
+        // Mark in DB that customer was notified
+        db.from('bookings').update({ customer_notified: true }).eq('id', bookingId).then(() => {});
+      } else {
+        throw new Error(txt);
+      }
+    } catch(e) {
+      console.error('Notify error:', e);
+      if (btn) { btn.disabled = false; btn.textContent = '📧 Notify Customer'; }
+      alert('Could not send email. Please check the Google Apps Script setup.\n\nError: ' + (e.message || e));
+    }
   }
 
   // ── Users ──
