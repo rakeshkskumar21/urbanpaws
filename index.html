@@ -2278,8 +2278,8 @@
     const card = document.querySelector(`.pricing-card[data-plan="${plan}"]`);
     if (card) { card.classList.add('plan-selected'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 
-    // Open Razorpay after the scroll settles
-    setTimeout(() => openPlanCheckout(plan, meta), 950);
+    // Open Razorpay after scroll + highlight is visible (gives user ~1.4s to see selected card)
+    setTimeout(() => openPlanCheckout(plan, meta), 1400);
   }
 
   async function openPlanCheckout(plan, meta) {
@@ -2819,9 +2819,20 @@
           { onConflict: 'id' }
         );
       }
-      errEl.style.color = '#16a34a';
-      errEl.textContent = '✅ Account created! You can now log in.';
-      errEl.classList.add('visible');
+      // If a session was created immediately (auto-confirm), onAuthStateChange handles the rest.
+      // Otherwise: show sign-in prompt so they can log in and land on their selected plan.
+      if (!data?.session) {
+        const hasPlan = !!localStorage.getItem('postLoginPlan');
+        errEl.style.color = '#16a34a';
+        errEl.textContent = hasPlan
+          ? '✅ Account created! Sign in below to activate your selected plan.'
+          : '✅ Account created! You can now sign in.';
+        errEl.classList.add('visible');
+        switchAuthTab('signin');
+        // Pre-fill email in sign-in form so it's one less step
+        const siEmail = document.getElementById('siEmail');
+        if (siEmail) siEmail.value = email;
+      }
     });
   }
 
@@ -2894,8 +2905,8 @@
     if (user) {
       const planIntent  = localStorage.getItem('postLoginPlan');
       const foodIntent  = sessionStorage.getItem('postLoginFood');
-      // Only consume plan intent on a fresh sign-in (not on page-load session restore)
-      if (planIntent && (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED')) {
+      // Only consume plan intent on a fresh sign-in (SIGNED_IN), not on page-load or token refresh
+      if (planIntent && _event === 'SIGNED_IN') {
         localStorage.removeItem('postLoginPlan');
         closeAuthModal();
         triggerPlanPayment(planIntent);
@@ -2906,6 +2917,7 @@
         _pendingBook = false;
         window.location.href = 'my-bookings.html?p=book';
       } else {
+        localStorage.removeItem('postLoginPlan'); // clear any stale intent
         window.location.replace('my-bookings.html');
       }
       return;
