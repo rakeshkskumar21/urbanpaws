@@ -676,11 +676,11 @@ function roleLabel(svc) {
 // ── INIT ──
 async function init() {
   const { data: { user }, error } = await db.auth.getUser();
-  if (!user || error) { window.location.href = 'executive-login.html'; return; }
+  if (!user || error) { window.location.href = '/login'; return; }
   currentUser = user;
 
   const { data: exec } = await db.from('executives').select('*').eq('id', user.id).single();
-  if (!exec) { window.location.href = 'executive-login.html'; return; }
+  if (!exec) { window.location.href = '/login'; return; }
   execProfile = exec;
 
   // Status gate

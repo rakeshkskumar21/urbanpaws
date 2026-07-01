@@ -1452,7 +1452,7 @@
       <div class="nav-user-avatar" id="navUserAvatar">?</div>
       <span id="navUserName">User</span>
       <div class="nav-user-dropdown">
-        <a href="my-bookings.html">📋 My Bookings</a>
+        <a href="/bookings">📋 My Bookings</a>
         <button class="logout-btn" onclick="event.stopPropagation(); signOut()">🚪 Logout</button>
       </div>
     </div>
@@ -1469,7 +1469,7 @@
     <div class="mob-av-chip" id="mobUserChip" style="display:none" onclick="this.classList.toggle('open')" id="mobAvChip">
       <span id="mobUserAvatar">?</span>
       <div class="mob-av-dropdown">
-        <a href="my-bookings.html">📋 My Bookings</a>
+        <a href="/bookings">📋 My Bookings</a>
         <button onclick="event.stopPropagation(); signOut()">🚪 Logout</button>
       </div>
     </div>
@@ -1503,7 +1503,7 @@
     <li><a href="#faq" onclick="closeBurger()"><span class="bm-icon">❓</span> FAQs</a></li>
     <hr class="burger-divider">
     <li id="burgerLoginLi"><a href="#" onclick="event.preventDefault(); closeBurger(); openAuthModal()"><span class="bm-icon">👤</span> Login / Sign Up</a></li>
-    <li id="burgerMyBookingsLi" style="display:none"><a href="my-bookings.html" onclick="closeBurger()"><span class="bm-icon">📋</span> My Bookings</a></li>
+    <li id="burgerMyBookingsLi" style="display:none"><a href="/bookings" onclick="closeBurger()"><span class="bm-icon">📋</span> My Bookings</a></li>
     <li id="burgerLogoutLi" style="display:none"><a href="#" onclick="event.preventDefault(); closeBurger(); signOut()"><span class="bm-icon">🚪</span> Sign Out</a></li>
   </ul>
   <a href="#" class="burger-book-btn" onclick="event.preventDefault();closeBurger();openBooking()">📅 Book a Service →</a>
@@ -1945,8 +1945,8 @@
       <div style="background:rgba(255,255,255,.15);color:#fff;padding:8px 18px;border-radius:100px;font-size:.82rem;font-weight:600;">💰 Great Earnings</div>
       <div style="background:rgba(255,255,255,.15);color:#fff;padding:8px 18px;border-radius:100px;font-size:.82rem;font-weight:600;">🏆 Certified Training</div>
     </div>
-    <a href="executive-login.html" style="display:inline-block;background:#fff;color:#5254B8;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;padding:14px 36px;border-radius:100px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:transform .15s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">🚀 Apply as Executive →</a>
-    <p style="color:rgba(255,255,255,.6);font-size:.78rem;margin-top:1rem;">Already an executive? <a href="executive-login.html" style="color:#fff;font-weight:700;text-decoration:underline;">Log in here →</a></p>
+    <a href="/login" style="display:inline-block;background:#fff;color:#5254B8;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;padding:14px 36px;border-radius:100px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:transform .15s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">🚀 Apply as Executive →</a>
+    <p style="color:rgba(255,255,255,.6);font-size:.78rem;margin-top:1rem;">Already an executive? <a href="/login" style="color:#fff;font-weight:700;text-decoration:underline;">Log in here →</a></p>
   </div>
 </section>
 
@@ -2242,7 +2242,7 @@
   function openBooking() {
     db.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'my-bookings.html?p=book';
+        window.location.href = '/bookings?p=book';
       } else {
         _pendingBook = true;
         openAuthModal();
@@ -2308,7 +2308,7 @@
         document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('plan-selected'));
         const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
         showToast('🎉 Welcome to ' + planName + '! Your subscription is active.', 'success');
-        setTimeout(() => window.location.href = 'my-bookings.html', 2000);
+        setTimeout(() => window.location.href = '/bookings', 2000);
       },
       modal: {
         ondismiss: function() {
@@ -2332,7 +2332,7 @@
   function openFood() {
     db.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'my-bookings.html?p=book&svc=food';
+        window.location.href = '/bookings?p=book&svc=food';
       } else {
         sessionStorage.setItem('postLoginFood', '1');
         openAuthModal();
@@ -2694,7 +2694,7 @@
   function openShopItem(item) {
     db.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        window.location.href = 'my-bookings.html?p=shop';
+        window.location.href = '/bookings?p=shop';
       } else {
         sessionStorage.setItem('postLoginShop', item);
         openAuthModal();
@@ -2772,7 +2772,7 @@
     const btn = document.querySelector('#paneForgot .auth-submit');
     btn.disabled = true; btn.textContent = 'Sending…';
     const { error } = await db.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/reset-password.html'
+      redirectTo: window.location.origin + '/reset-password'
     });
     btn.disabled = false; btn.textContent = 'Send Reset Link →';
     if (error) {
@@ -2810,7 +2810,7 @@
     if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.add('visible'); return; }
     const btn = document.querySelector('#paneSignUp .auth-submit');
     btn.disabled = true; btn.textContent = 'Creating account…';
-    db.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: window.location.origin + '/index.html' } }).then(async ({ data, error }) => {
+    db.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: window.location.origin + '/' } }).then(async ({ data, error }) => {
       btn.disabled = false; btn.textContent = 'Create Account →';
       if (error) { errEl.textContent = error.message; errEl.classList.add('visible'); return; }
       if (data?.user?.id) {
@@ -2912,13 +2912,13 @@
         triggerPlanPayment(planIntent);
       } else if (foodIntent) {
         sessionStorage.removeItem('postLoginFood');
-        window.location.href = 'my-bookings.html?p=book&svc=food';
+        window.location.href = '/bookings?p=book&svc=food';
       } else if (_pendingBook) {
         _pendingBook = false;
-        window.location.href = 'my-bookings.html?p=book';
+        window.location.href = '/bookings?p=book';
       } else {
         localStorage.removeItem('postLoginPlan'); // clear any stale intent
-        window.location.replace('my-bookings.html');
+        window.location.replace('/bookings');
       }
       return;
     }

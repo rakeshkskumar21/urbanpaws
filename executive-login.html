@@ -70,7 +70,7 @@
 
     <!-- LOGIN FORM -->
     <div id="loginSection">
-      <div class="tips"><strong>Executives only.</strong> If you're a customer, visit <a href="index.html" style="color:var(--paw);font-weight:700;">Urban Paws →</a></div>
+      <div class="tips"><strong>Executives only.</strong> If you're a customer, visit <a href="/" style="color:var(--paw);font-weight:700;">Urban Paws →</a></div>
       <div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="your@email.com" autocomplete="email"></div>
       <div class="field"><label>Password</label><div class="pw-wrap"><input type="password" id="lPw" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" class="pw-eye" onclick="togglePw('lPw',this)" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
       <div class="err" id="lErr"></div>
@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <p class="back">Looking for customer bookings? <a href="index.html">Urban Paws Home →</a></p>
+    <p class="back">Looking for customer bookings? <a href="/">Urban Paws Home →</a></p>
   </div>
 </div>
 
@@ -184,7 +184,7 @@
       return;
     }
     hideTabs(); document.getElementById('redirectSection').style.display = '';
-    setTimeout(() => { window.location.href = 'executive-dashboard.html'; }, 900);
+    setTimeout(() => { window.location.href = '/dashboard'; }, 900);
   }
 
   async function doLogin() {
@@ -224,7 +224,7 @@
   async function doForgot() {
     const email = document.getElementById('lEmail').value.trim();
     if (!email) { setErr('lErr', 'Enter your email first.'); return; }
-    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset-password.html' });
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/reset-password' });
     setErr('lErr', error ? error.message : 'Reset email sent! Check your inbox.', !error);
   }
 
