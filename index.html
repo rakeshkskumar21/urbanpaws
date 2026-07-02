@@ -2925,6 +2925,16 @@
     updateAuthUI(user);
   });
 
+  // Auto-open auth modal if ?auth=signin or ?auth=signup in URL
+  (function() {
+    const p = new URLSearchParams(location.search).get('auth');
+    if (p === 'signin' || p === 'signup') {
+      openAuthModal();
+      if (p === 'signup') setTimeout(() => switchAuthTab('signup'), 30);
+      history.replaceState(null, '', location.pathname);
+    }
+  })();
+
   // Close user dropdown when clicking outside it
   document.addEventListener('click', function(e) {
     const chip = document.getElementById('navUserChip');

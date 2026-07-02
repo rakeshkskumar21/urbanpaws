@@ -28,19 +28,43 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   background: linear-gradient(135deg, #f5f5ff 0%, var(--paw-soft) 100%);
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.gate-card {
-  background: #fff; border-radius: 24px; padding: 2.5rem 2rem;
-  max-width: 360px; width: 100%; box-shadow: 0 12px 48px rgba(232,83,26,.1); text-align: center;
+#authGate {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #f5f5ff 0%, #EDEEFA 100%); padding: 1.5rem;
 }
-.gate-logo { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--paw); }
-.gate-sub  { color: var(--muted); font-size: .85rem; margin: .4rem 0 2rem; }
-.gate-btn  {
+.gate-card {
+  background: #fff; border-radius: 28px; padding: 2.5rem 2rem 2rem;
+  max-width: 400px; width: 100%; box-shadow: 0 16px 56px rgba(108,111,212,.13); text-align: center;
+}
+.gate-logo { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--paw); }
+.gate-tagline { color: var(--muted); font-size: .85rem; margin: .3rem 0 1.6rem; }
+.gate-features {
+  display: flex; flex-direction: column; gap: .55rem; margin-bottom: 1.8rem; text-align: left;
+}
+.gate-feature {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--paw-soft); border-radius: 12px; padding: .6rem .9rem;
+  font-size: .82rem; font-weight: 600; color: var(--night);
+}
+.gate-feature span:first-child { font-size: 1rem; flex-shrink: 0; }
+.gate-divider {
+  font-size: .72rem; color: var(--muted); font-weight: 600; text-transform: uppercase;
+  letter-spacing: .07em; margin-bottom: 1rem;
+}
+.gate-btn {
   display: block; width: 100%; padding: 13px;
   background: var(--paw); color: #fff; border: none; border-radius: 100px;
   font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none;
-  font-family: inherit; transition: background .2s;
+  font-family: inherit; transition: background .2s; margin-bottom: .75rem;
 }
 .gate-btn:hover { background: var(--paw2); }
+.gate-btn-outline {
+  display: block; width: 100%; padding: 12px;
+  background: transparent; color: var(--paw); border: 2px solid var(--paw); border-radius: 100px;
+  font-size: 1rem; font-weight: 700; cursor: pointer; text-decoration: none;
+  font-family: inherit; transition: all .2s; box-sizing: border-box;
+}
+.gate-btn-outline:hover { background: var(--paw-soft); }
 
 /* ───── APP SHELL ───── */
 #app { display: none; height: 100vh; }
@@ -628,8 +652,16 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 <div id="authGate" style="display:none;">
   <div class="gate-card">
     <div class="gate-logo">🐾 Urban Paws</div>
-    <div class="gate-sub">Sign in to access your account</div>
-    <a href="/" class="gate-btn">Go to Home &amp; Login →</a>
+    <div class="gate-tagline">Premium pet care, right at your doorstep</div>
+    <div class="gate-features">
+      <div class="gate-feature"><span>🦮</span><span>Book dog walks & pet food delivery</span></div>
+      <div class="gate-feature"><span>📋</span><span>Track all your bookings in real-time</span></div>
+      <div class="gate-feature"><span>🎉</span><span>Manage subscriptions & meal plans</span></div>
+      <div class="gate-feature"><span>🔔</span><span>Get live status updates instantly</span></div>
+    </div>
+    <div class="gate-divider">Sign in or create a free account</div>
+    <a href="/?auth=signin" class="gate-btn">Sign In →</a>
+    <a href="/?auth=signup" class="gate-btn-outline">Create Account — It's Free</a>
   </div>
 </div>
 
