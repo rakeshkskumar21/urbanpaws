@@ -324,6 +324,35 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 }
 .coins-earned .coin-icon { font-size: .85rem; }
 
+/* REFERRAL CARD */
+.referral-card {
+  background: linear-gradient(135deg, #1a1a2e, #2d2d5e);
+  border-radius: 20px; padding: 1.5rem 1.6rem; color: #fff; margin-bottom: 1.5rem;
+  position: relative; overflow: hidden;
+}
+.referral-card::before {
+  content: '🎁'; position: absolute; right: -10px; top: -10px;
+  font-size: 5rem; opacity: .08; transform: rotate(-15deg);
+}
+.referral-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 900; margin-bottom: .25rem; }
+.referral-sub { font-size: .8rem; opacity: .75; margin-bottom: 1rem; line-height: 1.5; }
+.referral-reward { display: flex; gap: 1rem; margin-bottom: 1.1rem; }
+.referral-reward-item { flex: 1; background: rgba(255,255,255,.1); border-radius: 12px; padding: .75rem; text-align: center; }
+.referral-reward-amt { font-size: 1.3rem; font-weight: 900; }
+.referral-reward-lbl { font-size: .7rem; opacity: .75; margin-top: 2px; }
+.referral-code-wrap { display: flex; align-items: center; gap: .5rem; background: rgba(255,255,255,.12); border-radius: 10px; padding: .6rem .85rem; }
+.referral-code { font-family: monospace; font-size: 1rem; font-weight: 800; letter-spacing: .12em; flex: 1; }
+.referral-copy-btn { background: #fbbf24; color: #1a1a2e; border: none; border-radius: 8px; padding: 6px 14px; font-size: .75rem; font-weight: 800; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.referral-share-row { display: flex; gap: .5rem; margin-top: .75rem; flex-wrap: wrap; }
+.referral-share-btn { flex: 1; min-width: 100px; padding: 9px 12px; border-radius: 10px; border: none; font-size: .75rem; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.referral-share-wa { background: #22c55e; color: #fff; }
+.referral-share-link { background: rgba(255,255,255,.15); color: #fff; }
+.referral-how { display: flex; gap: .6rem; margin-top: 1.2rem; }
+.referral-step { flex: 1; text-align: center; }
+.referral-step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--paw); color: #fff; font-size: .8rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto .4rem; }
+.referral-step-lbl { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+.referral-step-connector { width: 1px; height: 28px; background: var(--border2); align-self: flex-start; margin-top: 0; }
+
 /* REWARDS PAGE */
 .rw-balance-card {
   background: linear-gradient(135deg, var(--paw), var(--paw2));
@@ -1991,6 +2020,30 @@ function renderInvoices() {
   }).join('') + '</div>';
 }
 
+function makeReferralCode(user) {
+  const base = ((user && (user.email || '')).split('@')[0] || 'paws').replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 6);
+  const suffix = (user && user.id) ? String(user.id).replace(/-/g,'').slice(0,4).toUpperCase() : 'PAWS';
+  return 'UP-' + base + suffix;
+}
+
+function copyReferralCode(code) {
+  navigator.clipboard.writeText(code).then(() => showToast('✅ Referral code copied!', 'success')).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = code; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+    showToast('✅ Referral code copied!', 'success');
+  });
+}
+
+function shareReferralWhatsApp(code) {
+  const msg = encodeURIComponent(`Hey! Try Urban Paws 🐾 — professional dog walks & fresh pet food in Bengaluru.\n\nUse my referral code *${code}* to get ₹100 off your first booking!\n\n👉 https://urbanpaws.app`);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function copyReferralLink(code) {
+  const link = 'https://urbanpaws.app/?ref=' + code;
+  navigator.clipboard.writeText(link).then(() => showToast('✅ Referral link copied!', 'success')).catch(() => showToast('✅ Link: urbanpaws.app/?ref=' + code, 'success'));
+}
+
 function renderRewards() {
   const el = document.getElementById('rewardsContent');
   if (!el) return;
@@ -1999,8 +2052,9 @@ function renderRewards() {
   const redeemable = Math.floor(total / 1000);
   const remaining = total % 1000;
   const pct = Math.min(100, Math.round((remaining / 1000) * 100));
-  const tierCoins = total;
-  const tier = tierCoins >= 5000 ? 'Platinum 💎' : tierCoins >= 2000 ? 'Gold 🥇' : tierCoins >= 500 ? 'Silver 🥈' : 'Bronze 🥉';
+  const tier = total >= 5000 ? 'Platinum 💎' : total >= 2000 ? 'Gold 🥇' : total >= 500 ? 'Silver 🥈' : 'Bronze 🥉';
+  const refCode = makeReferralCode(currentUser);
+
   el.innerHTML = `
     <div class="rw-balance-card">
       <div style="font-size:.8rem;font-weight:700;opacity:.8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem">Your Balance</div>
@@ -2014,11 +2068,59 @@ function renderRewards() {
       ${redeemable > 0 ? `<div class="rw-next">🎉 You have <strong>${redeemable} × ₹100</strong> discount${redeemable > 1 ? 's' : ''} available!</div>` : `<div class="rw-next">🎯 ${1000 - remaining} more points for your next ₹100 off</div>`}
     </div>
 
-    <div style="font-weight:800;font-size:.95rem;margin-bottom:.75rem">How to Earn</div>
+    <div class="referral-card">
+      <div class="referral-title">🎁 Invite a Friend</div>
+      <div class="referral-sub">Share your code — your friend gets ₹100 off their first booking, and you get ₹100 too!</div>
+      <div class="referral-reward">
+        <div class="referral-reward-item">
+          <div class="referral-reward-amt">₹100</div>
+          <div class="referral-reward-lbl">You earn<br>per referral</div>
+        </div>
+        <div class="referral-reward-item">
+          <div class="referral-reward-amt">₹100</div>
+          <div class="referral-reward-lbl">Your friend<br>gets off</div>
+        </div>
+        <div class="referral-reward-item">
+          <div class="referral-reward-amt">∞</div>
+          <div class="referral-reward-lbl">No limit<br>on referrals</div>
+        </div>
+      </div>
+      <div class="referral-code-wrap">
+        <div class="referral-code">${refCode}</div>
+        <button class="referral-copy-btn" onclick="copyReferralCode('${refCode}')">Copy Code</button>
+      </div>
+      <div class="referral-share-row">
+        <button class="referral-share-btn referral-share-wa" onclick="shareReferralWhatsApp('${refCode}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.115.549 4.099 1.51 5.828L.057 23.172a.5.5 0 0 0 .611.638l5.532-1.448A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.6a9.558 9.558 0 0 1-4.9-1.35l-.35-.21-3.625.95.968-3.532-.228-.362A9.558 9.558 0 0 1 2.4 12C2.4 6.698 6.698 2.4 12 2.4S21.6 6.698 21.6 12 17.302 21.6 12 21.6z"/></svg>
+          Share on WhatsApp
+        </button>
+        <button class="referral-share-btn referral-share-link" onclick="copyReferralLink('${refCode}')">
+          🔗 Copy Link
+        </button>
+      </div>
+    </div>
+
+    <div style="font-weight:800;font-size:.95rem;margin-bottom:.75rem">How It Works</div>
+    <div class="referral-how">
+      <div class="referral-step">
+        <div class="referral-step-num">1</div>
+        <div class="referral-step-lbl">Share your code with a friend</div>
+      </div>
+      <div class="referral-step">
+        <div class="referral-step-num">2</div>
+        <div class="referral-step-lbl">They sign up & complete their first booking</div>
+      </div>
+      <div class="referral-step">
+        <div class="referral-step-num">3</div>
+        <div class="referral-step-lbl">You both get ₹100 credited!</div>
+      </div>
+    </div>
+
+    <div style="font-weight:800;font-size:.95rem;margin:1.4rem 0 .75rem">How to Earn Points</div>
     <div class="rw-how-cards">
       <div class="rw-how-card"><div class="rw-how-icon">🐾</div><div class="rw-how-title">+100 per Booking</div><div class="rw-how-sub">Every completed booking earns 100 Paw Points</div></div>
       <div class="rw-how-card"><div class="rw-how-icon">💰</div><div class="rw-how-title">1000 pts = ₹100</div><div class="rw-how-sub">Redeem as instant discount on your next booking</div></div>
-      <div class="rw-how-card"><div class="rw-how-icon">🎉</div><div class="rw-how-title">Referral Bonus</div><div class="rw-how-sub">Refer a friend, earn ₹200 when they book</div></div>
+      <div class="rw-how-card"><div class="rw-how-icon">🎉</div><div class="rw-how-title">Referral Bonus</div><div class="rw-how-sub">Earn ₹100 for every friend who books</div></div>
       <div class="rw-how-card"><div class="rw-how-icon">🏆</div><div class="rw-how-title">Loyalty Tiers</div><div class="rw-how-sub">Silver → Gold → Platinum for exclusive perks</div></div>
     </div>
 

@@ -549,6 +549,7 @@
   );
 
   let allBookings = [];
+  let profileMap = {}; // email → full_name
 
   // ── Auth ──
   function toggleAdminPw(btn) {
@@ -586,21 +587,26 @@
   // ── Load bookings ──
   async function loadBookings() {
     document.getElementById('bookingsBody').innerHTML =
-      '<tr><td colspan="13" class="loading">Loading…</td></tr>';
+      '<tr><td colspan="12" class="loading">Loading…</td></tr>';
 
-    const { data, error } = await db
-      .from('bookings')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10000);
+    const [bkRes, profRes] = await Promise.all([
+      db.from('bookings').select('*').order('created_at', { ascending: false }).limit(10000),
+      db.from('profiles').select('email, full_name')
+    ]);
 
-    if (error) {
+    if (bkRes.error) {
       document.getElementById('bookingsBody').innerHTML =
-        '<tr><td colspan="13" class="empty">Error loading bookings: ' + error.message + '</td></tr>';
+        '<tr><td colspan="12" class="empty">Error loading bookings: ' + bkRes.error.message + '</td></tr>';
       return;
     }
 
-    allBookings = data || [];
+    profileMap = {};
+    (profRes.data || []).forEach(p => { if (p.email) profileMap[p.email.toLowerCase()] = p.full_name || ''; });
+
+    allBookings = (bkRes.data || []).map(b => ({
+      ...b,
+      _profileName: profileMap[(b.email||'').toLowerCase()] || b.owner_name || ''
+    }));
     updateStats();
     applyFilters();
   }
@@ -681,7 +687,7 @@
         <td>${b.service || '—'}</td>
         <td><strong>${b.pet_name || '—'}</strong><br><span style="color:var(--muted);font-size:0.78rem">${b.breed || ''} · ${b.pet_age || ''} · ${b.gender || ''}</span></td>
         <td style="font-size:0.82rem">
-          <div style="font-weight:700;color:#111">${b.owner_name || '—'}</div>
+          <div style="font-weight:700;color:#111">${b._profileName || '—'}</div>
           <div style="font-size:.74rem;color:var(--muted)">${b.email || '—'}</div>
         </td>
         <td style="font-size:0.82rem">${b.phone || '<span style="color:#ccc">—</span>'}</td>
