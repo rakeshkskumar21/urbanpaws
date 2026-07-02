@@ -315,6 +315,44 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .bk-bookagain { background: var(--green-soft); color: var(--green-text); }
 .bk-bookagain:hover { background: #16a34a; color: #fff; }
 
+/* COINS BADGE */
+.coins-earned {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: linear-gradient(135deg, #fef9c3, #fef08a);
+  border: 1.5px solid #fbbf24; border-radius: 100px;
+  padding: 3px 10px; font-size: .7rem; font-weight: 800; color: #92400e;
+  margin-top: 5px; white-space: nowrap;
+}
+.coins-earned .coin-icon { font-size: .85rem; }
+
+/* REWARDS PAGE */
+.rw-balance-card {
+  background: linear-gradient(135deg, var(--paw), var(--paw2));
+  border-radius: 20px; padding: 1.8rem 1.6rem; color: #fff; margin-bottom: 1.5rem;
+}
+.rw-coin-total { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 900; line-height: 1; }
+.rw-coin-label { font-size: .8rem; opacity: .8; margin-top: 4px; font-weight: 600; }
+.rw-progress-wrap { margin-top: 1.2rem; }
+.rw-progress-bar { height: 8px; background: rgba(255,255,255,.25); border-radius: 100px; margin-top: 6px; overflow: hidden; }
+.rw-progress-fill { height: 100%; background: #fbbf24; border-radius: 100px; transition: width .6s ease; }
+.rw-progress-lbl { display: flex; justify-content: space-between; font-size: .72rem; opacity: .85; margin-top: 4px; }
+.rw-next { font-size: .8rem; opacity: .9; margin-top: .8rem; font-weight: 600; }
+.rw-history { display: flex; flex-direction: column; gap: .6rem; }
+.rw-history-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--white); border: 1px solid var(--border2); border-radius: 12px; padding: .8rem 1rem;
+}
+.rw-history-icon { width: 36px; height: 36px; border-radius: 10px; background: #fef9c3; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.rw-history-body { flex: 1; min-width: 0; }
+.rw-history-svc { font-size: .85rem; font-weight: 700; }
+.rw-history-date { font-size: .73rem; color: var(--muted); margin-top: 1px; }
+.rw-history-pts { font-size: .9rem; font-weight: 800; color: #d97706; white-space: nowrap; }
+.rw-how-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; margin-top: 1rem; }
+.rw-how-card { background: var(--white); border: 1.5px solid var(--border2); border-radius: 14px; padding: 1rem; text-align: center; }
+.rw-how-icon { font-size: 1.5rem; margin-bottom: .4rem; }
+.rw-how-title { font-size: .82rem; font-weight: 800; }
+.rw-how-sub { font-size: .72rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
 /* INVOICE BUTTON */
 .bk-invoice-btn {
   display: flex; align-items: center; gap: 4px; margin-top: 4px;
@@ -944,20 +982,9 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
     <!-- REWARDS -->
     <div class="page" id="page-rewards" style="display:none">
-      <div class="page-title">Rewards 🎁</div>
-      <div class="page-sub">Earn points on every booking and redeem for discounts</div>
-      <div class="placeholder-page">
-        <div class="placeholder-icon">⭐</div>
-        <div class="coming-badge">Coming Soon</div>
-        <div class="placeholder-title">Urban Paws Credits</div>
-        <div class="placeholder-sub">Every booking earns you points. Collect enough and get ₹100 off your next service — no catch.</div>
-        <div class="feature-cards">
-          <div class="feature-card"><div class="feature-card-icon">🐾</div><div class="feature-card-title">Earn 100 Points</div><div class="feature-card-sub">Every completed booking gives you 100 Paw Points</div></div>
-          <div class="feature-card"><div class="feature-card-icon">💰</div><div class="feature-card-title">1000 Points = ₹100</div><div class="feature-card-sub">Redeem points as instant discount on your next booking</div></div>
-          <div class="feature-card"><div class="feature-card-icon">🎉</div><div class="feature-card-title">Referral Bonus</div><div class="feature-card-sub">Refer a friend — you get ₹200 when they complete their first booking</div></div>
-          <div class="feature-card"><div class="feature-card-icon">🏆</div><div class="feature-card-title">Loyalty Tiers</div><div class="feature-card-sub">Silver, Gold, Platinum — unlock exclusive perks as you level up</div></div>
-        </div>
-      </div>
+      <div class="page-title">Rewards 🪙</div>
+      <div class="page-sub">Earn Paw Points on every completed booking</div>
+      <div id="rewardsContent"></div>
     </div>
 
     <!-- ONBOARDING -->
@@ -1763,6 +1790,7 @@ function showPage(id) {
   closeSidebar();
   window.scrollTo(0, 0);
   if (id==='bookings' && allBookings.length) applyBkFilter();
+  if (id==='rewards') renderRewards();
 }
 
 function cbSearchInput(inputEl) {
@@ -1867,6 +1895,53 @@ function renderInvoices() {
   }).join('') + '</div>';
 }
 
+function renderRewards() {
+  const el = document.getElementById('rewardsContent');
+  if (!el) return;
+  const completed = allBookings.filter(b => b.status === 'completed');
+  const total = completed.length * 100;
+  const redeemable = Math.floor(total / 1000);
+  const remaining = total % 1000;
+  const pct = Math.min(100, Math.round((remaining / 1000) * 100));
+  const tierCoins = total;
+  const tier = tierCoins >= 5000 ? 'Platinum 💎' : tierCoins >= 2000 ? 'Gold 🥇' : tierCoins >= 500 ? 'Silver 🥈' : 'Bronze 🥉';
+  el.innerHTML = `
+    <div class="rw-balance-card">
+      <div style="font-size:.8rem;font-weight:700;opacity:.8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem">Your Balance</div>
+      <div class="rw-coin-total">🪙 ${total.toLocaleString()}</div>
+      <div class="rw-coin-label">Paw Points · Tier: ${tier}</div>
+      <div class="rw-progress-wrap">
+        <div style="font-size:.75rem;opacity:.85;font-weight:600">Progress to next ₹100 discount</div>
+        <div class="rw-progress-bar"><div class="rw-progress-fill" style="width:${pct}%"></div></div>
+        <div class="rw-progress-lbl"><span>${remaining} / 1000 pts</span><span>${pct}%</span></div>
+      </div>
+      ${redeemable > 0 ? `<div class="rw-next">🎉 You have <strong>${redeemable} × ₹100</strong> discount${redeemable > 1 ? 's' : ''} available!</div>` : `<div class="rw-next">🎯 ${1000 - remaining} more points for your next ₹100 off</div>`}
+    </div>
+
+    <div style="font-weight:800;font-size:.95rem;margin-bottom:.75rem">How to Earn</div>
+    <div class="rw-how-cards">
+      <div class="rw-how-card"><div class="rw-how-icon">🐾</div><div class="rw-how-title">+100 per Booking</div><div class="rw-how-sub">Every completed booking earns 100 Paw Points</div></div>
+      <div class="rw-how-card"><div class="rw-how-icon">💰</div><div class="rw-how-title">1000 pts = ₹100</div><div class="rw-how-sub">Redeem as instant discount on your next booking</div></div>
+      <div class="rw-how-card"><div class="rw-how-icon">🎉</div><div class="rw-how-title">Referral Bonus</div><div class="rw-how-sub">Refer a friend, earn ₹200 when they book</div></div>
+      <div class="rw-how-card"><div class="rw-how-icon">🏆</div><div class="rw-how-title">Loyalty Tiers</div><div class="rw-how-sub">Silver → Gold → Platinum for exclusive perks</div></div>
+    </div>
+
+    <div style="font-weight:800;font-size:.95rem;margin:1.2rem 0 .75rem">Points History</div>
+    ${completed.length === 0
+      ? `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.9rem">Complete a booking to start earning Paw Points 🐾</div>`
+      : `<div class="rw-history">${completed.map(b => `
+        <div class="rw-history-row">
+          <div class="rw-history-icon">🎉</div>
+          <div class="rw-history-body">
+            <div class="rw-history-svc">${b.service||'Service'} <span style="font-size:.72rem;color:var(--muted);font-weight:400">#${b.booking_id||b.id}</span></div>
+            <div class="rw-history-date">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'}</div>
+          </div>
+          <div class="rw-history-pts">+100 🪙</div>
+        </div>`).join('')}</div>`
+    }
+  `;
+}
+
 function renderCard(b) {
   const cancelled = b.status === 'cancelled';
   const completed = b.status === 'completed';
@@ -1884,6 +1959,7 @@ function renderCard(b) {
     </div>
     <div class="bk-list-right">
       <div id="badge-${b.id}">${badgeHtml(b.status)}</div>
+      ${completed ? `<span class="coins-earned"><span class="coin-icon">🎉</span> +100 🪙</span>` : ''}
       <div class="bk-list-pay">💳 ${b.payment||'—'}</div>
       ${completed ? `<button class="bk-invoice-btn" onclick='generateInvoice(${bJson})'>🧾 Invoice</button>` : ''}
     </div>
@@ -1913,6 +1989,7 @@ function renderRecent(bk) {
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
         <div id="badge-r-${b.id}">${badgeHtml(b.status)}</div>
+        ${b.status==='completed' ? `<span class="coins-earned"><span class="coin-icon">🎉</span> +100 🪙</span>` : ''}
         ${b.status==='completed' ? `<button onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'")}')" class="book-again-btn">↩ Book Again</button>` : ''}
       </div>
     </div>`).join('') + '</div>';

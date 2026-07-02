@@ -383,8 +383,7 @@
               <th>Date/Time</th>
               <th>Service</th>
               <th>Pet</th>
-              <th>Account Email</th>
-              <th>Owner</th>
+              <th>Account Name</th>
               <th>Phone</th>
               <th>Address</th>
               <th>Health Flags</th>
@@ -662,8 +661,7 @@
           <div style="font-weight:700;color:#111">${b.owner_name || '—'}</div>
           <div style="font-size:.74rem;color:var(--muted)">${b.email || '—'}</div>
         </td>
-        <td><span style="color:var(--muted);font-size:0.78rem">${b.phone || '—'}</span></td>
-        <td>${b.phone || '—'}</td>
+        <td style="font-size:0.82rem">${b.phone || '<span style="color:#ccc">—</span>'}</td>
         <td style="max-width:160px;word-break:break-word;font-size:0.78rem">${b.address || '—'}</td>
         <td>${flags || '<span style="color:#ccc">None</span>'}</td>
         <td style="font-size:0.82rem;font-weight:600">${paidVia}</td>
