@@ -260,6 +260,14 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .recent-svc { font-size: .88rem; font-weight: 700; }
 .recent-meta { font-size: .75rem; color: var(--muted); margin-top: 1px; }
 
+/* BOOK AGAIN */
+.book-again-btn {
+  background: var(--paw); color: #fff; border: none; border-radius: 100px;
+  padding: 4px 12px; font-size: .7rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; white-space: nowrap; transition: background .15s, transform .1s;
+}
+.book-again-btn:hover { background: var(--paw2); transform: scale(1.04); }
+
 /* BADGES */
 .badge { display: inline-block; padding: 4px 11px; border-radius: 100px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
 .badge-pending   { background: var(--yellow-soft); color: var(--yellow-text); }
@@ -1708,7 +1716,10 @@ function renderRecent(bk) {
         <div class="recent-svc">${b.service||'—'} <span style="font-weight:400;color:var(--muted);font-size:.8rem">· #${b.booking_id||b.id}</span></div>
         <div class="recent-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
       </div>
-      <div id="badge-r-${b.id}">${badgeHtml(b.status)}</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div id="badge-r-${b.id}">${badgeHtml(b.status)}</div>
+        ${b.status==='completed' ? `<button onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'")}')" class="book-again-btn">↩ Book Again</button>` : ''}
+      </div>
     </div>`).join('') + '</div>';
 }
 
@@ -2346,6 +2357,14 @@ const FOOD_SLOTS = [
   '4:00 PM – 5:00 PM','5:00 PM – 6:00 PM','6:00 PM – 7:00 PM','7:00 PM – 8:00 PM',
   '8:00 PM – 9:00 PM','9:00 PM – 10:00 PM','10:00 PM – 11:00 PM'
 ];
+
+function bookAgain(service) {
+  showPage('book');
+  const tabs = document.querySelectorAll('.bk-tab');
+  const isFood = (service||'').toLowerCase().includes('food');
+  tabs.forEach(t => { if ((isFood && t.textContent.toLowerCase().includes('food')) || (!isFood && t.textContent.toLowerCase().includes('walk'))) bkSelectService(t); });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 function bkSelectService(el) {
   document.querySelectorAll('.bk-tab').forEach(t => t.classList.remove('active'));
