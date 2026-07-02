@@ -291,21 +291,17 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .book-again-btn:hover { background: var(--paw2); transform: scale(1.04); }
 
 /* BOOKING PROGRESS STEPPER */
-.bk-progress { display: flex; align-items: center; gap: 0; margin-top: .6rem; flex-wrap: nowrap; overflow: hidden; }
-.prog-item { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+.bk-progress { display: flex; align-items: center; gap: 0; margin-top: .75rem; flex-wrap: nowrap; overflow: hidden; }
+.prog-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
 .prog-dot {
-  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border2);
   display: flex; align-items: center; justify-content: center;
-  font-size: .6rem; font-weight: 800; color: var(--muted); background: var(--white); flex-shrink: 0;
+  font-size: .65rem; font-weight: 800; color: var(--muted); background: var(--white); flex-shrink: 0;
+  transition: all .25s;
 }
 .prog-label { font-size: .62rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
-.prog-line { flex: 1; height: 2px; background: var(--border); margin: 0 2px; margin-bottom: 14px; }
-.prog-line-done { background: var(--paw); }
-.prog-item.prog-done .prog-dot { background: var(--paw); border-color: var(--paw); color: #fff; }
-.prog-item.prog-done .prog-label { color: var(--paw); }
-.prog-item.prog-active .prog-dot { border-color: var(--paw); color: var(--paw); box-shadow: 0 0 0 3px rgba(108,111,212,.15); }
-.prog-item.prog-active .prog-label { color: var(--paw); font-weight: 800; }
-.prog-cancelled { font-size: .72rem; font-weight: 700; color: var(--red-text); background: var(--red-soft); padding: 3px 10px; border-radius: 100px; }
+.prog-line { flex: 1; height: 2px; background: var(--border2); margin: 0 3px; margin-bottom: 16px; transition: background .3s; }
+.prog-cancelled { font-size: .72rem; font-weight: 700; color: #991B1B; background: #FEE2E2; padding: 3px 10px; border-radius: 100px; }
 
 /* CANCEL ACTIONS */
 .bk-cancel-actions { display: flex; gap: .5rem; margin-top: .6rem; flex-wrap: wrap; }
@@ -1915,18 +1911,30 @@ function badgeHtml(st) { return `<span class="badge badge-${st||'pending'}">${BA
 
 function progressHtml(status) {
   const steps = [
-    { key: 'pending',   label: 'Booked' },
-    { key: 'assigned',  label: 'Assigned' },
-    { key: 'confirmed', label: 'On the Way' },
-    { key: 'completed', label: 'Done ✓' }
+    { key: 'pending',   label: 'Booked',     color: '#f59e0b', soft: 'rgba(245,158,11,.14)', icon: '📋' },
+    { key: 'assigned',  label: 'Assigned',   color: '#3b82f6', soft: 'rgba(59,130,246,.14)',  icon: '👤' },
+    { key: 'confirmed', label: 'On the Way', color: '#8b5cf6', soft: 'rgba(139,92,246,.14)',  icon: '🚶' },
+    { key: 'completed', label: 'Done',       color: '#16a34a', soft: 'rgba(22,163,74,.14)',   icon: '✓'  }
   ];
   if (status === 'cancelled') return `<div class="bk-progress"><span class="prog-cancelled">❌ Cancelled</span></div>`;
   const ai = steps.findIndex(s => s.key === status);
-  return `<div class="bk-progress">${steps.map((s, i) => `
-    <div class="prog-item${i <= ai ? ' prog-done' : ''}${i === ai ? ' prog-active' : ''}">
-      <div class="prog-dot">${i < ai ? '✓' : ''}</div>
-      <div class="prog-label">${s.label}</div>
-    </div>${i < steps.length - 1 ? `<div class="prog-line${i < ai ? ' prog-line-done' : ''}"></div>` : ''}`).join('')}</div>`;
+  return `<div class="bk-progress">${steps.map((s, i) => {
+    const done   = i < ai;
+    const active = i === ai;
+    const future = i > ai;
+    const dotStyle = done
+      ? `background:${s.color};border-color:${s.color};color:#fff;`
+      : active
+        ? `background:#fff;border-color:${s.color};color:${s.color};box-shadow:0 0 0 3px ${s.soft};`
+        : `background:#f8f8fa;border-color:#e5e7eb;color:#d1d5db;`;
+    const labelStyle = (done || active) ? `color:${s.color};font-weight:700;` : `color:#d1d5db;`;
+    const lineColor  = done ? s.color : '#e5e7eb';
+    return `
+    <div class="prog-item">
+      <div class="prog-dot" style="${dotStyle}">${done ? '✓' : active ? s.icon : ''}</div>
+      <div class="prog-label" style="${labelStyle}">${s.label}</div>
+    </div>${i < steps.length - 1 ? `<div class="prog-line" style="background:${lineColor}"></div>` : ''}`;
+  }).join('')}</div>`;
 }
 
 function generateInvoice(b) {
