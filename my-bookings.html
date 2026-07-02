@@ -314,6 +314,9 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .bk-reschedule:hover { background: var(--paw); color: #fff; }
 .bk-bookagain { background: var(--green-soft); color: var(--green-text); }
 .bk-bookagain:hover { background: #16a34a; color: #fff; }
+.bk-cancel-btn { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca !important; }
+.bk-cancel-btn:hover { background: #dc2626; color: #fff; border-color: #dc2626 !important; }
+.bk-active-actions { display: flex; gap: .5rem; margin-top: .6rem; flex-wrap: wrap; }
 
 /* COINS BADGE */
 .coins-earned {
@@ -1755,6 +1758,72 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
 <div class="toast" id="toast"></div>
 
+<!-- CANCEL MODAL -->
+<div id="cancelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:20px;max-width:420px;width:100%;padding:1.8rem;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-size:2rem;text-align:center;margin-bottom:.5rem">😔</div>
+    <div style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:.25rem">Cancel Booking</div>
+    <div id="cancelModalSub" style="font-size:.82rem;color:#6b7280;text-align:center;margin-bottom:1.2rem"></div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Reason for cancellation</label>
+      <select id="cancelReason" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none">
+        <option value="">Select a reason</option>
+        <option value="Schedule changed">Schedule changed</option>
+        <option value="Pet is unwell">Pet is unwell</option>
+        <option value="Found another service">Found another service</option>
+        <option value="Price concern">Price concern</option>
+        <option value="Booked by mistake">Booked by mistake</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:.75rem 1rem;font-size:.78rem;color:#991b1b;margin-bottom:1.2rem">
+      ⚠️ Once cancelled, the slot cannot be guaranteed for rebooking. You can <strong>Reschedule</strong> instead if you'd like to keep your booking.
+    </div>
+    <div style="display:flex;gap:.75rem">
+      <button onclick="closeCancelModal()" style="flex:1;padding:11px;border-radius:100px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">Keep Booking</button>
+      <button id="cancelConfirmBtn" onclick="confirmCancel()" style="flex:1;padding:11px;border-radius:100px;border:none;background:#ef4444;color:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">Yes, Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESCHEDULE MODAL -->
+<div id="rescheduleModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:20px;max-width:420px;width:100%;padding:1.8rem;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-size:2rem;text-align:center;margin-bottom:.5rem">📅</div>
+    <div style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:.25rem">Reschedule Booking</div>
+    <div id="reschedModalSub" style="font-size:.82rem;color:#6b7280;text-align:center;margin-bottom:1.2rem"></div>
+    <div style="display:grid;gap:.85rem;margin-bottom:1.2rem">
+      <div>
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">New Date <span style="color:#ef4444">*</span></label>
+        <input type="date" id="reschedDate" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">New Time Slot <span style="color:#ef4444">*</span></label>
+        <select id="reschedSlot" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none">
+          <option value="">Select time slot</option>
+          <option>6:00 AM – 7:00 AM</option>
+          <option>7:00 AM – 8:00 AM</option>
+          <option>8:00 AM – 9:00 AM</option>
+          <option>9:00 AM – 10:00 AM</option>
+          <option>10:00 AM – 11:00 AM</option>
+          <option>4:00 PM – 5:00 PM</option>
+          <option>5:00 PM – 6:00 PM</option>
+          <option>6:00 PM – 7:00 PM</option>
+          <option>7:00 PM – 8:00 PM</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Note (optional)</label>
+        <input type="text" id="reschedNote" placeholder="Any specific instructions…" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+    </div>
+    <div style="display:flex;gap:.75rem">
+      <button onclick="closeReschedModal()" style="flex:1;padding:11px;border-radius:100px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">Go Back</button>
+      <button id="reschedConfirmBtn" onclick="confirmReschedule()" style="flex:1;padding:11px;border-radius:100px;border:none;background:var(--paw);color:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">Confirm Reschedule</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
@@ -1945,6 +2014,9 @@ function renderRewards() {
 function renderCard(b) {
   const cancelled = b.status === 'cancelled';
   const completed = b.status === 'completed';
+  const active = ['pending','assigned','confirmed'].includes(b.status);
+  const svc = (b.service||'').replace(/'/g,"&#39;");
+  const bid = b.id;
   const bJson = JSON.stringify(b).replace(/'/g, '&#39;');
   return `<div class="bk-list-row" id="card-${b.id}">
     <div class="bk-list-icon">${svcIcon(b.service)}</div>
@@ -1952,9 +2024,16 @@ function renderCard(b) {
       <div class="bk-list-svc">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
       <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
       ${progressHtml(b.status)}
+      ${active ? `<div class="bk-active-actions">
+        <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','${b.booking_date||''}','${(b.time_slot||'').replace(/'/g,"\\'")}','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
+        <button class="bk-action-btn bk-cancel-btn" onclick="openCancelModal('${bid}','${b.booking_id||bid}','${svc}')">✕ Cancel</button>
+      </div>` : ''}
       ${cancelled ? `<div class="bk-cancel-actions">
-        <button class="bk-action-btn bk-reschedule" onclick="showPage('book')">📅 Reschedule</button>
-        <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}')">↩ Book Again</button>
+        <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','','','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
+        <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}','${bid}')">↩ Book Again</button>
+      </div>` : ''}
+      ${completed ? `<div class="bk-cancel-actions">
+        <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}','${bid}')">↩ Book Again</button>
       </div>` : ''}
     </div>
     <div class="bk-list-right">
@@ -2631,12 +2710,169 @@ const FOOD_SLOTS = [
   '8:00 PM – 9:00 PM','9:00 PM – 10:00 PM','10:00 PM – 11:00 PM'
 ];
 
-function bookAgain(service) {
+function bookAgain(service, originalBookingId) {
   showPage('book');
   const tabs = document.querySelectorAll('.bk-tab');
   const isFood = (service||'').toLowerCase().includes('food');
   tabs.forEach(t => { if ((isFood && t.textContent.toLowerCase().includes('food')) || (!isFood && t.textContent.toLowerCase().includes('walk'))) bkSelectService(t); });
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (originalBookingId) {
+    const orig = allBookings.find(b => String(b.id) === String(originalBookingId));
+    if (orig) sendBookingNotification('book_again', orig);
+  }
+}
+
+// ── CANCEL FLOW ──────────────────────────────────────────────
+let _cancelBookingId = null;
+function openCancelModal(bookingId, displayId, service) {
+  _cancelBookingId = bookingId;
+  document.getElementById('cancelModalSub').textContent = service + ' · #' + displayId;
+  document.getElementById('cancelReason').value = '';
+  const m = document.getElementById('cancelModal');
+  m.style.display = 'flex';
+}
+function closeCancelModal() {
+  document.getElementById('cancelModal').style.display = 'none';
+  _cancelBookingId = null;
+}
+async function confirmCancel() {
+  if (!_cancelBookingId) return;
+  const reason = document.getElementById('cancelReason').value;
+  if (!reason) { showToast('❌ Please select a reason'); return; }
+  const btn = document.getElementById('cancelConfirmBtn');
+  btn.disabled = true; btn.textContent = '⏳ Cancelling…';
+  const { error } = await db.from('bookings').update({ status: 'cancelled', cancellation_reason: reason }).eq('id', _cancelBookingId);
+  if (error) { showToast('❌ Could not cancel. Please try again.'); btn.disabled=false; btn.textContent='Yes, Cancel'; return; }
+  const b = allBookings.find(x => String(x.id) === String(_cancelBookingId));
+  if (b) { b.status = 'cancelled'; b.cancellation_reason = reason; }
+  updateStats(allBookings);
+  applyBkFilter();
+  closeCancelModal();
+  showToast('✅ Booking cancelled. We hope to serve you again soon!', 'success');
+  if (b) sendBookingNotification('cancel', { ...b, cancellation_reason: reason });
+}
+
+// ── RESCHEDULE FLOW ──────────────────────────────────────────
+let _reschedBookingId = null;
+function openReschedModal(bookingId, currentDate, currentSlot, service, displayId) {
+  _reschedBookingId = bookingId;
+  document.getElementById('reschedModalSub').textContent = service + ' · #' + displayId;
+  const dateEl = document.getElementById('reschedDate');
+  const today = new Date().toISOString().split('T')[0];
+  dateEl.min = today;
+  dateEl.value = currentDate || '';
+  const slotEl = document.getElementById('reschedSlot');
+  slotEl.value = currentSlot || '';
+  document.getElementById('reschedNote').value = '';
+  const m = document.getElementById('rescheduleModal');
+  m.style.display = 'flex';
+}
+function closeReschedModal() {
+  document.getElementById('rescheduleModal').style.display = 'none';
+  _reschedBookingId = null;
+}
+async function confirmReschedule() {
+  if (!_reschedBookingId) return;
+  const newDate = document.getElementById('reschedDate').value;
+  const newSlot = document.getElementById('reschedSlot').value;
+  const note    = document.getElementById('reschedNote').value.trim();
+  if (!newDate) { showToast('❌ Please choose a new date'); return; }
+  if (!newSlot) { showToast('❌ Please select a time slot'); return; }
+  const btn = document.getElementById('reschedConfirmBtn');
+  btn.disabled = true; btn.textContent = '⏳ Rescheduling…';
+  const updates = { booking_date: newDate, time_slot: newSlot, status: 'pending' };
+  if (note) updates.notes = note;
+  const { error } = await db.from('bookings').update(updates).eq('id', _reschedBookingId);
+  if (error) { showToast('❌ Could not reschedule. Please try again.'); btn.disabled=false; btn.textContent='Confirm Reschedule'; return; }
+  const b = allBookings.find(x => String(x.id) === String(_reschedBookingId));
+  if (b) { b.booking_date = newDate; b.time_slot = newSlot; b.status = 'pending'; if (note) b.notes = note; }
+  updateStats(allBookings);
+  applyBkFilter();
+  closeReschedModal();
+  showToast('✅ Booking rescheduled to ' + newDate + ' · ' + newSlot, 'success');
+  if (b) sendBookingNotification('reschedule', { ...b, booking_date: newDate, time_slot: newSlot });
+}
+
+// ── NOTIFICATIONS TO ADMIN / EXECUTIVE ───────────────────────
+async function sendBookingNotification(action, b) {
+  try {
+    const labels = { cancel: 'Booking Cancelled', reschedule: 'Booking Rescheduled', book_again: 'Book Again Request' };
+    const emojis = { cancel: '❌', reschedule: '📅', book_again: '↩' };
+    const label = labels[action] || action;
+    const emoji = emojis[action] || '📋';
+    const subject = `${emoji} ${label} — #${b.booking_id||b.id} | Urban Paws`;
+
+    const detailsHtml = `
+      <tr><td style="padding:5px 0;font-size:13px;color:#6b7280;width:38%">Booking ID</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.booking_id||b.id}</td></tr>
+      <tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Service</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.service||'—'}</td></tr>
+      <tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Pet</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.pet_name||'—'}</td></tr>
+      <tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Date</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.booking_date||'—'}</td></tr>
+      <tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Time</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.time_slot||'—'}</td></tr>
+      <tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Customer</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.owner_name||b.email||'—'}</td></tr>
+      ${action==='cancel'&&b.cancellation_reason?`<tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Reason</td><td style="padding:5px 0;font-size:13px;font-weight:600;color:#dc2626">${b.cancellation_reason}</td></tr>`:''}
+    `;
+
+    const htmlBody = `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+<div style="max-width:520px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+  <div style="background:${action==='cancel'?'#ef4444':action==='reschedule'?'linear-gradient(135deg,#6C6FD4,#5254B8)':'linear-gradient(135deg,#22c55e,#16a34a)'};padding:28px 32px;text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:6px">${emoji}</div>
+    <div style="color:#fff;font-size:18px;font-weight:700">${label}</div>
+    <div style="color:rgba(255,255,255,.8);font-size:13px;margin-top:4px">Urban Paws — Admin Alert</div>
+  </div>
+  <div style="padding:28px 32px">
+    <div style="background:#f9fafb;border-radius:12px;padding:18px 22px;margin-bottom:20px">
+      <table style="width:100%;border-collapse:collapse">${detailsHtml}</table>
+    </div>
+    <a href="https://urbanpaws.app/admin" style="display:inline-block;background:#6C6FD4;color:#fff;text-decoration:none;padding:11px 24px;border-radius:100px;font-size:13px;font-weight:700">Open Admin Panel →</a>
+  </div>
+</div></body></html>`;
+
+    const fd = new FormData();
+    fd.append('action', 'notifyAdmin');
+    fd.append('email', 'hello@urbanpaws.app');
+    fd.append('subject', subject);
+    fd.append('htmlBody', htmlBody);
+    fd.append('plainBody', `${label}\n\nBooking: #${b.booking_id||b.id}\nService: ${b.service||'—'}\nCustomer: ${b.owner_name||b.email||'—'}\nDate: ${b.booking_date||'—'} ${b.time_slot||''}\n${action==='cancel'?'Reason: '+b.cancellation_reason:''}`.trim());
+    fd.append('bookingId', b.booking_id||b.id);
+    fd.append('custEmail', b.email||'');
+    fetch(SHEET_ENDPOINT, { method: 'POST', body: fd }).catch(() => {});
+
+    // Also notify the customer (confirmation email)
+    if (b.email) {
+      const custSubj = action==='cancel'
+        ? `Your booking #${b.booking_id||b.id} has been cancelled | Urban Paws`
+        : action==='reschedule'
+        ? `Booking rescheduled to ${b.booking_date} · ${b.time_slot} | Urban Paws`
+        : `We've received your Book Again request | Urban Paws`;
+      const custHtml = `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+<div style="max-width:520px;margin:32px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+  <div style="background:linear-gradient(135deg,#6C6FD4,#5254B8);padding:28px 32px;text-align:center">
+    <div style="font-size:32px;margin-bottom:6px">🐾</div>
+    <div style="color:#fff;font-size:18px;font-weight:700">Urban Paws</div>
+    <div style="color:rgba(255,255,255,.8);font-size:13px;margin-top:4px">${label}</div>
+  </div>
+  <div style="padding:28px 32px">
+    <p style="margin:0 0 16px;font-size:15px">Hi ${b.owner_name||'there'} 👋,</p>
+    ${action==='cancel'?`<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">Your booking <strong>#${b.booking_id||b.id}</strong> has been cancelled. We hope to serve <strong>${b.pet_name||'your pet'}</strong> again soon!</p>`:
+      action==='reschedule'?`<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">Your booking <strong>#${b.booking_id||b.id}</strong> has been rescheduled to <strong>${b.booking_date}</strong> at <strong>${b.time_slot}</strong>. We'll see you then! 🎉</p>`:
+      `<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.6">We've received your Book Again request for <strong>${b.service||'the service'}</strong>. Complete your booking to confirm the slot.</p>`}
+    <div style="background:#f9fafb;border-radius:12px;padding:18px 22px;margin-bottom:20px">
+      <table style="width:100%;border-collapse:collapse"><tr><td style="padding:5px 0;font-size:13px;color:#6b7280;width:38%">Booking ID</td><td style="padding:5px 0;font-size:13px;font-weight:600">#${b.booking_id||b.id}</td></tr><tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Service</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.service||'—'}</td></tr><tr><td style="padding:5px 0;font-size:13px;color:#6b7280">Pet</td><td style="padding:5px 0;font-size:13px;font-weight:600">${b.pet_name||'—'}</td></tr></table>
+    </div>
+    <p style="margin:0 0 20px;font-size:13px;color:#6b7280">Questions? <a href="mailto:hello@urbanpaws.app" style="color:#6C6FD4">hello@urbanpaws.app</a> · WhatsApp <a href="https://wa.me/918951895191" style="color:#6C6FD4">+91 8951895191</a></p>
+    <a href="https://urbanpaws.app/bookings" style="display:inline-block;background:#6C6FD4;color:#fff;text-decoration:none;padding:11px 24px;border-radius:100px;font-size:13px;font-weight:700">View My Bookings →</a>
+  </div>
+</div></body></html>`;
+      const fd2 = new FormData();
+      fd2.append('action', 'notifyCustomer');
+      fd2.append('email', b.email);
+      fd2.append('subject', custSubj);
+      fd2.append('htmlBody', custHtml);
+      fd2.append('plainBody', custSubj);
+      fd2.append('bookingId', b.booking_id||b.id);
+      fetch(SHEET_ENDPOINT, { method: 'POST', body: fd2 }).catch(() => {});
+    }
+  } catch(e) {}
 }
 
 function bkSelectService(el) {
@@ -2973,6 +3209,8 @@ document.addEventListener('click', e => {
       if (el) el.classList.remove('open');
     });
   }
+  if (e.target.id === 'cancelModal') closeCancelModal();
+  if (e.target.id === 'rescheduleModal') closeReschedModal();
 });
 
 function showToast(msg, type) {
