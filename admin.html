@@ -647,12 +647,21 @@
       const amtCell = amtRaw
         ? `<div style="font-size:.92rem;font-weight:800;color:var(--green)">${amtRaw}</div>`
         : '<span style="color:#aaa;font-size:.78rem">—</span>';
+      const bJson = JSON.stringify(b).replace(/`/g,'&#96;');
       return `<tr>
-        <td><strong>${b.booking_id || '—'}</strong><br><span style="font-size:0.72rem;color:#aaa">${dtDate}</span><br><span style="font-size:0.72rem;color:var(--paw);font-weight:600">${dtTime}</span></td>
+        <td>
+          <strong>${b.booking_id || '—'}</strong><br>
+          <span style="font-size:0.72rem;color:#aaa">${dtDate}</span><br>
+          <span style="font-size:0.72rem;color:var(--paw);font-weight:600">${dtTime}</span><br>
+          <button onclick='generateInvoice(${bJson})' style="margin-top:4px;background:rgba(108,111,212,.12);color:#5254B8;border:1px solid rgba(108,111,212,.25);border-radius:6px;padding:3px 8px;font-size:.64rem;font-weight:700;cursor:pointer">🧾 Invoice</button>
+        </td>
         <td>${b.booking_date || '—'}<br><span style="color:var(--muted);font-size:0.78rem">${b.time_slot || ''}</span></td>
         <td>${b.service || '—'}</td>
         <td><strong>${b.pet_name || '—'}</strong><br><span style="color:var(--muted);font-size:0.78rem">${b.breed || ''} · ${b.pet_age || ''} · ${b.gender || ''}</span></td>
-        <td style="font-size:0.82rem;font-weight:600">${b.email || '—'}</td>
+        <td style="font-size:0.82rem">
+          <div style="font-weight:700;color:#111">${b.owner_name || '—'}</div>
+          <div style="font-size:.74rem;color:var(--muted)">${b.email || '—'}</div>
+        </td>
         <td><span style="color:var(--muted);font-size:0.78rem">${b.phone || '—'}</span></td>
         <td>${b.phone || '—'}</td>
         <td style="max-width:160px;word-break:break-word;font-size:0.78rem">${b.address || '—'}</td>
@@ -687,6 +696,23 @@
         </td>
       </tr>`;
     }).join('');
+  }
+
+  // ── Invoice generator ──
+  function generateInvoice(b) {
+    const payParts = (b.payment || '').split(' | ');
+    const amount = payParts.find(p => p.startsWith('₹')) || b.payment || '—';
+    const method = payParts[0] || '—';
+    const win = window.open('', '_blank', 'width=800,height=900');
+    win.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Invoice #${b.booking_id||b.id}</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1a2e;background:#fff;padding:48px}.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #f0f0f5}.brand{font-size:1.5rem;font-weight:800;color:#6C6FD4}.brand-sub{font-size:.78rem;color:#9ca3af;margin-top:3px}.inv-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:2px}.inv-no{font-size:1.3rem;font-weight:800;text-align:right}.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:36px}.section-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin-bottom:8px}.info-val{font-size:.9rem;font-weight:700;margin-bottom:2px}.info-sub{font-size:.8rem;color:#6b7280;margin-bottom:2px}table{width:100%;border-collapse:collapse}th{background:#f5f5ff;padding:10px 14px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}td{padding:14px;border-bottom:1px solid #f5f5f5;font-size:.87rem}.total-row{background:#f5f5ff;border-radius:12px;padding:16px 20px;margin-top:20px;display:flex;justify-content:space-between;align-items:center}.total-amt{font-size:1.4rem;font-weight:800;color:#6C6FD4}.print-btn{display:block;margin:32px auto 0;padding:12px 36px;background:#6C6FD4;color:#fff;border:none;border-radius:100px;font-size:.95rem;font-weight:700;cursor:pointer}.footer{margin-top:40px;padding-top:20px;border-top:1px solid #f0f0f5;text-align:center;font-size:.75rem;color:#9ca3af}@media print{.print-btn{display:none!important}}</style></head><body>
+  <div class="header"><div><div class="brand">🐾 Urban Paws</div><div class="brand-sub">Pet Services, Bengaluru · hello@urbanpaws.app</div></div><div><div class="inv-label">Invoice</div><div class="inv-no">#${b.booking_id||b.id||'—'}</div><div style="font-size:.8rem;color:#6b7280;text-align:right;margin-top:4px">Date: ${b.booking_date||new Date().toLocaleDateString('en-IN')}</div></div></div>
+  <div class="info-grid"><div><div class="section-title">Bill To</div><div class="info-val">${b.owner_name||b.email||'—'}</div><div class="info-sub">${b.email||''}</div><div class="info-sub">${b.phone||''}</div><div class="info-sub">${b.address||''}</div></div><div><div class="section-title">Service Provider</div><div class="info-val">Urban Paws</div><div class="info-sub">Executive: ${b.executive_name||'Assigned on date'}</div>${b.executive_exec_id?`<div class="info-sub">ID: ${b.executive_exec_id}</div>`:''}</div></div>
+  <table><thead><tr><th>Service</th><th>Pet</th><th>Date & Time</th><th>Payment Method</th></tr></thead><tbody><tr><td>${b.service||'—'}</td><td><strong>${b.pet_name||'—'}</strong><br><span style="color:#6b7280;font-size:.75rem">${b.breed||''} ${b.pet_age?'· '+b.pet_age:''}</span></td><td>${b.booking_date||'—'}<br><span style="color:#6b7280;font-size:.75rem">${b.time_slot||''}</span></td><td>${method}</td></tr></tbody></table>
+  <div class="total-row"><span style="font-weight:700">Total Amount Paid</span><span class="total-amt">${amount}</span></div>
+  <button class="print-btn" onclick="window.print()">⬇ Download / Print Invoice</button>
+  <div class="footer"><p>Thank you for choosing Urban Paws 🐾</p><p style="margin-top:6px">hello@urbanpaws.app · urbanpaws.app</p><p style="margin-top:6px;color:#d1d5db">Auto-generated invoice — no signature required.</p></div>
+</body></html>`);
+    win.document.close();
   }
 
   // ── Health flags ──
