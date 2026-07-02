@@ -628,7 +628,20 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .bk-tab.active { background: var(--paw); color: #fff; }
 .bk-tab:not(.active):hover { background: var(--paw-soft); color: var(--paw2); }
 .bk-food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; margin-bottom: 1.25rem; }
-.bk-food-item { border: 2px solid var(--border); border-radius: 12px; padding: .85rem; cursor: pointer; transition: all .15s; background: var(--white); text-align: center; }
+.bk-food-item { border: 2px solid var(--border); border-radius: 12px; padding: .85rem; cursor: pointer; transition: all .15s; background: var(--white); text-align: center; position: relative; }
+/* Zomato-style veg / non-veg indicator */
+.food-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 14px; height: 14px; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; flex-shrink: 0;
+}
+.food-dot.veg  { border: 1.5px solid #0f8a65; }
+.food-dot.nonveg { border: 1.5px solid #7c3d00; }
+.food-dot.veg::after  { content:''; width:7px; height:7px; border-radius:50%; background:#0f8a65; }
+.food-dot.nonveg::after { content:''; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-bottom:8px solid #d32f2f; }
+/* Same dot on menu-card (Pet Kitchen) */
+.menu-card { position: relative; }
 .bk-food-item:hover { border-color: var(--paw); }
 .bk-food-item.selected { border-color: var(--paw); background: var(--paw-soft); }
 .bk-food-item .bk-food-emoji { font-size: 1.6rem; line-height: 1; margin-bottom: .35rem; }
@@ -1322,6 +1335,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="page-sub">Cooked fresh daily in our cloud kitchen. Vet-approved ingredients. Veg and non-veg options.</div>
       <div class="menu-grid">
         <div class="menu-card" onclick="bookWith('food','Rice \x26 Curd')" style="cursor:pointer;">
+          <span class="food-dot veg" title="Vegetarian"></span>
           <div class="menu-card-img">🍚🥛</div>
           <div class="menu-card-body">
             <h4>Rice & Curd</h4>
@@ -1330,6 +1344,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
         </div>
         <div class="menu-card" onclick="bookWith('food','Rice \x26 Chicken')" style="cursor:pointer;">
+          <span class="food-dot nonveg" title="Non-vegetarian"></span>
           <div class="menu-card-img">🍚🍗</div>
           <div class="menu-card-body">
             <h4>Rice & Chicken</h4>
@@ -1338,6 +1353,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
         </div>
         <div class="menu-card" onclick="bookWith('food','Rice \x26 Raw Egg')" style="cursor:pointer;">
+          <span class="food-dot nonveg" title="Non-vegetarian"></span>
           <div class="menu-card-img">🍚🥚</div>
           <div class="menu-card-body">
             <h4>Rice & Raw Egg</h4>
@@ -1346,6 +1362,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
         </div>
         <div class="menu-card" onclick="bookWith('food','Rice \x26 Milk')" style="cursor:pointer;">
+          <span class="food-dot veg" title="Vegetarian"></span>
           <div class="menu-card-img">🍚🥛</div>
           <div class="menu-card-body">
             <h4>Rice & Milk</h4>
@@ -1354,6 +1371,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
         </div>
         <div class="menu-card" onclick="bookWith('food','Rice, Carrots, Beans \x26 Potato')" style="cursor:pointer;">
+          <span class="food-dot veg" title="Vegetarian"></span>
           <div class="menu-card-img">🍗🥕🥔</div>
           <div class="menu-card-body">
             <h4>Rice, Carrots, Beans & Potato</h4>
@@ -1362,6 +1380,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           </div>
         </div>
         <div class="menu-card" onclick="bookWith('food','Rice \x26 Boiled Egg')" style="cursor:pointer;">
+          <span class="food-dot nonveg" title="Non-vegetarian"></span>
           <div class="menu-card-img">🍚🥚</div>
           <div class="menu-card-body">
             <h4>Rice & Boiled Egg</h4>
@@ -1559,12 +1578,12 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <div id="bkFoodGroup" style="display:none; margin-bottom:1.25rem;">
           <span class="bk-step-label">Step 2 — Select a meal <span class="bk-req">*</span></span>
           <div class="bk-food-grid">
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Curd')"><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Curd</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Chicken')"><div class="bk-food-emoji">🍚🍗</div><div class="bk-food-name">Rice & Chicken</div><div class="bk-food-price">₹80/bowl · 🥩 Non-veg</div></div>
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Raw Egg')"><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Raw Egg</div><div class="bk-food-price">₹75/bowl · 🥩 Non-veg</div></div>
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Milk')"><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Milk</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice, Carrots, Beans & Potato')"><div class="bk-food-emoji">🍗🥕🥔</div><div class="bk-food-name">Rice, Carrots, Beans & Potato</div><div class="bk-food-price">₹75/bowl · 🌿 Veg</div></div>
-            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Boiled Egg')"><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Boiled Egg</div><div class="bk-food-price">₹40/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Curd')"><span class="food-dot veg" title="Vegetarian"></span><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Curd</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Chicken')"><span class="food-dot nonveg" title="Non-vegetarian"></span><div class="bk-food-emoji">🍚🍗</div><div class="bk-food-name">Rice & Chicken</div><div class="bk-food-price">₹80/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Raw Egg')"><span class="food-dot nonveg" title="Non-vegetarian"></span><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Raw Egg</div><div class="bk-food-price">₹75/bowl · 🥩 Non-veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Milk')"><span class="food-dot veg" title="Vegetarian"></span><div class="bk-food-emoji">🍚🥛</div><div class="bk-food-name">Rice & Milk</div><div class="bk-food-price">₹30/bowl · 🌿 Veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice, Carrots, Beans & Potato')"><span class="food-dot veg" title="Vegetarian"></span><div class="bk-food-emoji">🍗🥕🥔</div><div class="bk-food-name">Rice, Carrots, Beans & Potato</div><div class="bk-food-price">₹75/bowl · 🌿 Veg</div></div>
+            <div class="bk-food-item" onclick="bkSelectFood(this,'Rice & Boiled Egg')"><span class="food-dot nonveg" title="Non-vegetarian"></span><div class="bk-food-emoji">🍚🥚</div><div class="bk-food-name">Rice & Boiled Egg</div><div class="bk-food-price">₹40/bowl · 🥩 Non-veg</div></div>
           </div>
         </div>
 
