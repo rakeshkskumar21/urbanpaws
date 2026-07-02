@@ -767,9 +767,18 @@
   .menu-card {
     background: #fff; border: 1px solid var(--border);
     border-radius: var(--radius); overflow: hidden;
-    transition: all var(--transition);
+    transition: all var(--transition); position: relative;
   }
   .menu-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  .food-dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 14px; height: 14px; border-radius: 3px;
+    background: #fff; display: flex; align-items: center; justify-content: center; z-index: 1;
+  }
+  .food-dot.veg  { border: 1.5px solid #0f8a65; }
+  .food-dot.nonveg { border: 1.5px solid #7c3d00; }
+  .food-dot.veg::after  { content:''; width:7px; height:7px; border-radius:50%; background:#0f8a65; }
+  .food-dot.nonveg::after { content:''; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-bottom:8px solid #d32f2f; }
 
   .menu-card-img {
     height: 160px; background: var(--paw-soft);
@@ -1669,6 +1678,7 @@
 
   <div class="menu-grid">
     <div class="menu-card" onclick="openFood()" style="cursor:pointer">
+      <span class="food-dot veg" title="Vegetarian"></span>
       <div class="menu-card-img">
         🍚🥛
       </div>
@@ -1682,6 +1692,7 @@
       </div>
     </div>
     <div class="menu-card" onclick="openFood()" style="cursor:pointer">
+      <span class="food-dot nonveg" title="Non-vegetarian"></span>
       <div class="menu-card-img">
         🍚🍗
       </div>
@@ -1695,6 +1706,7 @@
       </div>
     </div>
     <div class="menu-card" onclick="openFood()" style="cursor:pointer">
+      <span class="food-dot nonveg" title="Non-vegetarian"></span>
       <div class="menu-card-img">
         🍚🥚
       </div>
@@ -1708,6 +1720,7 @@
       </div>
     </div>
     <div class="menu-card" onclick="openFood()" style="cursor:pointer">
+      <span class="food-dot veg" title="Vegetarian"></span>
       <div class="menu-card-img">
         🍚🥛
       </div>
@@ -1721,6 +1734,7 @@
       </div>
     </div>
     <div class="menu-card" onclick="openFood()" style="cursor:pointer">
+      <span class="food-dot veg" title="Vegetarian"></span>
       <div class="menu-card-img">
         🍗🥕🥔
       </div>
@@ -1734,6 +1748,7 @@
       </div>
     </div>
     <div class="menu-card" onclick="openFood()" style="cursor:pointer">
+      <span class="food-dot nonveg" title="Non-vegetarian"></span>
       <div class="menu-card-img">
         🍚🥚
       </div>
