@@ -2741,10 +2741,10 @@ async function confirmCancel() {
   if (!reason) { showToast('❌ Please select a reason'); return; }
   const btn = document.getElementById('cancelConfirmBtn');
   btn.disabled = true; btn.textContent = '⏳ Cancelling…';
-  const { error } = await db.from('bookings').update({ status: 'cancelled', cancellation_reason: reason }).eq('id', _cancelBookingId);
+  const { error } = await db.from('bookings').update({ status: 'cancelled', notes: 'Cancelled: ' + reason }).eq('id', _cancelBookingId);
   if (error) { showToast('❌ Could not cancel. Please try again.'); btn.disabled=false; btn.textContent='Yes, Cancel'; return; }
   const b = allBookings.find(x => String(x.id) === String(_cancelBookingId));
-  if (b) { b.status = 'cancelled'; b.cancellation_reason = reason; }
+  if (b) { b.status = 'cancelled'; b.notes = 'Cancelled: ' + reason; b.cancellation_reason = reason; }
   updateStats(allBookings);
   applyBkFilter();
   closeCancelModal();
