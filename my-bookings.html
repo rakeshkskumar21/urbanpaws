@@ -452,6 +452,21 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   width: 90px; height: 90px; border-radius: 50%; background: var(--paw); color: #fff;
   font-size: 1.9rem; font-weight: 800; display: flex; align-items: center; justify-content: center;
   font-family: 'Syne', sans-serif; box-shadow: 0 0 0 5px #fff;
+  overflow: hidden; cursor: pointer;
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.avatar-upload-overlay {
+  position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s; cursor: pointer;
+  font-size: .65rem; color: #fff; font-weight: 700; flex-direction: column; gap: 2px;
+}
+.profile-avatar:hover .avatar-upload-overlay { opacity: 1; }
+.avatar-uploading { position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,.55);
+  display: none; align-items: center; justify-content: center; font-size: .7rem; color: #fff; font-weight: 700; }
+/* small avatars in sidebar/topbar support images */
+.sb-avatar img, .tb-ring-avatar img, .cb-avatar img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
 }
 .profile-ring-pct { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); font-size: .82rem; font-weight: 800; color: #22c55e; background: #fff; border: 2px solid #e5e7eb; border-radius: 100px; padding: 3px 14px; white-space: nowrap; }
 .profile-fullname { font-size: 1.1rem; font-weight: 800; margin-bottom: 3px; }
@@ -1159,7 +1174,15 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
               <circle class="profile-ring-bg"   cx="64" cy="64" r="54"/>
               <circle class="profile-ring-fill" id="pfRingFill" cx="64" cy="64" r="54"/>
             </svg>
-            <div class="profile-avatar" id="pfAvatarBig">?</div>
+            <div class="profile-avatar" id="pfAvatarBig" onclick="document.getElementById('avatarInput').click()" title="Change photo">
+              <span id="pfAvatarInitials">?</span>
+              <div class="avatar-upload-overlay" id="avatarOverlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <span>Change</span>
+              </div>
+              <div class="avatar-uploading" id="avatarUploading">⏳</div>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
             <span class="profile-ring-pct" id="pfRingPct">0%</span>
           </div>
           <div class="profile-fullname" id="pfNameBig">—</div>
@@ -2249,6 +2272,89 @@ function subscribeRealtime(email) {
 
 function initials(name) { return (name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
 
+function setAllAvatars(name, imgUrl) {
+  const ini = initials(name);
+  const ids = [
+    { id: 'sbAvatar',   isImg: false },
+    { id: 'tbAvatar',   isImg: false },
+    { id: 'cbAvatar',   isImg: false },
+  ];
+  ids.forEach(({ id }) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (imgUrl) {
+      el.innerHTML = `<img src="${imgUrl}" alt="${name}" onerror="this.parentElement.textContent='${ini}'">`;
+    } else {
+      el.textContent = ini;
+    }
+  });
+  // Profile page big avatar
+  const big = document.getElementById('pfAvatarInitials');
+  const bigWrap = document.getElementById('pfAvatarBig');
+  if (big) big.textContent = imgUrl ? '' : ini;
+  if (bigWrap) {
+    const existing = bigWrap.querySelector('img.pf-avatar-img');
+    if (imgUrl) {
+      if (!existing) {
+        const img = document.createElement('img');
+        img.className = 'pf-avatar-img';
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%';
+        img.src = imgUrl;
+        img.onerror = () => { img.remove(); if (big) big.textContent = ini; };
+        bigWrap.insertBefore(img, bigWrap.firstChild);
+      } else {
+        existing.src = imgUrl;
+      }
+    } else if (existing) {
+      existing.remove();
+    }
+  }
+  // dropdown avatar
+  const cbAv = document.getElementById('cbAvatar'); if (cbAv && !imgUrl) cbAv.textContent = ini;
+  const cbNm = document.getElementById('cbName'); if (cbNm) cbNm.textContent = name.split(' ')[0];
+  const tbAv = document.getElementById('tbAvatar'); if (tbAv && !imgUrl) tbAv.textContent = ini;
+}
+
+let _currentAvatarUrl = null;
+
+async function uploadAvatar(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  if (file.size > 5 * 1024 * 1024) { showToast('❌ Image must be under 5 MB'); return; }
+
+  const loadingEl = document.getElementById('avatarUploading');
+  if (loadingEl) { loadingEl.style.display = 'flex'; }
+  const overlayEl = document.getElementById('avatarOverlay');
+  if (overlayEl) overlayEl.style.opacity = '0';
+
+  try {
+    const ext = file.name.split('.').pop().toLowerCase() || 'jpg';
+    const path = currentUser.id + '/avatar.' + ext;
+
+    // Remove old file first (ignore error)
+    await db.storage.from('avatars').remove([path]);
+
+    const { error: upErr } = await db.storage.from('avatars').upload(path, file, {
+      cacheControl: '3600', upsert: true, contentType: file.type
+    });
+    if (upErr) throw upErr;
+
+    const { data: urlData } = db.storage.from('avatars').getPublicUrl(path);
+    const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+
+    await db.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+    _currentAvatarUrl = publicUrl;
+    setAllAvatars(_profileName, publicUrl);
+    showToast('✅ Profile photo updated!', 'success');
+  } catch(e) {
+    showToast('❌ Upload failed: ' + (e.message || 'try again'));
+  } finally {
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (overlayEl) overlayEl.style.opacity = '';
+    input.value = '';
+  }
+}
+
 function showWelcomeBanner(emoji, title, sub) {
   const el = document.getElementById('welcomeBanner');
   document.getElementById('wbEmoji').textContent = emoji;
@@ -2269,12 +2375,11 @@ async function loadProfile(user) {
   _currentPlan = plan;
   const sinceRaw = (p&&p.created_at) || user.created_at;
   const since = sinceRaw ? new Date(sinceRaw).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
-  document.getElementById('sbAvatar').textContent  = initials(name);
+  const avatarUrl = (p && p.avatar_url) || null;
+  _currentAvatarUrl = avatarUrl;
+  setAllAvatars(name, avatarUrl);
   document.getElementById('sbName').textContent    = name.split(' ')[0];
   document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||'Starter Plan';
-  const cbAv = document.getElementById('cbAvatar'); if (cbAv) cbAv.textContent = initials(name);
-  const cbNm = document.getElementById('cbName'); if (cbNm) cbNm.textContent = name.split(' ')[0];
-  const tbAv = document.getElementById('tbAvatar'); if (tbAv) tbAv.textContent = initials(name);
   // Populate dropdown
   const planLabels = {starter:'⭐ Starter',casual:'🐾 Casual',standard:'🌟 Standard Pro',carnival:'🎊 Carnival'};
   const el = id => document.getElementById(id);
@@ -2293,7 +2398,6 @@ async function loadProfile(user) {
   } else {
     document.getElementById('welcomeMsg').textContent = timeGreet + ', ' + firstName + ' 👋';
   }
-  document.getElementById('pfAvatarBig').textContent  = initials(name);
   document.getElementById('pfNameBig').textContent    = name;
   document.getElementById('pfEmailSmall').textContent = user.email;
   document.getElementById('pfSince').textContent      = since;
@@ -2505,8 +2609,7 @@ async function obSubmit() {
   };
   localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
   document.getElementById('pfNameBig').textContent   = full_name;
-  document.getElementById('pfAvatarBig').textContent = initials(full_name);
-  document.getElementById('sbAvatar').textContent    = initials(full_name);
+  setAllAvatars(full_name, _currentAvatarUrl);
   document.getElementById('sbName').textContent      = full_name.split(' ')[0];
   document.getElementById('welcomeMsg').textContent  = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
   document.getElementById('sbPlan').textContent      = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[_obPlan]||'Starter Plan';
@@ -2696,8 +2799,7 @@ async function saveProfile() {
   btn.disabled = false; btn.textContent = 'Save Changes →';
   if (error) { showToast('❌ '+error.message); return; }
   document.getElementById('pfNameBig').textContent    = full_name;
-  document.getElementById('pfAvatarBig').textContent  = initials(full_name);
-  document.getElementById('sbAvatar').textContent     = initials(full_name);
+  setAllAvatars(full_name, _currentAvatarUrl);
   document.getElementById('sbName').textContent       = full_name.split(' ')[0];
   document.getElementById('welcomeMsg').textContent   = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
   const ok = document.getElementById('saveOk'); ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),3000);
