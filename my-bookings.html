@@ -793,6 +793,54 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .co-pay-btn:disabled { opacity: .6; cursor: not-allowed; }
 .co-pay-btn-label { flex: 1; text-align: center; }
 .co-pay-btn-amt { font-size: 1.05rem; font-weight: 800; white-space: nowrap; }
+
+/* ── Feedback popup ── */
+#fbPopupOverlay {
+  position: fixed; inset: 0; z-index: 1200;
+  background: rgba(10,10,30,.55); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; padding: 1rem;
+}
+#fbPopupOverlay.show { display: flex; }
+#fbPopupSheet {
+  background: #fff; border-radius: 24px; width: 100%; max-width: 420px;
+  padding: 2rem 1.75rem 1.5rem; position: relative;
+  animation: slideUp .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 24px 60px rgba(0,0,0,.18);
+}
+.fbp-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: #f3f4f6; border: none; border-radius: 50%; width: 32px; height: 32px;
+  cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+  color: #6b7280; transition: background .15s;
+}
+.fbp-close:hover { background: #e5e7eb; }
+.fbp-icon { font-size: 2.5rem; text-align: center; margin-bottom: .5rem; }
+.fbp-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--night); text-align: center; margin-bottom: .25rem; }
+.fbp-sub { font-size: .83rem; color: var(--muted); text-align: center; margin-bottom: 1.25rem; line-height: 1.5; }
+.fbp-stars { display: flex; justify-content: center; gap: 8px; margin-bottom: 1.1rem; }
+.fbp-star { font-size: 2.2rem; cursor: pointer; color: #d1d5db; transition: color .12s, transform .1s; }
+.fbp-star:hover, .fbp-star.lit { color: #f59e0b; transform: scale(1.15); }
+.fbp-textarea {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border2); border-radius: 12px;
+  font-size: .9rem; font-family: inherit; resize: none; outline: none;
+  transition: border-color .15s; color: var(--night); background: #fafafa;
+}
+.fbp-textarea:focus { border-color: var(--paw); background: #fff; }
+.fbp-submit {
+  width: 100%; margin-top: .9rem; padding: 13px; border: none; border-radius: 100px;
+  background: linear-gradient(135deg, var(--paw), var(--paw2)); color: #fff;
+  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer;
+  transition: opacity .15s;
+}
+.fbp-submit:hover { opacity: .9; }
+.fbp-submit:disabled { opacity: .5; cursor: not-allowed; }
+.fbp-skip {
+  display: block; width: 100%; text-align: center; margin-top: .65rem;
+  font-size: .82rem; color: var(--muted); background: none; border: none;
+  cursor: pointer; font-family: inherit; padding: .3rem;
+}
+.fbp-skip:hover { color: var(--night); }
+.fbp-hint { font-size: .75rem; color: var(--muted); text-align: center; margin-top: .75rem; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -2355,6 +2403,7 @@ function subscribeRealtime(email) {
       if (idx!==-1) { allBookings[idx]={...allBookings[idx],...b}; updateStats(allBookings); }
       showToast('🐾 Booking #'+b.booking_id+' is now '+b.status+'!', 'success');
       if (Notification.permission==='granted') new Notification('Urban Paws', { body: 'Booking #'+b.booking_id+' ('+b.service+') → '+b.status });
+      if (b.status === 'completed') setTimeout(() => openFbPopup(b), 1500);
     }).subscribe();
   if (Notification.permission==='default') Notification.requestPermission();
 }
@@ -3459,6 +3508,79 @@ function pickExecStar(n) {
   document.querySelectorAll('.fb-star').forEach((s,i) => s.style.color = i < n ? '#f59e0b' : '#d1d5db');
 }
 
+// ── Feedback popup (auto-shown on completion) ─────────────────────────────
+
+let _fbpBooking = null;
+const FB_SKIPPED_KEY = 'fbp_skipped';
+
+function openFbPopup(booking) {
+  const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
+  if (skipped.includes(booking.id)) return;
+  _fbpBooking = booking;
+  fbpPickStar(0);
+  document.getElementById('fbpMessage').value = '';
+  document.getElementById('fbpErr').textContent = '';
+  document.getElementById('fbpSubmitBtn').disabled = false;
+  document.getElementById('fbpSubmitBtn').textContent = 'Submit Review ⭐';
+  document.getElementById('fbPopupOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFbPopup() {
+  document.getElementById('fbPopupOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  if (_fbpBooking) {
+    const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
+    if (!skipped.includes(_fbpBooking.id)) skipped.push(_fbpBooking.id);
+    localStorage.setItem(FB_SKIPPED_KEY, JSON.stringify(skipped));
+  }
+  _fbpBooking = null;
+}
+
+function fbPopupOverlayClick(e) {
+  if (e.target === document.getElementById('fbPopupOverlay')) closeFbPopup();
+}
+
+let _fbpStars = 0;
+function fbpPickStar(n) {
+  _fbpStars = n;
+  document.querySelectorAll('.fbp-star').forEach((s,i) => s.classList.toggle('lit', i < n));
+}
+
+async function submitFbPopup() {
+  if (!_fbpStars) { document.getElementById('fbpErr').textContent = 'Please pick a star rating.'; return; }
+  const message = (document.getElementById('fbpMessage').value || '').trim();
+  const btn = document.getElementById('fbpSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  document.getElementById('fbpErr').textContent = '';
+
+  const user = (await db.auth.getUser()).data.user;
+  const payload = {
+    user_id:    user?.id || null,
+    user_name:  _profileName || user?.email || 'Anonymous',
+    user_email: user?.email || '',
+    service:    _fbpBooking?.service || '',
+    stars:      _fbpStars,
+    message:    message || null,
+    is_public:  true
+  };
+
+  const { error } = await db.from('feedback').insert([payload]);
+  if (error) {
+    btn.disabled = false; btn.textContent = 'Submit Review ⭐';
+    document.getElementById('fbpErr').textContent = error.message;
+    return;
+  }
+
+  btn.textContent = '✅ Thank you!';
+  if (_fbpBooking) {
+    const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
+    if (!skipped.includes(_fbpBooking.id)) skipped.push(_fbpBooking.id);
+    localStorage.setItem(FB_SKIPPED_KEY, JSON.stringify(skipped));
+  }
+  setTimeout(() => { closeFbPopup(); showToast('⭐ Review submitted — thank you!', 'success'); }, 1200);
+}
+
 function openFeedbackFromBooking(service) {
   showPage('feedback');
   if (service) { const sel = document.getElementById('fbService'); for (let o of sel.options) if (o.value === service || service.includes(o.value)) { sel.value = o.value; break; } }
@@ -3757,5 +3879,27 @@ db.auth.onAuthStateChange((_event, session) => {
     <button class="pp-btn-dismiss" onclick="dismissProfilePrompt()">Later</button>
   </div>
 </div>
+<!-- FEEDBACK POPUP -->
+<div id="fbPopupOverlay" onclick="fbPopupOverlayClick(event)">
+  <div id="fbPopupSheet">
+    <button class="fbp-close" onclick="closeFbPopup()" aria-label="Close">✕</button>
+    <div class="fbp-icon">🐾</div>
+    <div class="fbp-title">How was the experience?</div>
+    <div class="fbp-sub">Your review helps other pet parents make the right choice and helps us improve.</div>
+    <div class="fbp-stars" id="fbpStars">
+      <span class="fbp-star" onclick="fbpPickStar(1)">★</span>
+      <span class="fbp-star" onclick="fbpPickStar(2)">★</span>
+      <span class="fbp-star" onclick="fbpPickStar(3)">★</span>
+      <span class="fbp-star" onclick="fbpPickStar(4)">★</span>
+      <span class="fbp-star" onclick="fbpPickStar(5)">★</span>
+    </div>
+    <textarea class="fbp-textarea" id="fbpMessage" rows="3" placeholder="Tell us what you loved (or how we can do better)…"></textarea>
+    <div id="fbpErr" style="font-size:.78rem;color:#dc2626;margin-top:.4rem;min-height:.9rem;"></div>
+    <button class="fbp-submit" id="fbpSubmitBtn" onclick="submitFbPopup()">Submit Review ⭐</button>
+    <button class="fbp-skip" onclick="closeFbPopup()">Skip for now</button>
+    <div class="fbp-hint">⭐ This gives you valuable feedback and builds reviews</div>
+  </div>
+</div>
+
 </body>
 </html>
