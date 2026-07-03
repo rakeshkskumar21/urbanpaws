@@ -3372,6 +3372,7 @@ db.auth.getSession().then(({ data: { session } }) => {
 db.auth.onAuthStateChange((_event, session) => {
   const user = session?.user ?? null;
   if (user) {
+    if (_event === 'SIGNED_IN') sessionStorage.removeItem('ppDismissed');
     if (!_appInited) {
       _appInited = true;
       document.getElementById('loadingSplash').style.display = 'none';
@@ -3379,6 +3380,7 @@ db.auth.onAuthStateChange((_event, session) => {
     }
   } else if (_event === 'SIGNED_OUT') {
     _appInited = false;
+    sessionStorage.removeItem('ppDismissed');
     showAuthGate();
   }
 });
