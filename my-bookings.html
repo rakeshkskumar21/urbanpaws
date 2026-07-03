@@ -2391,6 +2391,10 @@ async function loadBookings(email) {
   updateStats(allBookings);
   renderRecent(allBookings);
   applyBkFilter();
+  // Show feedback popup for most recent completed booking not yet reviewed
+  const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
+  const pending = allBookings.find(b => b.status === 'completed' && !skipped.includes(b.id));
+  if (pending) setTimeout(() => openFbPopup(pending), 2000);
 }
 
 function subscribeRealtime(email) {
