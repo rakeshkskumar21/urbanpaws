@@ -2397,19 +2397,66 @@ async function loadBookings(email) {
   if (pending) setTimeout(() => openFbPopup(pending), 2000);
 }
 
+function applyBookingUpdate(b) {
+  const idx = allBookings.findIndex(x => x.id === b.id);
+  if (idx === -1) return false;
+  const prev = allBookings[idx];
+  if (prev.status === b.status && prev.assigned_executive === b.assigned_executive) return false;
+  allBookings[idx] = { ...prev, ...b };
+  updateStats(allBookings);
+  // Re-render the full card so stepper + actions update
+  const cardEl = document.getElementById('card-' + b.id);
+  if (cardEl) cardEl.outerHTML = renderCard(allBookings[idx]);
+  // Update recent-row badge
+  ['badge-r-'+b.id].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=badgeHtml(b.status); });
+  return true;
+}
+
+let _pollInterval = null;
+let _pollEmail = null;
+
+function startPolling(email) {
+  _pollEmail = email;
+  if (_pollInterval) clearInterval(_pollInterval);
+  _pollInterval = setInterval(async () => {
+    if (!_pollEmail) return;
+    const { data } = await db.from('bookings').select('*').eq('email', _pollEmail).order('created_at', { ascending: false });
+    if (!data) return;
+    let anyChanged = false;
+    data.forEach(b => { if (applyBookingUpdate(b)) anyChanged = true; });
+    if (anyChanged) {
+      renderRecent(allBookings);
+      // Check for new completed bookings to prompt feedback
+      const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
+      const pending = allBookings.find(b => b.status === 'completed' && !skipped.includes(b.id));
+      if (pending) setTimeout(() => openFbPopup(pending), 800);
+    }
+  }, 30000);
+}
+
 function subscribeRealtime(email) {
   if (realtimeChannel) db.removeChannel(realtimeChannel);
   realtimeChannel = db.channel('app-bk-' + email)
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'bookings', filter: 'email=eq.' + email }, payload => {
       const b = payload.new;
-      ['badge-'+b.id,'badge-r-'+b.id].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=badgeHtml(b.status); });
-      const idx = allBookings.findIndex(x=>x.id===b.id);
-      if (idx!==-1) { allBookings[idx]={...allBookings[idx],...b}; updateStats(allBookings); }
-      showToast('🐾 Booking #'+b.booking_id+' is now '+b.status+'!', 'success');
-      if (Notification.permission==='granted') new Notification('Urban Paws', { body: 'Booking #'+b.booking_id+' ('+b.service+') → '+b.status });
-      if (b.status === 'completed') setTimeout(() => openFbPopup(b), 1500);
-    }).subscribe();
+      const changed = applyBookingUpdate(b);
+      if (changed) {
+        renderRecent(allBookings);
+        showToast('🐾 Booking #'+b.booking_id+' is now '+b.status+'!', 'success');
+        if (Notification.permission==='granted') new Notification('Urban Paws', { body: 'Booking #'+b.booking_id+' ('+b.service+') → '+b.status });
+        if (b.status === 'completed') setTimeout(() => openFbPopup(b), 1500);
+      }
+    })
+    .subscribe(status => {
+      if (status === 'SUBSCRIBED') {
+        document.querySelector('.rt-dot') && (document.querySelector('.rt-dot').style.background = '#22c55e');
+      }
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        document.querySelector('.rt-dot') && (document.querySelector('.rt-dot').style.background = '#f59e0b');
+      }
+    });
   if (Notification.permission==='default') Notification.requestPermission();
+  startPolling(email);
 }
 
 function initials(name) { return (name||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
@@ -3772,6 +3819,7 @@ function showAuthGate() {
   document.getElementById('authGate').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   if (realtimeChannel) { db.removeChannel(realtimeChannel); realtimeChannel = null; }
+  if (_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; }
 }
 
 // Check existing session immediately on load (critical for mobile where
