@@ -1579,28 +1579,13 @@
         <span class="svc-name">Pet Food</span>
         <span class="svc-price">Starting from ₹28</span>
       </a>
-      <div class="hero-svc-tile" style="opacity:0.45; cursor:default;">
-        <span class="svc-icon">✂️</span>
+      <div class="hero-svc-tile" style="cursor:default; background:linear-gradient(135deg,#fef9ec,#fef3c7); border:1.5px solid #f59e0b;">
+        <span class="svc-icon">🚀</span>
         <span class="svc-name">Grooming</span>
-        <span class="svc-price">Coming soon</span>
-      </div>
-      <div class="hero-svc-tile" style="opacity:0.45; cursor:default;">
-        <span class="svc-icon">🏠</span>
-        <span class="svc-name">Boarding</span>
-        <span class="svc-price">Coming soon</span>
-      </div>
-      <div class="hero-svc-tile" style="opacity:0.45; cursor:default;">
-        <span class="svc-icon">💉</span>
-        <span class="svc-name">Vaccination</span>
-        <span class="svc-price">Coming soon</span>
-      </div>
-      <div class="hero-svc-tile" style="opacity:0.45; cursor:default;">
-        <span class="svc-icon">🚐</span>
-        <span class="svc-name">Pet Taxi</span>
-        <span class="svc-price">Coming soon</span>
+        <span class="svc-price" style="color:#b45309; font-weight:700; font-size:.72rem;">Launching Aug 2026</span>
       </div>
     </div>
-    <p class="hero-svc-note">More services launching soon →</p>
+    <p class="hero-svc-note">More services launching soon</p>
   </div>
 
 </section>
@@ -1626,47 +1611,51 @@
       <div class="service-price">Starting From ₹28/bowl</div>
     </div>
 
+    <div class="service-card" style="cursor:default; pointer-events:none; background:linear-gradient(135deg,#fef9ec,#fef3c7); border:1.5px solid #f59e0b;">
+      <div class="service-icon">🚀</div>
+      <h3 style="color:#92400e;">Grooming <span class="service-tag" style="background:#fde68a;color:#92400e;border:none;">Launching Aug 2026</span></h3>
+      <p>Full bath, blow dry, nail clipping, ear cleaning, and breed-specific grooming at your doorstep. We're getting trained professionals ready.</p>
+      <div class="service-price" style="color:#b45309;">Starting From ₹478/session</div>
+    </div>
+
+    <!-- Boarding, Vaccination, Pet Taxi, Insurance, Sitting — launching later, hidden for now
     <div class="service-card" style="opacity:0.5; cursor:default; pointer-events:none;">
       <div class="service-icon">✂️</div>
       <h3>Washing & Grooming <span class="service-tag">Coming soon</span></h3>
       <p>Full bath, blow dry, nail clipping, ear cleaning, and breed-specific grooming at your doorstep.</p>
       <div class="service-price">Starting From ₹478/session</div>
     </div>
-
     <div class="service-card" style="opacity:0.5; cursor:default; pointer-events:none;">
       <div class="service-icon">🏠</div>
       <h3>Pet Boarding <span class="service-tag">Coming soon</span></h3>
       <p>Heading out of the city for 24+ hours? Leave your dog or cat with our verified host families. Daily updates guaranteed.</p>
       <div class="service-price">Starting From ₹478/night</div>
     </div>
-
     <div class="service-card" style="opacity:0.5; cursor:default; pointer-events:none;">
       <div class="service-icon">💉</div>
       <h3>Vaccination & Medicine <span class="service-tag">Coming soon</span></h3>
       <p>Vet visits at home for scheduled vaccinations, medicine delivery within 2 hours, and health check-ups.</p>
       <div class="service-price">Starting From ₹299/visit</div>
     </div>
-
     <div class="service-card" style="opacity:0.5; cursor:default; pointer-events:none;">
       <div class="service-icon">🚐</div>
       <h3>Pet Taxi & Transport <span class="service-tag">Coming soon</span></h3>
       <p>Dedicated transport for your pets — no more rejection from autos. Safe, calm, air-conditioned rides.</p>
       <div class="service-price">Starting From ₹289/trip</div>
     </div>
-
     <div class="service-card" style="opacity:0.5; cursor:default; pointer-events:none;">
       <div class="service-icon">🛡️</div>
       <h3>Pet Insurance <span class="service-tag">Coming soon</span></h3>
       <p>Affordable health coverage for accidents, illnesses, and surgeries. Get a quote and enroll in under 5 minutes.</p>
       <div class="service-price">Starting From ₹999/year</div>
     </div>
-
     <div class="service-card" style="opacity:0.5; cursor:default; pointer-events:none;">
       <div class="service-icon">🧡</div>
       <h3>Pet Sitting <span class="service-tag">Coming soon</span></h3>
       <p>In-home sitting while you're at work. Our sitter comes to you — no displacement stress for your pet.</p>
       <div class="service-price">Starting From ₹299/session</div>
     </div>
+    -->
   </div>
 </section>
 
@@ -1964,6 +1953,78 @@
     <p style="color:rgba(255,255,255,.6);font-size:.78rem;margin-top:1rem;">Already an executive? <a href="/login" style="color:#fff;font-weight:700;text-decoration:underline;">Log in here →</a></p>
   </div>
 </section>
+
+<!--=========================== REVIEWS & RATINGS ===========================-->
+<section id="reviews" style="background:#f8f9ff; padding:4rem 1.5rem;">
+  <div style="max-width:900px; margin:0 auto;">
+    <div class="section-label">What customers say</div>
+    <h2 class="section-title">Reviews & Ratings</h2>
+    <p class="section-sub">Real feedback from verified Urban Paws customers.</p>
+
+    <!-- Aggregate rating bar -->
+    <div id="reviewsAggregate" style="display:flex;align-items:center;gap:1.5rem;background:#fff;border-radius:16px;padding:1.5rem 2rem;margin-bottom:2rem;box-shadow:0 2px 12px rgba(108,111,212,.08);flex-wrap:wrap;">
+      <div style="text-align:center;min-width:80px;">
+        <div style="font-size:3rem;font-weight:800;color:var(--paw);line-height:1;" id="avgRating">—</div>
+        <div id="avgStars" style="font-size:1.2rem;color:#f59e0b;margin:.25rem 0;">★★★★★</div>
+        <div style="font-size:.75rem;color:var(--muted);" id="totalReviews">Loading…</div>
+      </div>
+      <div style="flex:1;min-width:200px;" id="ratingBars"></div>
+    </div>
+
+    <!-- Reviews grid -->
+    <div id="reviewsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;">
+      <div style="text-align:center;color:var(--muted);padding:2rem;grid-column:1/-1;">Loading reviews…</div>
+    </div>
+
+    <div style="text-align:center;margin-top:2rem;">
+      <a href="my-bookings.html" style="display:inline-block;background:var(--paw);color:#fff;font-family:'Syne',sans-serif;font-weight:700;padding:12px 32px;border-radius:100px;text-decoration:none;font-size:.95rem;">Leave a Review ↗</a>
+    </div>
+  </div>
+</section>
+
+<script>
+window.addEventListener('load', async function loadPublicReviews() {
+  try {
+    const { data, error } = await db.from('feedback').select('*').eq('is_public', true).order('created_at', { ascending: false }).limit(12);
+    if (error || !data || !data.length) {
+      document.getElementById('reviewsGrid').innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;grid-column:1/-1;">No reviews yet — be the first to share your experience!</div>';
+      document.getElementById('totalReviews').textContent = '0 reviews';
+      document.getElementById('avgRating').textContent = '—';
+      return;
+    }
+    const avg = (data.reduce((s,r)=>s+(r.stars||0),0)/data.length).toFixed(1);
+    const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5-Math.round(avg));
+    document.getElementById('avgRating').textContent = avg;
+    document.getElementById('avgStars').textContent = stars;
+    document.getElementById('totalReviews').textContent = data.length + ' review' + (data.length!==1?'s':'');
+    const counts = [5,4,3,2,1].map(n=>({n,c:data.filter(r=>r.stars===n).length}));
+    document.getElementById('ratingBars').innerHTML = counts.map(({n,c})=>`
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;">
+        <span style="font-size:.75rem;color:var(--muted);width:8px;">${n}</span>
+        <span style="color:#f59e0b;font-size:.8rem;">★</span>
+        <div style="flex:1;background:#f1f5f9;border-radius:100px;height:8px;overflow:hidden;">
+          <div style="background:#f59e0b;height:100%;width:${data.length?Math.round(c/data.length*100):0}%;border-radius:100px;transition:width .4s;"></div>
+        </div>
+        <span style="font-size:.72rem;color:var(--muted);width:18px;">${c}</span>
+      </div>`).join('');
+    document.getElementById('reviewsGrid').innerHTML = data.map(r=>{
+      const initials = (r.user_name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      const starsHtml = '★'.repeat(r.stars||5)+'☆'.repeat(5-(r.stars||5));
+      const date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '';
+      return `<div style="background:#fff;border-radius:16px;padding:1.25rem 1.5rem;box-shadow:0 2px 10px rgba(108,111,212,.07);display:flex;flex-direction:column;gap:.6rem;">
+        <div style="color:#f59e0b;font-size:1rem;">${starsHtml}</div>
+        <p style="font-size:.88rem;color:#374151;line-height:1.6;margin:0;">"${r.message||''}"</p>
+        <div style="display:flex;align-items:center;gap:.6rem;margin-top:auto;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--paw-soft);color:var(--paw);font-weight:700;font-size:.75rem;display:flex;align-items:center;justify-content:center;">${initials}</div>
+          <div><div style="font-size:.82rem;font-weight:600;color:#111;">${r.user_name||'Anonymous'}</div><div style="font-size:.72rem;color:var(--muted);">${r.service||''} · ${date}</div></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('reviewsGrid').innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;grid-column:1/-1;">No reviews yet — be the first!</div>';
+  }
+});
+</script>
 
 <section id="faq" style="padding:0; background:#fff;">
   <div class="faq-app-grid">

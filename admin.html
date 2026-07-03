@@ -334,6 +334,8 @@
       <button class="tab-btn active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
       <button class="tab-btn" id="tabUsers" onclick="switchAdminTab('users')">👥 Users</button>
       <button class="tab-btn" id="tabExecutives" onclick="switchAdminTab('executives')">👔 Executives</button>
+      <button class="tab-btn" id="tabServices" onclick="switchAdminTab('services')">📦 Services</button>
+      <button class="tab-btn" id="tabFeedback" onclick="switchAdminTab('feedback')">⭐ Feedback</button>
     </div>
 
     <!-- BOOKINGS TAB -->
@@ -534,6 +536,93 @@
         </div>
       </div>
     </div><!-- /executivesTab -->
+
+    <!-- SERVICES TAB -->
+    <div id="servicesTab" style="display:none">
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card"><div class="stat-number" id="svcStatTotal">—</div><div class="stat-label">Total Services</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--green)" id="svcStatActive">—</div><div class="stat-label">Active</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--yellow)" id="svcStatDraft">—</div><div class="stat-label">Draft / Hidden</div></div>
+      </div>
+
+      <!-- Add / Edit form -->
+      <div class="table-wrap" style="margin-bottom:1.5rem;padding:1.5rem;">
+        <div class="table-title" id="svcFormTitle" style="margin-bottom:1.25rem;">➕ Add New Service</div>
+        <input type="hidden" id="svcEditId">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-bottom:1rem;">
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Icon / Emoji</label>
+            <input id="svcIcon" type="text" placeholder="e.g. 🐶" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;"></div>
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Service Name *</label>
+            <input id="svcName" type="text" placeholder="e.g. Pet Walk" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;"></div>
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Price / Tag</label>
+            <input id="svcPrice" type="text" placeholder="e.g. Starting from ₹89" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;"></div>
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Photo URL</label>
+            <input id="svcPhoto" type="url" placeholder="https://…" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;"></div>
+        </div>
+        <div style="margin-bottom:1rem;"><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Description *</label>
+          <textarea id="svcDesc" rows="3" placeholder="Short description of the service…" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;font-family:inherit;resize:vertical;"></textarea></div>
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:var(--text);cursor:pointer;">
+            <input type="checkbox" id="svcActive" checked style="accent-color:var(--accent);width:15px;height:15px;"> Active (visible to users)
+          </label>
+          <button onclick="saveSvc()" style="padding:9px 24px;background:linear-gradient(135deg,var(--paw),var(--paw2));color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;">Save Service</button>
+          <button onclick="resetSvcForm()" style="padding:9px 18px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:.85rem;cursor:pointer;">Clear</button>
+          <span id="svcFormMsg" style="font-size:.82rem;"></span>
+        </div>
+      </div>
+
+      <!-- Services list -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">All Services</div>
+          <div class="table-count" id="svcTableCount"></div>
+        </div>
+        <div class="table-scroll">
+          <table style="min-width:700px;">
+            <thead><tr>
+              <th>#</th><th>Icon</th><th>Name</th><th>Price</th><th>Description</th><th>Photo</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="svcBody"><tr><td colspan="8" class="loading">Loading services…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /servicesTab -->
+
+    <!-- FEEDBACK TAB -->
+    <div id="feedbackTab" style="display:none">
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card"><div class="stat-number" id="fbStatTotal">—</div><div class="stat-label">Total Reviews</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--yellow)" id="fbStatAvg">—</div><div class="stat-label">Avg Rating ⭐</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--green)" id="fbStat5">—</div><div class="stat-label">5-Star Reviews</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--accent)" id="fbStatPublic">—</div><div class="stat-label">Public / Visible</div></div>
+      </div>
+      <div class="filters-bar" style="margin-bottom:1rem">
+        <select id="fbFilterStars" onchange="applyFbFilters()" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.82rem">
+          <option value="">All Ratings</option>
+          <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+          <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+          <option value="3">⭐⭐⭐ 3 Stars</option>
+          <option value="2">⭐⭐ 2 Stars</option>
+          <option value="1">⭐ 1 Star</option>
+        </select>
+        <input type="text" id="fbFilterSearch" placeholder="Search name, message, service…" oninput="applyFbFilters()" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.82rem;min-width:220px">
+        <button class="refresh-btn" onclick="loadFeedback()">↻ Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">Customer Feedback</div>
+          <div class="table-count" id="fbTableCount"></div>
+        </div>
+        <div class="table-scroll">
+          <table style="min-width:820px;">
+            <thead><tr>
+              <th>#</th><th>Date</th><th>Name</th><th>Email</th><th>Service</th><th>Rating</th><th>Exec Rating</th><th>Review</th><th>Public</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="fbBody"><tr><td colspan="10" class="loading">Loading feedback…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /feedbackTab -->
 
   </main>
 </div>
@@ -802,14 +891,189 @@
 
   // ── Admin tab switching ──
   function switchAdminTab(tab) {
-    const tabIds = { bookings: 'tabBookings', users: 'tabUsers', executives: 'tabExecutives' };
-    const divIds = { bookings: 'bookingsTab', users: 'usersTab', executives: 'executivesTab' };
+    const tabIds = { bookings:'tabBookings', users:'tabUsers', executives:'tabExecutives', services:'tabServices', feedback:'tabFeedback' };
+    const divIds = { bookings:'bookingsTab', users:'usersTab', executives:'executivesTab', services:'servicesTab', feedback:'feedbackTab' };
     Object.keys(tabIds).forEach(t => {
       const btn = document.getElementById(tabIds[t]); if (btn) btn.classList.toggle('active', tab===t);
       const div = document.getElementById(divIds[t]); if (div) div.style.display = tab===t ? '' : 'none';
     });
-    if (tab==='users') { document.getElementById('uFilterSearch').value=''; if (!window._usersLoaded) loadUsers(); }
+    if (tab==='users')      { document.getElementById('uFilterSearch').value=''; if (!window._usersLoaded) loadUsers(); }
     if (tab==='executives') { if (!window._execsLoaded) loadExecs(); }
+    if (tab==='services')   { if (!window._svcsLoaded) loadSvcs(); }
+    if (tab==='feedback')   { if (!window._fbLoaded) loadFeedback(); }
+  }
+
+  // ── Services ──────────────────────────────────────────────────────────────
+
+  let allSvcs = [];
+
+  async function loadSvcs() {
+    window._svcsLoaded = true;
+    document.getElementById('svcBody').innerHTML = '<tr><td colspan="8" class="loading">Loading…</td></tr>';
+    const { data, error } = await db.from('services').select('*').order('sort_order', { ascending: true });
+    if (error) {
+      if (error.code === '42P01') {
+        document.getElementById('svcBody').innerHTML = '<tr><td colspan="8" class="empty" style="padding:2rem;text-align:center;">Services table not created yet.<br><small style="color:var(--muted)">Run: CREATE TABLE services (id uuid primary key default gen_random_uuid(), name text, icon text, price text, description text, photo_url text, is_active boolean default true, sort_order int default 0, created_at timestamptz default now())</small></td></tr>';
+        return;
+      }
+      document.getElementById('svcBody').innerHTML = '<tr><td colspan="8" class="empty">Error: ' + error.message + '</td></tr>';
+      return;
+    }
+    allSvcs = data || [];
+    renderSvcs();
+  }
+
+  function renderSvcs() {
+    const tbody = document.getElementById('svcBody');
+    document.getElementById('svcStatTotal').textContent  = allSvcs.length;
+    document.getElementById('svcStatActive').textContent = allSvcs.filter(s=>s.is_active).length;
+    document.getElementById('svcStatDraft').textContent  = allSvcs.filter(s=>!s.is_active).length;
+    document.getElementById('svcTableCount').textContent = allSvcs.length + ' services';
+    if (!allSvcs.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty">No services yet. Add one above.</td></tr>'; return; }
+    tbody.innerHTML = allSvcs.map((s,i) => `<tr>
+      <td>${i+1}</td>
+      <td style="font-size:1.4rem">${s.icon||'—'}</td>
+      <td style="font-weight:700">${s.name||'—'}</td>
+      <td>${s.price||'—'}</td>
+      <td style="max-width:200px;white-space:normal;font-size:.82rem">${s.description||'—'}</td>
+      <td>${s.photo_url ? `<img src="${s.photo_url}" style="width:48px;height:36px;object-fit:cover;border-radius:6px;" onerror="this.style.display='none'">` : '—'}</td>
+      <td><span style="padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:700;background:${s.is_active?'rgba(34,197,94,.12)':'rgba(156,163,175,.12)'};color:${s.is_active?'#16a34a':'#6b7280'}">${s.is_active?'Active':'Draft'}</span></td>
+      <td>
+        <button onclick='editSvc(${JSON.stringify(s).replace(/'/g,"&#39;")})' style="padding:4px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);font-size:.78rem;cursor:pointer;margin-right:4px;">✏️ Edit</button>
+        <button onclick="deleteSvc('${s.id}')" style="padding:4px 10px;border:1px solid #fca5a5;border-radius:6px;background:rgba(220,38,38,.08);color:#dc2626;font-size:.78rem;cursor:pointer;">🗑</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  function editSvc(s) {
+    document.getElementById('svcEditId').value   = s.id;
+    document.getElementById('svcIcon').value     = s.icon || '';
+    document.getElementById('svcName').value     = s.name || '';
+    document.getElementById('svcPrice').value    = s.price || '';
+    document.getElementById('svcPhoto').value    = s.photo_url || '';
+    document.getElementById('svcDesc').value     = s.description || '';
+    document.getElementById('svcActive').checked = !!s.is_active;
+    document.getElementById('svcFormTitle').textContent = '✏️ Edit Service — ' + (s.name||'');
+    document.getElementById('svcFormMsg').textContent = '';
+    document.querySelector('#servicesTab .table-wrap').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function resetSvcForm() {
+    document.getElementById('svcEditId').value = '';
+    ['svcIcon','svcName','svcPrice','svcPhoto','svcDesc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('svcActive').checked = true;
+    document.getElementById('svcFormTitle').textContent = '➕ Add New Service';
+    document.getElementById('svcFormMsg').textContent = '';
+  }
+
+  async function saveSvc() {
+    const name = document.getElementById('svcName').value.trim();
+    const desc = document.getElementById('svcDesc').value.trim();
+    const msgEl = document.getElementById('svcFormMsg');
+    if (!name) { msgEl.style.color='#dc2626'; msgEl.textContent='Name is required.'; return; }
+    if (!desc) { msgEl.style.color='#dc2626'; msgEl.textContent='Description is required.'; return; }
+    msgEl.style.color='var(--muted)'; msgEl.textContent='Saving…';
+    const payload = {
+      name, icon: document.getElementById('svcIcon').value.trim(),
+      price: document.getElementById('svcPrice').value.trim(),
+      photo_url: document.getElementById('svcPhoto').value.trim(),
+      description: desc, is_active: document.getElementById('svcActive').checked
+    };
+    const editId = document.getElementById('svcEditId').value;
+    let error;
+    if (editId) {
+      ({ error } = await db.from('services').update(payload).eq('id', editId));
+    } else {
+      payload.sort_order = allSvcs.length;
+      ({ error } = await db.from('services').insert([payload]));
+    }
+    if (error) { msgEl.style.color='#dc2626'; msgEl.textContent=error.message; return; }
+    msgEl.style.color='#16a34a'; msgEl.textContent='✅ Saved!';
+    resetSvcForm();
+    window._svcsLoaded = false;
+    await loadSvcs();
+    setTimeout(() => { msgEl.textContent=''; }, 3000);
+  }
+
+  async function deleteSvc(id) {
+    if (!confirm('Delete this service?')) return;
+    const { error } = await db.from('services').delete().eq('id', id);
+    if (error) { alert('Error: ' + error.message); return; }
+    window._svcsLoaded = false;
+    loadSvcs();
+  }
+
+  // ── Feedback ──────────────────────────────────────────────────────────────
+
+  let allFeedback = [];
+
+  async function loadFeedback() {
+    window._fbLoaded = true;
+    document.getElementById('fbBody').innerHTML = '<tr><td colspan="10" class="loading">Loading…</td></tr>';
+    const { data, error } = await db.from('feedback').select('*').order('created_at', { ascending: false });
+    if (error) {
+      if (error.code === '42P01') {
+        document.getElementById('fbBody').innerHTML = '<tr><td colspan="10" class="empty" style="padding:2rem;text-align:center;">Feedback table not created yet.<br><small style="color:var(--muted)">Run: CREATE TABLE feedback (id uuid primary key default gen_random_uuid(), user_id uuid, user_name text, user_email text, service text, stars int, exec_stars int, message text, is_public boolean default true, created_at timestamptz default now())</small></td></tr>';
+        return;
+      }
+      document.getElementById('fbBody').innerHTML = '<tr><td colspan="10" class="empty">Error: ' + error.message + '</td></tr>';
+      return;
+    }
+    allFeedback = data || [];
+    applyFbFilters();
+    document.getElementById('fbStatTotal').textContent  = allFeedback.length;
+    const avg = allFeedback.length ? (allFeedback.reduce((s,r)=>s+(r.stars||0),0)/allFeedback.length).toFixed(1) : '—';
+    document.getElementById('fbStatAvg').textContent    = avg;
+    document.getElementById('fbStat5').textContent      = allFeedback.filter(r=>r.stars===5).length;
+    document.getElementById('fbStatPublic').textContent = allFeedback.filter(r=>r.is_public).length;
+  }
+
+  function applyFbFilters() {
+    const stars  = document.getElementById('fbFilterStars').value;
+    const search = (document.getElementById('fbFilterSearch').value||'').toLowerCase();
+    const filtered = allFeedback.filter(r => {
+      if (stars && String(r.stars) !== stars) return false;
+      if (search && !((r.user_name||'').toLowerCase().includes(search) || (r.message||'').toLowerCase().includes(search) || (r.service||'').toLowerCase().includes(search))) return false;
+      return true;
+    });
+    document.getElementById('fbTableCount').textContent = filtered.length + ' of ' + allFeedback.length;
+    const tbody = document.getElementById('fbBody');
+    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="10" class="empty">No matching feedback.</td></tr>'; return; }
+    tbody.innerHTML = filtered.map((r,i) => {
+      const starsHtml = '★'.repeat(r.stars||0)+'☆'.repeat(5-(r.stars||0));
+      const execStarsHtml = r.exec_stars ? '★'.repeat(r.exec_stars)+'☆'.repeat(5-r.exec_stars) : '—';
+      const date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      return `<tr>
+        <td>${i+1}</td>
+        <td style="font-size:.8rem">${date}</td>
+        <td style="font-weight:600">${r.user_name||'—'}</td>
+        <td style="font-size:.8rem">${r.user_email||'—'}</td>
+        <td>${r.service||'—'}</td>
+        <td style="color:#f59e0b">${starsHtml}</td>
+        <td style="color:#f59e0b;font-size:.85rem">${execStarsHtml}</td>
+        <td style="max-width:250px;white-space:normal;font-size:.82rem">"${r.message||''}"</td>
+        <td>
+          <label style="cursor:pointer;display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" ${r.is_public?'checked':''} onchange="toggleFbPublic('${r.id}',this.checked)" style="accent-color:var(--accent)">
+            <span style="font-size:.78rem;color:var(--muted)">${r.is_public?'Yes':'No'}</span>
+          </label>
+        </td>
+        <td>
+          <button onclick="deleteFb('${r.id}')" style="padding:4px 10px;border:1px solid #fca5a5;border-radius:6px;background:rgba(220,38,38,.08);color:#dc2626;font-size:.78rem;cursor:pointer;">🗑</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function toggleFbPublic(id, val) {
+    await db.from('feedback').update({ is_public: val }).eq('id', id);
+  }
+
+  async function deleteFb(id) {
+    if (!confirm('Delete this review?')) return;
+    await db.from('feedback').delete().eq('id', id);
+    window._fbLoaded = false;
+    loadFeedback();
   }
 
   // ── Executives ──
