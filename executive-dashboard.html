@@ -926,6 +926,11 @@ function renderMyBookings() {
           ? `<div style="margin-top:4px;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:100px;display:inline-block;background:${execResp==='accepted'?'rgba(34,197,94,.12)':execResp==='declined'?'rgba(239,68,68,.1)':'rgba(245,158,11,.12)'};color:${execResp==='accepted'?'#15803d':execResp==='declined'?'#b91c1c':'#92400e'}">
               ${execResp==='accepted'?'✅ Accepted':execResp==='declined'?'❌ Declined':'⏳ Waiting'}
             </div>` : '';
+        const sessionBlock = b.started_at ? `<div style="margin-top:4px;padding:5px 7px;background:rgba(249,115,22,.08);border-radius:7px;border:1px solid rgba(249,115,22,.2);font-size:.67rem;line-height:1.85">
+          <div>📅 <strong>${new Date(b.started_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}</strong></div>
+          <div>▶ <strong>${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></div>
+          ${b.completed_at ? `<div>🏁 <strong>${new Date(b.completed_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></div><div>⏱ <strong>${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</strong></div>` : `<div>⏱ <strong id="exec-timer-${b.id}" style="color:#f97316;font-variant-numeric:tabular-nums">--:--:--</strong></div>`}
+        </div>` : '';
         const actionCell = isAssigned
           ? `<div style="display:flex;flex-direction:column;gap:5px">
                <button onclick="waitBooking('${b.id}')" style="background:#fef3c7;color:#92400e;border:1.5px solid #f59e0b;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">⏳ Wait</button>
@@ -939,11 +944,11 @@ function renderMyBookings() {
                </div>`
             : b.status === 'started'
             ? `<div style="display:flex;flex-direction:column;gap:5px">
-                 <div style="font-size:.72rem;color:#ea580c;font-weight:700">⏱ <span id="exec-timer-${b.id}">--:--:--</span></div>
+                 ${sessionBlock}
                  <button onclick="clockOut('${b.id}')" style="background:rgba(239,68,68,.12);color:#b91c1c;border:1.5px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">🏁 Clock Out</button>
                  ${respBadge}
                </div>`
-            : `<div><span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>${respBadge}</div>`;
+            : `<div><span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>${respBadge}${sessionBlock}</div>`;
         return `<tr style="${isAssigned ? 'background:rgba(245,158,11,.06);' : ''}">
           <td class="bid">${b.booking_id||'—'}</td>
           <td>${b.booking_date||'—'}<div class="bsub">${b.time_slot||''}</div></td>

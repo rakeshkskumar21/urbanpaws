@@ -2315,10 +2315,13 @@ function renderCard(b) {
       <div class="bk-list-svc">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
       <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
       ${progressHtml(b.status)}
-      ${started ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(249,115,22,.1);border-radius:10px;border:1px solid rgba(249,115,22,.3);display:flex;align-items:center;gap:8px;">
-        <span style="font-size:.9rem">⏱</span>
-        <span style="font-size:.82rem;color:#ea580c;font-weight:700">Session in progress</span>
-        <span id="timer-${b.id}" style="margin-left:auto;font-size:.9rem;font-weight:800;color:#f97316;font-variant-numeric:tabular-nums">--:--:--</span>
+      ${b.started_at ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(249,115,22,.07);border-radius:10px;border:1px solid rgba(249,115,22,.22);font-size:.75rem">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <span><span style="color:#9ca3af">📅</span> <strong>${new Date(b.started_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</strong></span>
+          <span><span style="color:#9ca3af">▶ Start</span> <strong>${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>
+          ${b.completed_at ? `<span><span style="color:#9ca3af">🏁 End</span> <strong>${new Date(b.completed_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>` : ''}
+          <span><span style="color:#9ca3af">⏱</span> ${b.completed_at ? `<strong>${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</strong>` : `<strong id="timer-${b.id}" style="color:#f97316;font-variant-numeric:tabular-nums">--:--:--</strong>`}</span>
+        </div>
       </div>` : ''}
       ${active ? `<div class="bk-active-actions">
         <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','${b.booking_date||''}','${(b.time_slot||'').replace(/'/g,"\\'")}','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>

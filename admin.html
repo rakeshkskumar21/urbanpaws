@@ -904,8 +904,12 @@
             <option value="completed" ${b.status==='completed' ? 'selected':''}>🎉 Completed</option>
             <option value="cancelled" ${b.status==='cancelled' ? 'selected':''}>❌ Cancelled</option>
           </select>
-          ${b.started_at ? `<div style="font-size:.68rem;color:#ea580c;margin-top:4px;font-weight:600">⏱ Started: ${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>` : ''}
-          ${b.completed_at && b.started_at ? `<div style="font-size:.68rem;color:#16a34a;margin-top:2px;font-weight:600">✓ Duration: ${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</div>` : ''}
+          ${b.started_at ? `<div style="margin-top:6px;padding:6px 8px;background:rgba(249,115,22,.08);border-radius:7px;border:1px solid rgba(249,115,22,.2);font-size:.67rem;line-height:1.9">
+            <div>📅 <strong>${new Date(b.started_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</strong></div>
+            <div>▶ Start: <strong>${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></div>
+            ${b.completed_at ? `<div>🏁 End: <strong>${new Date(b.completed_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></div>` : ''}
+            <div>⏱ Duration: <strong>${b.completed_at ? Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)+' min' : 'In progress…'}</strong></div>
+          </div>` : ''}
         </td>
       </tr>`;
     }).join('');
