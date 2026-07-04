@@ -241,6 +241,7 @@
     display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
     gap: 0; align-items: flex-start;
     padding: 0;
+
     position: relative;
     overflow: hidden;
     width: 100%;
@@ -1563,13 +1564,13 @@
   </div>
 
   <!-- Right column — two stacked boxes -->
-  <div style="display:flex;flex-direction:column;gap:1rem;min-width:0;overflow:hidden;">
+  <div style="display:flex;flex-direction:column;gap:1rem;min-width:0;overflow:hidden;padding:1.5rem 2rem 1.5rem 1rem;">
 
     <!-- Box 1: What we offer -->
-    <div class="hero-services-card" style="margin:0;">
+    <div class="hero-services-card" style="margin:0; text-align:center;">
       <div class="card-title">What we offer right now</div>
       <h3>Walk &amp; Food Delivery</h3>
-      <div class="hero-svc-grid">
+      <div class="hero-svc-grid" >
         <a href="javascript:void(0)" class="hero-svc-tile" onclick="openBooking()">
           <span class="svc-icon">🦮</span>
           <span class="svc-name">Pet Walk</span>
