@@ -1127,9 +1127,7 @@
 
   @media (max-width: 640px) {
     .hero h1 { font-size: 2.2rem; }
-    .hero-actions { flex-direction: column; align-items: stretch; }
-    .hero-actions .btn-primary,
-    .hero-actions .btn-outline { text-align: center; width: 100%; box-sizing: border-box; }
+    .hero-actions { flex-wrap: wrap; gap: .75rem; }
     .form-grid { grid-template-columns: 1fr; }
     .pricing-grid { grid-template-columns: 1fr; }
     .footer-grid { grid-template-columns: 1fr; }
@@ -1404,7 +1402,7 @@
     font-size: 0.92rem;
     font-weight: 600;
     color: #fff;
-    margin: 0 0 1rem;
+    margin: 0;
     letter-spacing: 0.01em;
     box-shadow: 0 4px 16px rgba(108,111,212,0.4);
     text-decoration: none;
@@ -1542,11 +1540,10 @@
     </div>
     <h1>Pet <em>Walking</em> &  <br>Pet <em>Food Delivery</em> </h1>
 
-    <a href="javascript:void(0)" class="trial-promo" onclick="openBooking()">
-      <span style="font-size:1.7em;">🎉</span> Book your first 2 trial walks for <strong>FREE</strong>
-    </a>
-
     <div class="hero-actions">
+      <a href="javascript:void(0)" class="trial-promo" onclick="openBooking()">
+        <span style="font-size:1.4em;">🎁</span> Book your first 2 trial walks for <strong>FREE</strong>
+      </a>
       <a href="javascript:void(0)" class="btn-primary" onclick="openBooking()">Book a Service ↗</a>
     </div>
 
