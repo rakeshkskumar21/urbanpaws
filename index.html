@@ -2819,10 +2819,12 @@ window.addEventListener('load', async function loadPublicReviews() {
       btn.disabled = false; btn.textContent = 'Create Account →';
       if (error) { errEl.textContent = error.message; errEl.classList.add('visible'); return; }
       if (data?.user?.id) {
+        const referredBy = localStorage.getItem('pendingReferralCode') || null;
         await db.from('profiles').upsert(
-          { id: data.user.id, email, full_name: name, plan: 'starter' },
+          { id: data.user.id, email, full_name: name, plan: 'starter', referred_by: referredBy },
           { onConflict: 'id' }
         );
+        if (referredBy) localStorage.removeItem('pendingReferralCode');
       }
       // If a session was created immediately (auto-confirm), onAuthStateChange handles the rest.
       // Otherwise: show sign-in prompt so they can log in and land on their selected plan.
@@ -2938,6 +2940,12 @@ window.addEventListener('load', async function loadPublicReviews() {
       if (p === 'signup') setTimeout(() => switchAuthTab('signup'), 30);
       history.replaceState(null, '', location.pathname);
     }
+  })();
+
+  // Capture referral code from a shared ?ref=CODE link, applied at signup
+  (function() {
+    const ref = new URLSearchParams(location.search).get('ref');
+    if (ref) localStorage.setItem('pendingReferralCode', ref.trim().toUpperCase());
   })();
 
   // Close user dropdown when clicking outside it

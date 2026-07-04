@@ -368,6 +368,7 @@
     <div class="tab-bar">
       <button class="tab-btn active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
       <button class="tab-btn" id="tabUsers" onclick="switchAdminTab('users')">👥 Users</button>
+      <button class="tab-btn" id="tabReferrals" onclick="switchAdminTab('referrals')">🎁 Referrals</button>
       <button class="tab-btn" id="tabExecutives" onclick="switchAdminTab('executives')">👔 Executives</button>
       <button class="tab-btn" id="tabFood" onclick="switchAdminTab('food')">🍲 Food Menu</button>
       <button class="tab-btn" id="tabServices" onclick="switchAdminTab('services')">📦 Services</button>
@@ -521,6 +522,58 @@
         </div>
       </div>
     </div><!-- /usersTab -->
+
+    <!-- REFERRALS TAB -->
+    <div id="referralsTab" style="display:none">
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card highlight">
+          <div class="stat-label">Total Referrals</div>
+          <div class="stat-value" id="rStatTotal">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed First Order</div>
+          <div class="stat-value" id="rStatCompleted">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Signed Up, No Order Yet</div>
+          <div class="stat-value" id="rStatPending">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Unmatched Codes</div>
+          <div class="stat-value" id="rStatUnmatched">—</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <span class="filter-label">Filter:</span>
+        <input type="text" id="rFilterSearch" placeholder="Search referrer / referred name or email…" oninput="applyReferralFilters()" autocomplete="off" style="min-width:260px;" />
+        <button class="refresh-btn" onclick="loadReferrals()">↻ Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">Referrals</div>
+          <div class="table-count" id="rTableCount"></div>
+        </div>
+        <div class="table-scroll">
+          <table style="min-width:900px">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Referrer</th>
+                <th>Referred User</th>
+                <th>Code Used</th>
+                <th>Signed Up</th>
+                <th>First Order</th>
+              </tr>
+            </thead>
+            <tbody id="referralsBody">
+              <tr><td colspan="6" class="loading">Loading referrals…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /referralsTab -->
 
     <!-- EXECUTIVES TAB -->
     <div id="executivesTab" style="display:none">
@@ -1036,13 +1089,14 @@
 
   // ── Admin tab switching ──
   function switchAdminTab(tab) {
-    const tabIds = { bookings:'tabBookings', users:'tabUsers', executives:'tabExecutives', food:'tabFood', services:'tabServices', feedback:'tabFeedback' };
-    const divIds = { bookings:'bookingsTab', users:'usersTab', executives:'executivesTab', food:'foodTab', services:'servicesTab', feedback:'feedbackTab' };
+    const tabIds = { bookings:'tabBookings', users:'tabUsers', referrals:'tabReferrals', executives:'tabExecutives', food:'tabFood', services:'tabServices', feedback:'tabFeedback' };
+    const divIds = { bookings:'bookingsTab', users:'usersTab', referrals:'referralsTab', executives:'executivesTab', food:'foodTab', services:'servicesTab', feedback:'feedbackTab' };
     Object.keys(tabIds).forEach(t => {
       const btn = document.getElementById(tabIds[t]); if (btn) btn.classList.toggle('active', tab===t);
       const div = document.getElementById(divIds[t]); if (div) div.style.display = tab===t ? '' : 'none';
     });
     if (tab==='users')      { document.getElementById('uFilterSearch').value=''; if (!window._usersLoaded) loadUsers(); }
+    if (tab==='referrals')  { if (!window._referralsLoaded) loadReferrals(); }
     if (tab==='executives') { if (!window._execsLoaded) loadExecs(); }
     if (tab==='food')       { if (!window._foodLoaded) loadFoodItems(); }
     if (tab==='services')   { if (!window._svcsLoaded) loadSvcs(); }
@@ -1766,6 +1820,100 @@ urbanpaws.app`;
         <td style="text-align:center"><strong>${u.booking_count}</strong></td>
         <td style="min-width:120px">${amountCell}</td>
         <td style="min-width:120px">${paidSummary}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Referrals ──
+  let allReferrals = [];
+
+  function makeReferralCode(user) {
+    const base = ((user && (user.email || '')).split('@')[0] || 'paws').replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 6);
+    const suffix = (user && user.id) ? String(user.id).replace(/-/g,'').slice(0,4).toUpperCase() : 'PAWS';
+    return 'UP-' + base + suffix;
+  }
+
+  async function loadReferrals() {
+    window._referralsLoaded = true;
+    document.getElementById('referralsBody').innerHTML = '<tr><td colspan="6" class="loading">Loading referrals…</td></tr>';
+    const [profilesRes, bookingsRes] = await Promise.all([
+      db.from('profiles').select('id, email, full_name, created_at, referred_by').order('created_at', { ascending: false }),
+      db.from('bookings').select('email, status, booking_date')
+    ]);
+    if (profilesRes.error) {
+      document.getElementById('referralsBody').innerHTML = '<tr><td colspan="6" class="empty">Error: ' + profilesRes.error.message + '</td></tr>';
+      return;
+    }
+    const profiles = profilesRes.data || [];
+
+    // Map each user's own referral code back to their profile
+    const codeMap = {};
+    profiles.forEach(p => { codeMap[makeReferralCode(p)] = p; });
+
+    // Earliest completed booking date per email = first order
+    const firstCompletedOrder = {};
+    (bookingsRes.data || []).forEach(b => {
+      if (!b.email || b.status !== 'completed') return;
+      if (!firstCompletedOrder[b.email] || (b.booking_date || '') < firstCompletedOrder[b.email]) {
+        firstCompletedOrder[b.email] = b.booking_date;
+      }
+    });
+
+    allReferrals = profiles
+      .filter(p => p.referred_by)
+      .map(p => ({
+        referred: p,
+        referrer: codeMap[p.referred_by] || null,
+        code: p.referred_by,
+        firstOrderDate: firstCompletedOrder[p.email] || null,
+      }));
+
+    updateReferralStats();
+    applyReferralFilters();
+  }
+
+  function updateReferralStats() {
+    document.getElementById('rStatTotal').textContent     = allReferrals.length;
+    document.getElementById('rStatCompleted').textContent = allReferrals.filter(r => r.firstOrderDate).length;
+    document.getElementById('rStatPending').textContent   = allReferrals.filter(r => !r.firstOrderDate).length;
+    document.getElementById('rStatUnmatched').textContent = allReferrals.filter(r => !r.referrer).length;
+  }
+
+  function applyReferralFilters() {
+    const search = document.getElementById('rFilterSearch').value.toLowerCase();
+    const filtered = allReferrals.filter(r => {
+      if (!search) return true;
+      return (
+        (r.referrer?.full_name || '').toLowerCase().includes(search) ||
+        (r.referrer?.email || '').toLowerCase().includes(search) ||
+        (r.referred.full_name || '').toLowerCase().includes(search) ||
+        (r.referred.email || '').toLowerCase().includes(search)
+      );
+    });
+    document.getElementById('rTableCount').textContent = filtered.length + ' referral' + (filtered.length!==1?'s':'');
+    renderReferralsTable(filtered);
+  }
+
+  function renderReferralsTable(rows) {
+    if (!rows.length) {
+      document.getElementById('referralsBody').innerHTML = '<tr><td colspan="6" class="empty">No referrals found.</td></tr>';
+      return;
+    }
+    document.getElementById('referralsBody').innerHTML = rows.map((r, i) => {
+      const signedUp = r.referred.created_at ? new Date(r.referred.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const referrerCell = r.referrer
+        ? `<strong>${r.referrer.full_name || '—'}</strong><br><span style="font-size:0.78rem;color:var(--muted)">${r.referrer.email || ''}</span>`
+        : '<span style="color:var(--muted2);font-style:italic">Unmatched code</span>';
+      const orderCell = r.firstOrderDate
+        ? `<span style="color:var(--green);font-weight:700">✅ ${new Date(r.firstOrderDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</span>`
+        : '<span style="color:var(--yellow)">⏳ Pending</span>';
+      return `<tr>
+        <td style="color:var(--muted);font-size:0.78rem">${i+1}</td>
+        <td>${referrerCell}</td>
+        <td><strong>${r.referred.full_name || '—'}</strong><br><span style="font-size:0.78rem;color:var(--muted)">${r.referred.email || ''}</span></td>
+        <td style="font-family:monospace;font-size:0.82rem">${r.code}</td>
+        <td style="font-size:0.78rem;white-space:nowrap">${signedUp}</td>
+        <td>${orderCell}</td>
       </tr>`;
     }).join('');
   }
