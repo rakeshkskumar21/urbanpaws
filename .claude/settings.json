@@ -50,7 +50,16 @@
       "Bash(curl -sI --max-time 10 https://urbanpaws-ijhnrn7w0-rakeshs-projects-b24c59bc.vercel.app)",
       "Bash(curl -s --max-time 10 https://urbanpaws-ijhnrn7w0-rakeshs-projects-b24c59bc.vercel.app)",
       "Bash(git commit --allow-empty -m ' *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(git -C /Users/rakeshks/urbanpaws add my-bookings.html executive-login.html executive-dashboard.html reset-password.html)",
+      "Bash(git add *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git fetch *)",
+      "Bash(NODE_PATH=/Users/rakeshks/urbanpaws/node_modules node /private/tmp/claude-501/-Users-rakeshks-urbanpaws/c6d7d741-c5b4-428c-b5ab-71b376f2760f/scratchpad/check.mjs)",
+      "Bash(node _tmp_check.mjs)",
+      "Bash(ls \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" 2>/dev/null && echo FOUND)",
+      "Read(//Applications/Google Chrome.app/Contents/MacOS/**)"
     ]
   }
 }

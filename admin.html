@@ -200,7 +200,9 @@
     display: flex; gap: 0; background: var(--surface);
     border: 1px solid var(--border); border-radius: 12px;
     padding: 4px; margin-bottom: 1.75rem; width: fit-content;
+    max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
   }
+  .tab-bar::-webkit-scrollbar { display: none; }
   .tab-btn {
     padding: 9px 24px; border: none; background: none;
     border-radius: 9px; font-size: 0.86rem; font-weight: 700;
@@ -224,6 +226,8 @@
     .stats-grid { grid-template-columns: 1fr 1fr; }
     main { padding: 1rem; }
     header { padding: 0 1rem; }
+    .tab-bar { width: 100%; }
+    .tab-btn { padding: 9px 16px; font-size: 0.8rem; }
   }
   @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
@@ -897,15 +901,24 @@
         <td>${flags || '<span style="color:#ccc">None</span>'}</td>
         <td style="font-size:0.82rem;font-weight:600">${paidVia}</td>
         <td>${amtCell}</td>
-        <td style="min-width:170px">
+        <td style="min-width:190px">
           ${b.executive_name ? `
             <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-              <div style="width:28px;height:28px;border-radius:50%;background:var(--paw);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0">${(b.executive_name||'?')[0].toUpperCase()}</div>
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--paw);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0">${(b.executive_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
               <div>
                 <div style="font-size:.78rem;font-weight:700;color:var(--text)">${b.executive_name}</div>
                 ${b.executive_exec_id ? `<span style="background:rgba(129,140,248,.18);color:var(--accent);font-size:.65rem;font-weight:800;padding:1px 6px;border-radius:5px;letter-spacing:.04em">${b.executive_exec_id}</span>` : ''}
+                ${b.executive_phone ? `<div style="font-size:.67rem;color:var(--muted);margin-top:2px">📱 ${b.executive_phone}</div>` : ''}
+                ${b.executive_vehicle ? `<div style="font-size:.67rem;color:var(--muted)">🚗 ${b.executive_vehicle}</div>` : ''}
               </div>
             </div>
+            ${['assigned','confirmed','started','completed'].includes(b.status) ? `<div style="padding:6px 8px;background:#f5f6ff;border-radius:8px;border:1px solid rgba(108,111,212,.15);font-size:.67rem;line-height:1.8;margin-bottom:4px">
+              <div style="font-weight:700;color:#6C6FD4;margin-bottom:3px">📋 Confirmation Preview</div>
+              <div>⏰ ${b.time_slot||'—'} · ${b.booking_date||'—'}</div>
+              <div>📱 ${b.executive_phone||'hello@urbanpaws.app'}</div>
+              <div>🚗 ${b.executive_vehicle||'Urban Paws Vehicle'}</div>
+              <div>📍 ${b.status==='assigned'?'● Assigned':b.status==='confirmed'?'● On the Way':b.status==='started'?'● In Progress':'✓ Completed'}</div>
+            </div>` : ''}
             <button onclick="openExecPicker('${b.id}')" style="background:var(--surface3);color:var(--muted);border:1px solid var(--border);border-radius:7px;padding:3px 8px;font-size:.66rem;font-weight:600;cursor:pointer;margin-bottom:4px">✎ Change</button>
           ` : `
             <button onclick="openExecPicker('${b.id}')" style="background:rgba(129,140,248,.15);color:var(--accent);border:1px solid rgba(129,140,248,.3);border-radius:8px;padding:5px 10px;font-size:.74rem;font-weight:700;cursor:pointer;width:100%">+ Assign Executive</button>
@@ -1537,10 +1550,13 @@
     closeExecPicker();
 
     const bk = allBookings.find(b => String(b.id) === String(bookingId));
+    const execProfile = allExecs.find(e => e.id === execId);
     const upd = {
       executive_id:      execId   || null,
       executive_name:    execName || null,
       executive_exec_id: execPublicId || null,
+      executive_phone:   execProfile?.phone || null,
+      executive_vehicle: execProfile?.vehicle || null,
     };
     if (execId && bk && (bk.status === 'pending' || !bk.status)) upd.status = 'assigned';
     if (!execId && bk && bk.status === 'assigned') upd.status = 'pending';

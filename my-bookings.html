@@ -2316,6 +2316,36 @@ function renderCard(b) {
       <div class="bk-list-svc">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
       <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
       ${progressHtml(b.status)}
+      ${b.executive_id && !['pending','cancelled'].includes(b.status) ? `<div style="margin-top:10px;padding:12px 14px;background:#f5f6ff;border-radius:12px;border:1px solid rgba(108,111,212,.15)">
+        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6C6FD4;margin-bottom:9px">✅ Booking Confirmed</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(108,111,212,.1)">
+          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6C6FD4,#5254B8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:800;flex-shrink:0">${(b.executive_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+          <div>
+            <div style="font-size:.85rem;font-weight:700;color:#1a1a2e">${b.executive_name||'—'}</div>
+            <div style="font-size:.7rem;color:#6b7280">Your Urban Paws Executive</div>
+            ${b.executive_exec_id ? `<span style="font-size:.62rem;font-weight:700;background:rgba(108,111,212,.1);color:#6C6FD4;padding:2px 8px;border-radius:5px">${b.executive_exec_id}</span>` : ''}
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">⏰ Estimated Arrival</div>
+            <div style="font-size:.78rem;font-weight:700;color:#1a1a2e">${b.time_slot||'—'}</div>
+            <div style="font-size:.65rem;color:#6b7280">${b.booking_date||''}</div>
+          </div>
+          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">📱 Contact</div>
+            <div style="font-size:.78rem;font-weight:700;color:#1a1a2e;word-break:break-all">${b.executive_phone||'hello@urbanpaws.app'}</div>
+          </div>
+          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">🚗 Vehicle</div>
+            <div style="font-size:.78rem;font-weight:700;color:#1a1a2e">${b.executive_vehicle||'Urban Paws Vehicle'}</div>
+          </div>
+          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">📍 Tracking</div>
+            <div style="font-size:.78rem;font-weight:700;color:${b.status==='started'?'#f97316':b.status==='completed'?'#16a34a':'#6C6FD4'}">${b.status==='assigned'?'● Assigned':b.status==='confirmed'?'● On the Way':b.status==='started'?'● In Progress':'✓ Completed'}</div>
+          </div>
+        </div>
+      </div>` : ''}
       ${b.started_at ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(249,115,22,.07);border-radius:10px;border:1px solid rgba(249,115,22,.22);font-size:.75rem">
         <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
           <span><span style="color:#9ca3af">📅</span> <strong>${new Date(b.started_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</strong></span>
