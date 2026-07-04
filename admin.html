@@ -334,6 +334,7 @@
       <button class="tab-btn active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
       <button class="tab-btn" id="tabUsers" onclick="switchAdminTab('users')">👥 Users</button>
       <button class="tab-btn" id="tabExecutives" onclick="switchAdminTab('executives')">👔 Executives</button>
+      <button class="tab-btn" id="tabFood" onclick="switchAdminTab('food')">🍲 Food Menu</button>
       <button class="tab-btn" id="tabServices" onclick="switchAdminTab('services')">📦 Services</button>
       <button class="tab-btn" id="tabFeedback" onclick="switchAdminTab('feedback')">⭐ Feedback</button>
     </div>
@@ -538,6 +539,86 @@
     </div><!-- /executivesTab -->
 
     <!-- SERVICES TAB -->
+    <!-- FOOD MENU TAB -->
+    <div id="foodTab" style="display:none">
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card"><div class="stat-number" id="foodStatTotal">—</div><div class="stat-label">Total Items</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:var(--green)" id="foodStatActive">—</div><div class="stat-label">Active</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:#0f8a65" id="foodStatVeg">—</div><div class="stat-label">Veg</div></div>
+        <div class="stat-card"><div class="stat-number" style="color:#d32f2f" id="foodStatNonveg">—</div><div class="stat-label">Non-veg</div></div>
+      </div>
+
+      <!-- Add / Edit form -->
+      <div class="table-wrap" style="margin-bottom:1.5rem;padding:1.5rem;" id="foodFormWrap">
+        <div class="table-title" id="foodFormTitle" style="margin-bottom:1.25rem;">➕ Add Food Item</div>
+        <input type="hidden" id="foodEditId">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1rem;">
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Emoji / Icon</label>
+            <input id="foodEmoji" type="text" placeholder="e.g. 🍚🥛" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;box-sizing:border-box;"></div>
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Item Name <span style="color:#ef4444">*</span></label>
+            <input id="foodName" type="text" placeholder="e.g. Rice & Curd" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;box-sizing:border-box;"></div>
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Price (₹) <span style="color:#ef4444">*</span></label>
+            <input id="foodPrice" type="number" placeholder="e.g. 30" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;box-sizing:border-box;"></div>
+          <div><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Price Label</label>
+            <input id="foodPriceLabel" type="text" placeholder="e.g. ₹30/bowl" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;box-sizing:border-box;"></div>
+        </div>
+        <div style="margin-bottom:1rem;"><label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;">Description</label>
+          <textarea id="foodDesc" rows="2" placeholder="Short description…" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:.9rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea></div>
+
+        <!-- Photo upload section -->
+        <div style="margin-bottom:1rem;">
+          <label style="font-size:.75rem;font-weight:700;color:var(--muted);display:block;margin-bottom:8px;">Photo</label>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <div id="foodPhotoPreview" style="width:72px;height:72px;border-radius:12px;background:var(--surface2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:1.8rem;overflow:hidden;flex-shrink:0;">🍲</div>
+            <div style="display:flex;flex-direction:column;gap:.5rem;">
+              <div style="font-size:.75rem;color:var(--muted);">Only .png, .jpg, .jpeg up to 10MB</div>
+              <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                <button onclick="document.getElementById('foodPhotoInput').click()" style="display:flex;align-items:center;gap:6px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload Photo
+                </button>
+                <button onclick="clearFoodPhoto()" id="foodPhotoDeleteBtn" style="display:none;align-items:center;gap:6px;background:#fee2e2;color:#dc2626;border:1px solid #fecaca;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                  Remove Photo
+                </button>
+              </div>
+              <div id="foodPhotoUploadStatus" style="font-size:.75rem;color:var(--muted);"></div>
+            </div>
+            <input type="hidden" id="foodPhotoUrl">
+            <input type="file" id="foodPhotoInput" accept=".png,.jpg,.jpeg,image/png,image/jpeg" style="display:none" onchange="uploadFoodPhoto(this)">
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;cursor:pointer;">
+            <input type="checkbox" id="foodIsVeg" checked style="accent-color:#0f8a65;width:15px;height:15px;"> Vegetarian
+          </label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;cursor:pointer;">
+            <input type="checkbox" id="foodActive" checked style="accent-color:var(--accent);width:15px;height:15px;"> Active (visible to users)
+          </label>
+          <button onclick="saveFoodItem()" style="padding:9px 24px;background:linear-gradient(135deg,var(--paw),var(--paw2));color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;">Save Item</button>
+          <button onclick="resetFoodForm()" style="padding:9px 18px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:.85rem;cursor:pointer;">Clear</button>
+          <span id="foodFormMsg" style="font-size:.82rem;"></span>
+        </div>
+      </div>
+
+      <!-- Food items list -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">🍲 All Food Items</div>
+          <div class="table-count" id="foodTableCount"></div>
+        </div>
+        <div class="table-scroll">
+          <table style="min-width:750px;">
+            <thead><tr>
+              <th>#</th><th>Photo</th><th>Item</th><th>Price</th><th>Type</th><th>Description</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="foodBody"><tr><td colspan="8" class="loading">Loading food items…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /foodTab -->
+
     <div id="servicesTab" style="display:none">
       <div class="stats-grid" style="margin-bottom:1.5rem">
         <div class="stat-card"><div class="stat-number" id="svcStatTotal">—</div><div class="stat-label">Total Services</div></div>
@@ -891,16 +972,190 @@
 
   // ── Admin tab switching ──
   function switchAdminTab(tab) {
-    const tabIds = { bookings:'tabBookings', users:'tabUsers', executives:'tabExecutives', services:'tabServices', feedback:'tabFeedback' };
-    const divIds = { bookings:'bookingsTab', users:'usersTab', executives:'executivesTab', services:'servicesTab', feedback:'feedbackTab' };
+    const tabIds = { bookings:'tabBookings', users:'tabUsers', executives:'tabExecutives', food:'tabFood', services:'tabServices', feedback:'tabFeedback' };
+    const divIds = { bookings:'bookingsTab', users:'usersTab', executives:'executivesTab', food:'foodTab', services:'servicesTab', feedback:'feedbackTab' };
     Object.keys(tabIds).forEach(t => {
       const btn = document.getElementById(tabIds[t]); if (btn) btn.classList.toggle('active', tab===t);
       const div = document.getElementById(divIds[t]); if (div) div.style.display = tab===t ? '' : 'none';
     });
     if (tab==='users')      { document.getElementById('uFilterSearch').value=''; if (!window._usersLoaded) loadUsers(); }
     if (tab==='executives') { if (!window._execsLoaded) loadExecs(); }
+    if (tab==='food')       { if (!window._foodLoaded) loadFoodItems(); }
     if (tab==='services')   { if (!window._svcsLoaded) loadSvcs(); }
     if (tab==='feedback')   { if (!window._fbLoaded) loadFeedback(); }
+  }
+
+  // ── Food Menu ─────────────────────────────────────────────────────────────
+
+  const FOOD_STORAGE_BUCKET = 'food-photos';
+  let allFoodItems = [];
+
+  async function loadFoodItems() {
+    window._foodLoaded = true;
+    document.getElementById('foodBody').innerHTML = '<tr><td colspan="8" class="loading">Loading…</td></tr>';
+    const { data, error } = await db.from('food_items').select('*').order('sort_order').order('created_at');
+    if (error) {
+      document.getElementById('foodBody').innerHTML = '<tr><td colspan="8" class="empty">Error: ' + error.message + '</td></tr>';
+      return;
+    }
+    allFoodItems = data || [];
+    renderFoodTable();
+  }
+
+  function renderFoodTable() {
+    const total  = allFoodItems.length;
+    const active = allFoodItems.filter(f => f.is_active).length;
+    const veg    = allFoodItems.filter(f => f.is_veg).length;
+    document.getElementById('foodStatTotal').textContent  = total;
+    document.getElementById('foodStatActive').textContent = active;
+    document.getElementById('foodStatVeg').textContent    = veg;
+    document.getElementById('foodStatNonveg').textContent = total - veg;
+    document.getElementById('foodTableCount').textContent = total + ' item' + (total!==1?'s':'');
+    if (!total) { document.getElementById('foodBody').innerHTML = '<tr><td colspan="8" class="empty">No food items yet. Add one above.</td></tr>'; return; }
+    document.getElementById('foodBody').innerHTML = allFoodItems.map((f, i) => {
+      const vegDot = f.is_veg
+        ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border:1.5px solid #0f8a65;border-radius:3px;background:#fff;margin-right:4px;"><span style="width:7px;height:7px;border-radius:50%;background:#0f8a65;display:block"></span></span>`
+        : `<span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border:1.5px solid #7c3d00;border-radius:3px;background:#fff;margin-right:4px;"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:8px solid #d32f2f;display:block"></span></span>`;
+      const photo = f.photo_url
+        ? `<img src="${f.photo_url}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid var(--border);" onerror="this.style.display='none'">`
+        : `<div style="width:48px;height:48px;border-radius:10px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:1px solid var(--border);">${f.emoji||'🍲'}</div>`;
+      const fJson = JSON.stringify(f).replace(/'/g,"&#39;");
+      return `<tr>
+        <td style="color:var(--muted);font-size:.78rem">${i+1}</td>
+        <td>${photo}</td>
+        <td>
+          <div style="font-weight:700;font-size:.9rem">${f.emoji||''} ${f.name||'—'}</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:2px">${f.price_label||'—'}</div>
+        </td>
+        <td style="font-weight:700;color:var(--green)">₹${f.price_paise ? (f.price_paise/100).toFixed(0) : '—'}</td>
+        <td>${vegDot}<span style="font-size:.78rem;font-weight:600">${f.is_veg ? 'Veg' : 'Non-veg'}</span></td>
+        <td style="font-size:.78rem;max-width:180px;word-break:break-word;color:var(--muted)">${(f.description||'').slice(0,80)}${f.description&&f.description.length>80?'…':''}</td>
+        <td><span style="padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:700;background:${f.is_active?'rgba(34,197,94,.12)':'rgba(239,68,68,.1)'};color:${f.is_active?'#15803d':'#dc2626'}">${f.is_active?'Active':'Hidden'}</span></td>
+        <td>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button onclick='editFoodItem(${fJson})' style="background:var(--paw-soft);color:var(--paw);border:none;border-radius:6px;padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;">✏️ Edit</button>
+            <button onclick="toggleFoodActive('${f.id}',${!f.is_active})" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;">${f.is_active?'Hide':'Show'}</button>
+            <button onclick="deleteFoodItem('${f.id}','${(f.name||'').replace(/'/g,"\\'")}')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 12px;font-size:.72rem;font-weight:700;cursor:pointer;">🗑 Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function editFoodItem(f) {
+    document.getElementById('foodEditId').value      = f.id;
+    document.getElementById('foodFormTitle').textContent = '✏️ Edit Food Item';
+    document.getElementById('foodEmoji').value       = f.emoji || '';
+    document.getElementById('foodName').value        = f.name || '';
+    document.getElementById('foodPrice').value       = f.price_paise ? (f.price_paise/100) : '';
+    document.getElementById('foodPriceLabel').value  = f.price_label || '';
+    document.getElementById('foodDesc').value        = f.description || '';
+    document.getElementById('foodIsVeg').checked     = !!f.is_veg;
+    document.getElementById('foodActive').checked    = !!f.is_active;
+    document.getElementById('foodPhotoUrl').value    = f.photo_url || '';
+    setFoodPhotoPreview(f.photo_url, f.emoji);
+    document.getElementById('foodFormWrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function setFoodPhotoPreview(url, emoji) {
+    const prev = document.getElementById('foodPhotoPreview');
+    const delBtn = document.getElementById('foodPhotoDeleteBtn');
+    if (url) {
+      prev.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.parentElement.textContent='${emoji||'🍲'}'">`;
+      delBtn.style.display = 'flex';
+    } else {
+      prev.textContent = emoji || '🍲';
+      delBtn.style.display = 'none';
+    }
+  }
+
+  async function uploadFoodPhoto(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    if (file.size > 10 * 1024 * 1024) { alert('Image must be under 10 MB'); return; }
+    const statusEl = document.getElementById('foodPhotoUploadStatus');
+    statusEl.textContent = '⏳ Uploading…';
+    try {
+      const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
+      const path = 'items/' + Date.now() + '.' + ext;
+      const { error: upErr } = await db.storage.from(FOOD_STORAGE_BUCKET).upload(path, file, { cacheControl:'3600', upsert:true, contentType:file.type });
+      if (upErr) throw upErr;
+      const { data: urlData } = db.storage.from(FOOD_STORAGE_BUCKET).getPublicUrl(path);
+      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
+      document.getElementById('foodPhotoUrl').value = publicUrl;
+      setFoodPhotoPreview(publicUrl, document.getElementById('foodEmoji').value);
+      statusEl.textContent = '✅ Photo uploaded!';
+      setTimeout(() => statusEl.textContent = '', 3000);
+    } catch(e) {
+      statusEl.textContent = '❌ Upload failed: ' + (e.message || 'try again');
+    }
+    input.value = '';
+  }
+
+  function clearFoodPhoto() {
+    document.getElementById('foodPhotoUrl').value = '';
+    setFoodPhotoPreview('', document.getElementById('foodEmoji').value);
+    document.getElementById('foodPhotoUploadStatus').textContent = '';
+  }
+
+  async function saveFoodItem() {
+    const name = document.getElementById('foodName').value.trim();
+    if (!name) { alert('Item name is required'); return; }
+    const priceRaw = parseFloat(document.getElementById('foodPrice').value);
+    const data = {
+      name,
+      emoji:        document.getElementById('foodEmoji').value.trim(),
+      price_paise:  isNaN(priceRaw) ? 0 : Math.round(priceRaw * 100),
+      price_label:  document.getElementById('foodPriceLabel').value.trim() || (isNaN(priceRaw) ? '' : '₹' + priceRaw + '/bowl'),
+      description:  document.getElementById('foodDesc').value.trim(),
+      is_veg:       document.getElementById('foodIsVeg').checked,
+      is_active:    document.getElementById('foodActive').checked,
+      photo_url:    document.getElementById('foodPhotoUrl').value || null,
+    };
+    const editId = document.getElementById('foodEditId').value;
+    const msgEl  = document.getElementById('foodFormMsg');
+    msgEl.textContent = '⏳ Saving…';
+    let error;
+    if (editId) {
+      ({ error } = await db.from('food_items').update(data).eq('id', editId));
+    } else {
+      const max = allFoodItems.reduce((m, f) => Math.max(m, f.sort_order||0), 0);
+      data.sort_order = max + 1;
+      ({ error } = await db.from('food_items').insert(data));
+    }
+    if (error) { msgEl.style.color='#ef4444'; msgEl.textContent = '❌ ' + error.message; return; }
+    msgEl.style.color = '#22c55e'; msgEl.textContent = '✅ Saved!';
+    setTimeout(() => msgEl.textContent = '', 3000);
+    resetFoodForm();
+    loadFoodItems();
+  }
+
+  async function toggleFoodActive(id, active) {
+    await db.from('food_items').update({ is_active: active }).eq('id', id);
+    loadFoodItems();
+  }
+
+  async function deleteFoodItem(id, name) {
+    if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+    await db.from('food_items').delete().eq('id', id);
+    loadFoodItems();
+  }
+
+  function resetFoodForm() {
+    document.getElementById('foodEditId').value     = '';
+    document.getElementById('foodFormTitle').textContent = '➕ Add Food Item';
+    document.getElementById('foodEmoji').value      = '';
+    document.getElementById('foodName').value       = '';
+    document.getElementById('foodPrice').value      = '';
+    document.getElementById('foodPriceLabel').value = '';
+    document.getElementById('foodDesc').value       = '';
+    document.getElementById('foodIsVeg').checked    = true;
+    document.getElementById('foodActive').checked   = true;
+    document.getElementById('foodPhotoUrl').value   = '';
+    document.getElementById('foodPhotoDeleteBtn').style.display = 'none';
+    document.getElementById('foodPhotoPreview').textContent = '🍲';
+    document.getElementById('foodPhotoUploadStatus').textContent = '';
+    document.getElementById('foodFormMsg').textContent = '';
   }
 
   // ── Services ──────────────────────────────────────────────────────────────
