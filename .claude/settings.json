@@ -69,7 +69,9 @@
       "Bash(git rebase *)",
       "Bash(node _tmp_hero_check.mjs)",
       "Bash(node _tmp_referral_admin.mjs)",
-      "Bash(node _tmp_final_check.mjs)"
+      "Bash(node _tmp_final_check.mjs)",
+      "Bash(node _tmp_faq_check.mjs)",
+      "Bash(node _tmp_faq_check2.mjs)"
     ]
   }
 }

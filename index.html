@@ -702,23 +702,23 @@
   .search-no-result { padding: 12px 16px; color: #999; font-size: 0.85rem; }
 
   /* FAQ */
-  .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
+  .faq-list { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; text-align: left; }
   .faq-item { border-bottom: 1px solid #eee; }
   .faq-item:first-child { border-top: 1px solid #eee; }
   .faq-q {
     width: 100%; background: none; border: none; cursor: pointer;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 1.2rem 0; gap: 1rem;
-    font-size: 1rem; font-weight: 600; color: var(--night);
+    padding: 0.8rem 0; gap: 1rem;
+    font-size: 0.88rem; font-weight: 600; color: var(--night);
     text-align: left; font-family: 'Metropolis', sans-serif;
     transition: color var(--transition);
   }
   .faq-q:hover { color: var(--paw); }
-  .faq-icon { font-size: 1.4rem; font-weight: 300; color: var(--paw); flex-shrink: 0; transition: transform 0.3s; }
+  .faq-icon { font-size: 1.15rem; font-weight: 300; color: var(--paw); flex-shrink: 0; transition: transform 0.3s; }
   .faq-item.open .faq-icon { transform: rotate(45deg); }
-  .faq-a { display: none; padding-bottom: 1.2rem; }
+  .faq-a { display: none; padding-bottom: 0.8rem; }
   .faq-item.open .faq-a { display: block; }
-  .faq-a p { margin: 0; color: #555; line-height: 1.7; font-size: 0.95rem; }
+  .faq-a p { margin: 0; color: #555; line-height: 1.55; font-size: 0.85rem; }
 
   .req { color: #ff5c5c; margin-left: 2px; }
 
@@ -990,29 +990,20 @@
   .app-section .section-title { color: #fff; }
   .app-section .section-sub { color: rgba(255,255,255,0.6); }
 
-  /* FAQ + APP SIDE BY SIDE */
+  /* FAQ */
   .faq-app-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 600px;
+    display: block;
   }
   .faq-col {
-    padding: 4rem 3rem;
+    padding: 2.5rem 2rem;
     background: #fff;
-  }
-  .app-col {
-    border-radius: 20px;
-    padding: 2rem 3rem;
-    background: linear-gradient(135deg, var(--night) 0%, var(--bark) 100%);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     text-align: center;
   }
+  .faq-col .section-label { margin-bottom: 0.5rem; }
+  .faq-col .section-title { margin-bottom: 0.5rem; }
+  .faq-col .section-sub { margin: 0 auto 1.25rem; }
   @media (max-width: 1024px) {
-    .faq-app-grid { grid-template-columns: 1fr; }
-    .faq-col, .app-col { padding: 3rem 2rem; }
+    .faq-col { padding: 2rem 1.5rem; }
   }
   .app-badges { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
   .app-badge {
