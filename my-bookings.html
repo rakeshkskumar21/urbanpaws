@@ -911,6 +911,11 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         My Pets
       </a>
 
+      <a onclick="showPage('referral')" id="nav-referral">
+        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1014.25 7.5H12V4.875zM12 4.875A2.625 2.625 0 109.75 7.5H12V4.875zM21 7.5H3v3.75a.75.75 0 00.75.75h16.5a.75.75 0 00.75-.75V7.5zM12 7.5v13.5"/></svg></span>
+        Invite a Friend
+      </a>
+
       <a onclick="showPage('rewards')" id="nav-rewards">
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg></span>
         Rewards
@@ -1100,6 +1105,13 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       </div>
     </div>
 
+
+    <!-- REFERRAL -->
+    <div class="page" id="page-referral" style="display:none">
+      <div class="page-title">Invite a Friend 🎁</div>
+      <div class="page-sub">Share Urban Paws and earn rewards together</div>
+      <div id="referralContent"></div>
+    </div>
 
     <!-- REWARDS -->
     <div class="page" id="page-rewards" style="display:none">
@@ -2045,12 +2057,12 @@ function closeSidebar() {
   document.getElementById('sbOverlay').classList.remove('open');
 }
 
-const PAGES = ['dashboard','bookings','pets','rewards','book','onboarding','profile','services','food','shop','pricing','faq','feedback'];
+const PAGES = ['dashboard','bookings','pets','referral','rewards','book','onboarding','profile','services','food','shop','pricing','faq','feedback'];
 const PAGE_LABELS = {
   dashboard:'Dashboard', bookings:'My Bookings', book:'Book a Service',
   profile:'My Profile', services:'Services', food:'Pet Food', shop:'Shop',
   pricing:'Pricing & Plans', faq:'FAQs', onboarding:'Set Up Plan',
-  pets:'My Pets', rewards:'Rewards',
+  pets:'My Pets', rewards:'Rewards', referral:'Invite a Friend',
 };
 function showPage(id) {
   PAGES.forEach(p => {
@@ -2064,6 +2076,7 @@ function showPage(id) {
   window.scrollTo(0, 0);
   if (id==='bookings' && allBookings.length) applyBkFilter();
   if (id==='rewards') renderRewards();
+  if (id==='referral') renderReferral();
   if (id==='feedback') loadFeedbackReviews();
 }
 
@@ -2206,30 +2219,12 @@ function copyReferralLink(code) {
   navigator.clipboard.writeText(link).then(() => showToast('✅ Referral link copied!', 'success')).catch(() => showToast('✅ Link: urbanpaws.app/?ref=' + code, 'success'));
 }
 
-function renderRewards() {
-  const el = document.getElementById('rewardsContent');
+function renderReferral() {
+  const el = document.getElementById('referralContent');
   if (!el) return;
-  const completed = allBookings.filter(b => b.status === 'completed');
-  const total = completed.length * 100;
-  const redeemable = Math.floor(total / 1000);
-  const remaining = total % 1000;
-  const pct = Math.min(100, Math.round((remaining / 1000) * 100));
-  const tier = total >= 5000 ? 'Platinum 💎' : total >= 2000 ? 'Gold 🥇' : total >= 500 ? 'Silver 🥈' : 'Bronze 🥉';
   const refCode = makeReferralCode(currentUser);
 
   el.innerHTML = `
-    <div class="rw-balance-card">
-      <div style="font-size:.8rem;font-weight:700;opacity:.8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem">Your Balance</div>
-      <div class="rw-coin-total">🪙 ${total.toLocaleString()}</div>
-      <div class="rw-coin-label">Paw Points · Tier: ${tier}</div>
-      <div class="rw-progress-wrap">
-        <div style="font-size:.75rem;opacity:.85;font-weight:600">Progress to next ₹100 discount</div>
-        <div class="rw-progress-bar"><div class="rw-progress-fill" style="width:${pct}%"></div></div>
-        <div class="rw-progress-lbl"><span>${remaining} / 1000 pts</span><span>${pct}%</span></div>
-      </div>
-      ${redeemable > 0 ? `<div class="rw-next">🎉 You have <strong>${redeemable} × ₹100</strong> discount${redeemable > 1 ? 's' : ''} available!</div>` : `<div class="rw-next">🎯 ${1000 - remaining} more points for your next ₹100 off</div>`}
-    </div>
-
     <div class="referral-card">
       <div class="referral-title">🎁 Invite a Friend</div>
       <div class="referral-sub">Share your code — your friend gets ₹100 off their first booking, and you get ₹100 too!</div>
@@ -2276,6 +2271,31 @@ function renderRewards() {
         <div class="referral-step-num">3</div>
         <div class="referral-step-lbl">You both get ₹100 credited!</div>
       </div>
+    </div>
+  `;
+}
+
+function renderRewards() {
+  const el = document.getElementById('rewardsContent');
+  if (!el) return;
+  const completed = allBookings.filter(b => b.status === 'completed');
+  const total = completed.length * 100;
+  const redeemable = Math.floor(total / 1000);
+  const remaining = total % 1000;
+  const pct = Math.min(100, Math.round((remaining / 1000) * 100));
+  const tier = total >= 5000 ? 'Platinum 💎' : total >= 2000 ? 'Gold 🥇' : total >= 500 ? 'Silver 🥈' : 'Bronze 🥉';
+
+  el.innerHTML = `
+    <div class="rw-balance-card">
+      <div style="font-size:.8rem;font-weight:700;opacity:.8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem">Your Balance</div>
+      <div class="rw-coin-total">🪙 ${total.toLocaleString()}</div>
+      <div class="rw-coin-label">Paw Points · Tier: ${tier}</div>
+      <div class="rw-progress-wrap">
+        <div style="font-size:.75rem;opacity:.85;font-weight:600">Progress to next ₹100 discount</div>
+        <div class="rw-progress-bar"><div class="rw-progress-fill" style="width:${pct}%"></div></div>
+        <div class="rw-progress-lbl"><span>${remaining} / 1000 pts</span><span>${pct}%</span></div>
+      </div>
+      ${redeemable > 0 ? `<div class="rw-next">🎉 You have <strong>${redeemable} × ₹100</strong> discount${redeemable > 1 ? 's' : ''} available!</div>` : `<div class="rw-next">🎯 ${1000 - remaining} more points for your next ₹100 off</div>`}
     </div>
 
     <div style="font-weight:800;font-size:.95rem;margin:1.4rem 0 .75rem">How to Earn Points</div>
