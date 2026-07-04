@@ -238,11 +238,12 @@
   /* HERO */
   .hero {
     min-height: calc(10vh - 64px);
-    display: grid; grid-template-columns: 1fr 1fr;
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
     gap: 0; align-items: flex-start;
     padding: 0;
     position: relative;
     overflow: hidden;
+    width: 100%;
   }
   .hero-content {
     padding: 2rem 3rem 2.5rem 4rem;
@@ -1107,7 +1108,7 @@
     .mob-controls { display: flex; }
     .logo svg { width: 26px; height: 26px; }
     .logo-mark .logo-urban, .logo-mark .logo-paws { font-size: 0.5rem; letter-spacing: 0.18em; }
-    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero { grid-template-columns: minmax(0,1fr); min-height: auto; }
     .hero-content { padding: 2.5rem 2rem 0; text-align: center; }
     .hero-services-card { padding: 2rem; }
     .hero-svc-grid { grid-template-columns: repeat(3, 1fr); }
@@ -1562,7 +1563,7 @@
   </div>
 
   <!-- Right column — two stacked boxes -->
-  <div style="display:flex;flex-direction:column;gap:1rem;">
+  <div style="display:flex;flex-direction:column;gap:1rem;min-width:0;overflow:hidden;">
 
     <!-- Box 1: What we offer -->
     <div class="hero-services-card" style="margin:0;">
