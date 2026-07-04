@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var t=localStorage.getItem('up_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-
 <!-- ============================================================
      SEO  —  primary keywords: "pet walking", "pet food delivery"
      NOTE: replace https://urbanpaws.app/ everywhere below with
@@ -1416,68 +1414,6 @@
   .trial-promo:hover { background: var(--paw-deep); transform: translateY(-1px); }
   .trial-promo strong { color: #6dffb3; font-weight: 800; }
 
-  /* ── THEME TOGGLE ── */
-  .theme-toggle-btn {
-    width: 36px; height: 36px; border-radius: 50%; background: none;
-    border: 1.5px solid var(--border); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text); transition: all .2s; flex-shrink: 0;
-  }
-  .theme-toggle-btn:hover { background: var(--paw-soft); border-color: var(--paw); }
-
-  /* ── DARK THEME ── */
-  [data-theme="dark"] {
-    --cream: #0F1117;
-    --card-bg: #1E2035;
-    --text: #E8E9F2;
-    --muted: #8B8FA8;
-    --border: rgba(255,255,255,.1);
-    --paw-soft: #252840;
-    --warm-gray: #6B6F85;
-  }
-  [data-theme="dark"] body { background: #0F1117; color: #E8E9F2; }
-  [data-theme="dark"] nav { background: rgba(15,17,23,0.96) !important; border-color: rgba(255,255,255,.08) !important; }
-  [data-theme="dark"] .nav-links a { color: #C2C4D8 !important; }
-  [data-theme="dark"] .nav-links a:hover { color: var(--paw) !important; }
-  [data-theme="dark"] .mob-brand { color: #E8E9F2 !important; }
-  [data-theme="dark"] .nav-search input { background: #1E2035 !important; color: #E8E9F2 !important; border-color: rgba(255,255,255,.1) !important; }
-  [data-theme="dark"] .search-dropdown { background: #1E2035 !important; border-color: rgba(255,255,255,.08) !important; }
-  [data-theme="dark"] .nav-user-dropdown,
-  [data-theme="dark"] .mob-av-dropdown { background: #1E2035 !important; border-color: rgba(255,255,255,.08) !important; box-shadow: 0 8px 32px rgba(0,0,0,.5) !important; }
-  [data-theme="dark"] .nav-user-dropdown a,
-  [data-theme="dark"] .nav-user-dropdown button,
-  [data-theme="dark"] .mob-av-dropdown a,
-  [data-theme="dark"] .mob-av-dropdown button { color: #E8E9F2 !important; }
-  [data-theme="dark"] .nav-user-dropdown a:hover,
-  [data-theme="dark"] .nav-user-dropdown button:hover,
-  [data-theme="dark"] .mob-av-dropdown a:hover,
-  [data-theme="dark"] .mob-av-dropdown button:hover { background: #252840 !important; }
-  [data-theme="dark"] .burger-menu { background: #1E2035 !important; border-color: rgba(255,255,255,.08) !important; }
-  [data-theme="dark"] .burger-menu a { color: #C2C4D8 !important; }
-  [data-theme="dark"] section:nth-child(even) { background: #1a1c2e !important; }
-  [data-theme="dark"] .testimonial-card,
-  [data-theme="dark"] .pricing-card,
-  [data-theme="dark"] .hero-card-float,
-  [data-theme="dark"] .menu-card { background: #1E2035 !important; border-color: rgba(255,255,255,.08) !important; }
-  [data-theme="dark"] .menu-card:hover { background: #252840 !important; }
-  [data-theme="dark"] .faq-item { background: #1E2035 !important; border-color: rgba(255,255,255,.08) !important; }
-  [data-theme="dark"] .faq-q { color: #E8E9F2 !important; }
-  [data-theme="dark"] .faq-a { color: #C2C4D8 !important; }
-  [data-theme="dark"] .auth-modal-box,
-  [data-theme="dark"] .booking-modal-body { background: #1E2035 !important; }
-  [data-theme="dark"] .auth-tab-bar { background: #252840 !important; }
-  [data-theme="dark"] .auth-tab.active { background: #1E2035 !important; color: #E8E9F2 !important; }
-  [data-theme="dark"] .auth-tab { color: #8B8FA8 !important; }
-  [data-theme="dark"] input[type="text"],
-  [data-theme="dark"] input[type="email"],
-  [data-theme="dark"] input[type="password"],
-  [data-theme="dark"] input[type="tel"],
-  [data-theme="dark"] input[type="number"],
-  [data-theme="dark"] select,
-  [data-theme="dark"] textarea { background: #252840 !important; color: #E8E9F2 !important; border-color: rgba(255,255,255,.12) !important; }
-  [data-theme="dark"] input::placeholder,
-  [data-theme="dark"] textarea::placeholder { color: #6B6F85 !important; }
-  [data-theme="dark"] .walk-dur-opt { background: #252840 !important; color: #C2C4D8 !important; border-color: rgba(255,255,255,.1) !important; }
 </style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
@@ -1522,7 +1458,6 @@
 
   <!-- Auth state (hidden on mobile, handled via burger menu) -->
   <div class="nav-auth" id="navAuth">
-    <button class="theme-toggle-btn" id="themeToggleDesktop" onclick="toggleTheme()" title="Switch to dark mode"></button>
     <button class="nav-login-btn" id="navLoginBtn" onclick="openAuthModal()">Login / SignUp</button>
     <div class="nav-user-chip" id="navUserChip" style="display:none" onclick="this.classList.toggle('open')">
       <div class="nav-user-avatar" id="navUserAvatar">?</div>
@@ -1538,7 +1473,6 @@
   <!-- Mobile controls: search + auth (right side) -->
   <div class="mob-controls">
     <span class="mob-brand">🐾 Urban Paws</span>
-    <button class="theme-toggle-btn" id="themeToggleMobile" onclick="toggleTheme()" title="Switch to dark mode" style="width:32px;height:32px;"></button>
     <button class="mob-icon-btn" id="mobSearchBtn" onclick="toggleMobSearch()" aria-label="Search">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
@@ -3028,23 +2962,6 @@ window.addEventListener('load', async function loadPublicReviews() {
     if (chip && !chip.contains(e.target)) chip.classList.remove('open');
   });
 
-  // ── Theme toggle ──
-  function toggleTheme() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const next = isDark ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('up_theme', next); } catch(e) {}
-    _syncThemeIcons(!isDark);
-  }
-  function _syncThemeIcons(isDark) {
-    const sun = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-    const moon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-    document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-      btn.innerHTML = isDark ? sun : moon;
-      btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
-    });
-  }
-  _syncThemeIcons(document.documentElement.getAttribute('data-theme') === 'dark');
 </script>
 </body>
 </html>
