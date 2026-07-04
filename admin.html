@@ -1069,25 +1069,44 @@
     }
   }
 
+  function _compressImage(file, maxW, maxH) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = e => {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = () => {
+          let w = img.width, h = img.height;
+          if (w > maxW || h > maxH) {
+            const r = Math.min(maxW / w, maxH / h);
+            w = Math.round(w * r); h = Math.round(h * r);
+          }
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(c.toDataURL('image/jpeg', 0.75));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function uploadFoodPhoto(input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
     if (file.size > 10 * 1024 * 1024) { alert('Image must be under 10 MB'); return; }
     const statusEl = document.getElementById('foodPhotoUploadStatus');
-    statusEl.textContent = '⏳ Uploading…';
+    statusEl.textContent = '⏳ Processing…';
     try {
-      const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
-      const path = 'items/' + Date.now() + '.' + ext;
-      const { error: upErr } = await db.storage.from(FOOD_STORAGE_BUCKET).upload(path, file, { cacheControl:'3600', upsert:true, contentType:file.type });
-      if (upErr) throw upErr;
-      const { data: urlData } = db.storage.from(FOOD_STORAGE_BUCKET).getPublicUrl(path);
-      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
-      document.getElementById('foodPhotoUrl').value = publicUrl;
-      setFoodPhotoPreview(publicUrl, document.getElementById('foodEmoji').value);
-      statusEl.textContent = '✅ Photo uploaded!';
+      const dataUrl = await _compressImage(file, 480, 480);
+      document.getElementById('foodPhotoUrl').value = dataUrl;
+      setFoodPhotoPreview(dataUrl, document.getElementById('foodEmoji').value);
+      statusEl.textContent = '✅ Photo ready!';
       setTimeout(() => statusEl.textContent = '', 3000);
     } catch(e) {
-      statusEl.textContent = '❌ Upload failed: ' + (e.message || 'try again');
+      statusEl.textContent = '❌ Failed: ' + (e.message || 'try again');
     }
     input.value = '';
   }
@@ -1123,7 +1142,7 @@
       data.sort_order = max + 1;
       ({ error } = await db.from('food_items').insert(data));
     }
-    if (error) { msgEl.style.color='#ef4444'; msgEl.textContent = '❌ ' + error.message; return; }
+    if (error) { msgEl.style.color='#ef4444'; msgEl.textContent = '❌ ' + (error.message || error.details || JSON.stringify(error)); console.error('saveFoodItem error:', error); return; }
     msgEl.style.color = '#22c55e'; msgEl.textContent = '✅ Saved!';
     setTimeout(() => msgEl.textContent = '', 3000);
     resetFoodForm();
