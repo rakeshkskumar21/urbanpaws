@@ -933,7 +933,16 @@ function renderMyBookings() {
                <button onclick="declineBooking('${b.id}')" style="background:rgba(239,68,68,.1);color:#b91c1c;border:1.5px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">❌ Decline</button>
              </div>`
           : b.status === 'confirmed'
-            ? `<div><button onclick="updateBkStatus('${b.id}','completed')" style="background:rgba(59,130,246,.12);color:#1d4ed8;border:none;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer">🎉 Mark Done</button>${respBadge}</div>`
+            ? `<div style="display:flex;flex-direction:column;gap:5px">
+                 <button onclick="startSession('${b.id}')" style="background:rgba(249,115,22,.15);color:#c2410c;border:1.5px solid rgba(249,115,22,.4);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">🏃 Start Session</button>
+                 ${respBadge}
+               </div>`
+            : b.status === 'started'
+            ? `<div style="display:flex;flex-direction:column;gap:5px">
+                 <div style="font-size:.72rem;color:#ea580c;font-weight:700">⏱ <span id="exec-timer-${b.id}">--:--:--</span></div>
+                 <button onclick="clockOut('${b.id}')" style="background:rgba(239,68,68,.12);color:#b91c1c;border:1.5px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">🏁 Clock Out</button>
+                 ${respBadge}
+               </div>`
             : `<div><span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>${respBadge}</div>`;
         return `<tr style="${isAssigned ? 'background:rgba(245,158,11,.06);' : ''}">
           <td class="bid">${b.booking_id||'—'}</td>
@@ -952,6 +961,7 @@ function renderMyBookings() {
         </tr>`;
       }).join('')
     : `<tr><td colspan="10" class="empty-msg">No ${bkFilter === 'all' ? '' : bkFilter} bookings.</td></tr>`;
+  _startAllExecTimers();
 }
 
 async function acceptBooking(id) {
@@ -981,6 +991,46 @@ async function updateBkStatus(id, status) {
   if (bk) bk.status = status;
   showToast('✅ Status updated to ' + status, 'success');
   renderMyBookings(); renderDashboard();
+}
+
+async function startSession(id) {
+  const startedAt = new Date().toISOString();
+  const { error } = await db.from('bookings').update({ status: 'started', started_at: startedAt }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  const bk = allBookings.find(b => String(b.id) === String(id));
+  if (bk) { bk.status = 'started'; bk.started_at = startedAt; }
+  renderMyBookings(); renderDashboard();
+  showToast('🏃 Session started! Timer is running.', 'success');
+}
+
+async function clockOut(id) {
+  if (!confirm('Clock out and mark this session as completed?')) return;
+  const completedAt = new Date().toISOString();
+  const { error } = await db.from('bookings').update({ status: 'completed', completed_at: completedAt }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  const bk = allBookings.find(b => String(b.id) === String(id));
+  if (bk) { bk.status = 'completed'; bk.completed_at = completedAt; }
+  if (_execTimerMap[id]) { clearInterval(_execTimerMap[id]); delete _execTimerMap[id]; }
+  renderMyBookings(); renderDashboard();
+  showToast('🏁 Session completed! Great work.', 'success');
+}
+
+const _execTimerMap = {};
+function _startExecTimer(id, startedAt) {
+  if (_execTimerMap[id]) return;
+  const start = new Date(startedAt).getTime();
+  _execTimerMap[id] = setInterval(() => {
+    const el = document.getElementById('exec-timer-' + id);
+    if (!el) { clearInterval(_execTimerMap[id]); delete _execTimerMap[id]; return; }
+    const elapsed = Math.floor((Date.now() - start) / 1000);
+    const h = Math.floor(elapsed / 3600).toString().padStart(2,'0');
+    const m = Math.floor((elapsed % 3600) / 60).toString().padStart(2,'0');
+    const s = (elapsed % 60).toString().padStart(2,'0');
+    el.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+function _startAllExecTimers() {
+  allBookings.filter(b => b.status === 'started' && b.started_at).forEach(b => _startExecTimer(b.id, b.started_at));
 }
 
 // ── EARNINGS ──

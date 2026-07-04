@@ -900,9 +900,12 @@
             <option value="pending"   ${b.status==='pending'   ? 'selected':''}>⏳ Pending</option>
             <option value="assigned"  ${b.status==='assigned'  ? 'selected':''}>📋 Assigned</option>
             <option value="confirmed" ${b.status==='confirmed' ? 'selected':''}>✅ Confirmed</option>
+            <option value="started"   ${b.status==='started'   ? 'selected':''}>▶ Started</option>
             <option value="completed" ${b.status==='completed' ? 'selected':''}>🎉 Completed</option>
             <option value="cancelled" ${b.status==='cancelled' ? 'selected':''}>❌ Cancelled</option>
           </select>
+          ${b.started_at ? `<div style="font-size:.68rem;color:#ea580c;margin-top:4px;font-weight:600">⏱ Started: ${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>` : ''}
+          ${b.completed_at && b.started_at ? `<div style="font-size:.68rem;color:#16a34a;margin-top:2px;font-weight:600">✓ Duration: ${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</div>` : ''}
         </td>
       </tr>`;
     }).join('');

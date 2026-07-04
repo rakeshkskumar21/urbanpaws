@@ -1064,7 +1064,9 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <select class="filter-select" id="fStatus" onchange="applyBkFilter()">
           <option value="">All Status</option>
           <option value="pending">⏳ Pending</option>
-          <option value="confirmed">✅ Confirmed</option>
+          <option value="assigned">👤 Assigned</option>
+          <option value="confirmed">🚶 On the Way</option>
+          <option value="started">▶ Started</option>
           <option value="completed">🎉 Completed</option>
           <option value="cancelled">❌ Cancelled</option>
         </select>
@@ -2112,15 +2114,16 @@ function svcIcon(s) {
   for (const [k,v] of Object.entries(SVC)) if (sl.includes(k)) return v;
   return '🐾';
 }
-const BADGE_LBL = { pending:'⏳ Pending', confirmed:'✅ Confirmed', completed:'🎉 Completed', cancelled:'❌ Cancelled' };
+const BADGE_LBL = { pending:'⏳ Pending', assigned:'👤 Assigned', confirmed:'🚶 On the Way', started:'▶ Started', completed:'🎉 Completed', cancelled:'❌ Cancelled' };
 function badgeHtml(st) { return `<span class="badge badge-${st||'pending'}">${BADGE_LBL[st]||st}</span>`; }
 
 function progressHtml(status) {
   const steps = [
-    { key: 'pending',   label: 'Booked',     color: '#f59e0b', soft: 'rgba(245,158,11,.14)', icon: '📋' },
-    { key: 'assigned',  label: 'Assigned',   color: '#3b82f6', soft: 'rgba(59,130,246,.14)',  icon: '👤' },
-    { key: 'confirmed', label: 'On the Way', color: '#8b5cf6', soft: 'rgba(139,92,246,.14)',  icon: '🚶' },
-    { key: 'completed', label: 'Done',       color: '#16a34a', soft: 'rgba(22,163,74,.14)',   icon: '✓'  }
+    { key: 'pending',   label: 'Booked',           color: '#f59e0b', soft: 'rgba(245,158,11,.14)', icon: '📋' },
+    { key: 'assigned',  label: 'Assigned',          color: '#3b82f6', soft: 'rgba(59,130,246,.14)',  icon: '👤' },
+    { key: 'confirmed', label: 'Executive on Way',  color: '#8b5cf6', soft: 'rgba(139,92,246,.14)',  icon: '🚶' },
+    { key: 'started',   label: 'Started',           color: '#f97316', soft: 'rgba(249,115,22,.14)',  icon: '▶'  },
+    { key: 'completed', label: 'Completed',         color: '#16a34a', soft: 'rgba(22,163,74,.14)',   icon: '✓'  }
   ];
   if (status === 'cancelled') return `<div class="bk-progress"><span class="prog-cancelled">❌ Cancelled</span></div>`;
   const ai = steps.findIndex(s => s.key === status);
@@ -2301,6 +2304,7 @@ function renderRewards() {
 function renderCard(b) {
   const cancelled = b.status === 'cancelled';
   const completed = b.status === 'completed';
+  const started   = b.status === 'started';
   const active = ['pending','assigned','confirmed'].includes(b.status);
   const svc = (b.service||'').replace(/'/g,"&#39;");
   const bid = b.id;
@@ -2311,6 +2315,11 @@ function renderCard(b) {
       <div class="bk-list-svc">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
       <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
       ${progressHtml(b.status)}
+      ${started ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(249,115,22,.1);border-radius:10px;border:1px solid rgba(249,115,22,.3);display:flex;align-items:center;gap:8px;">
+        <span style="font-size:.9rem">⏱</span>
+        <span style="font-size:.82rem;color:#ea580c;font-weight:700">Session in progress</span>
+        <span id="timer-${b.id}" style="margin-left:auto;font-size:.9rem;font-weight:800;color:#f97316;font-variant-numeric:tabular-nums">--:--:--</span>
+      </div>` : ''}
       ${active ? `<div class="bk-active-actions">
         <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','${b.booking_date||''}','${(b.time_slot||'').replace(/'/g,"\\'")}','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
         <button class="bk-action-btn bk-cancel-btn" onclick="openCancelModal('${bid}','${b.booking_id||bid}','${svc}')">✕ Cancel</button>
@@ -2335,9 +2344,27 @@ function renderCard(b) {
 
 function updateStats(bk) {
   document.getElementById('statTotal').textContent     = bk.length;
-  document.getElementById('statUpcoming').textContent  = bk.filter(b=>b.status==='pending'||b.status==='confirmed').length;
+  document.getElementById('statUpcoming').textContent  = bk.filter(b=>['pending','assigned','confirmed','started'].includes(b.status)).length;
   document.getElementById('statCompleted').textContent = bk.filter(b=>b.status==='completed').length;
   document.getElementById('statCancelled').textContent = bk.filter(b=>b.status==='cancelled').length;
+}
+
+const _timerMap = {};
+function _startTimer(id, startedAt) {
+  if (_timerMap[id]) return;
+  const start = new Date(startedAt).getTime();
+  _timerMap[id] = setInterval(() => {
+    const el = document.getElementById('timer-' + id);
+    if (!el) { clearInterval(_timerMap[id]); delete _timerMap[id]; return; }
+    const elapsed = Math.floor((Date.now() - start) / 1000);
+    const h = Math.floor(elapsed / 3600).toString().padStart(2,'0');
+    const m = Math.floor((elapsed % 3600) / 60).toString().padStart(2,'0');
+    const s = (elapsed % 60).toString().padStart(2,'0');
+    el.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+function _startAllTimers() {
+  allBookings.filter(b => b.status === 'started' && b.started_at).forEach(b => _startTimer(b.id, b.started_at));
 }
 
 function renderRecent(bk) {
@@ -2382,6 +2409,7 @@ function applyBkFilter() {
     return;
   }
   list.innerHTML = '<div class="bk-list">' + filtered.map(renderCard).join('') + '</div>';
+  _startAllTimers();
 }
 
 async function loadBookings(email) {
@@ -2407,6 +2435,7 @@ function applyBookingUpdate(b) {
   // Re-render the full card so stepper + actions update
   const cardEl = document.getElementById('card-' + b.id);
   if (cardEl) cardEl.outerHTML = renderCard(allBookings[idx]);
+  if (allBookings[idx].status === 'started' && allBookings[idx].started_at) _startTimer(allBookings[idx].id, allBookings[idx].started_at);
   // Update recent-row badge
   ['badge-r-'+b.id].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=badgeHtml(b.status); });
   return true;
