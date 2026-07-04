@@ -179,6 +179,49 @@
     .faq-contact-card p { font-size: .84rem; opacity: .88; line-height: 1.6; }
     .faq-contact-card a { color: #fff; font-weight: 700; }
 
+    /* ── ASSIGNMENT NOTIFICATION POPUP ── */
+    #assignPopupOverlay {
+      position: fixed; inset: 0; z-index: 1200;
+      background: rgba(10,10,30,.6); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    #assignPopupOverlay.show { display: flex; }
+    #assignPopupSheet {
+      background: #fff; border-radius: 24px; width: 100%; max-width: 440px;
+      position: relative; overflow: hidden;
+      animation: slideUp .32s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 28px 64px rgba(0,0,0,.22);
+    }
+    @keyframes slideUp { from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+    .ap-header {
+      background: linear-gradient(135deg,var(--paw),var(--paw2));
+      padding: 1.5rem 1.75rem 1.25rem; text-align: center; position: relative;
+    }
+    .ap-bell { font-size: 2.2rem; margin-bottom: .35rem; animation: bellRing .5s ease-in-out 2; }
+    @keyframes bellRing { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-12deg)} 75%{transform:rotate(12deg)} }
+    .ap-title { font-family:'Syne',sans-serif; font-size:1.15rem; font-weight:800; color:#fff; margin-bottom:.2rem; }
+    .ap-sub { font-size:.78rem; color:rgba(255,255,255,.8); }
+    .ap-close {
+      position:absolute; top:.85rem; right:.85rem; background:rgba(255,255,255,.2);
+      border:none; border-radius:50%; width:30px; height:30px; cursor:pointer;
+      font-size:.9rem; color:#fff; display:flex; align-items:center; justify-content:center;
+      transition:background .15s;
+    }
+    .ap-close:hover { background:rgba(255,255,255,.35); }
+    .ap-body { padding: 1.25rem 1.75rem; }
+    .ap-row { display:flex; justify-content:space-between; align-items:flex-start; padding:.45rem 0; border-bottom:1px solid #f3f4f6; font-size:.84rem; }
+    .ap-row:last-child { border-bottom:none; }
+    .ap-row .ap-lbl { color:var(--muted); font-size:.75rem; min-width:80px; }
+    .ap-row .ap-val { font-weight:700; color:var(--night); text-align:right; }
+    .ap-actions { display:flex; gap:.65rem; padding:1rem 1.75rem 1.5rem; }
+    .ap-btn { flex:1; padding:11px 6px; border:none; border-radius:12px; font-size:.82rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all .15s; }
+    .ap-wait    { background:#fef3c7; color:#92400e; border:1.5px solid #f59e0b; }
+    .ap-wait:hover { background:#fde68a; }
+    .ap-decline { background:rgba(239,68,68,.1); color:#b91c1c; border:1.5px solid rgba(239,68,68,.3); }
+    .ap-decline:hover { background:rgba(239,68,68,.18); }
+    .ap-accept  { background:var(--green-soft); color:#15803d; border:1.5px solid rgba(34,197,94,.4); }
+    .ap-accept:hover { background:rgba(34,197,94,.2); }
+
     /* ── PENDING GATE ── */
     .pending-gate { text-align: center; padding: 4rem 2rem; max-width: 400px; margin: 0 auto; }
     .pending-gate .pg-icon { font-size: 3rem; margin-bottom: 1rem; }
@@ -605,6 +648,30 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- ASSIGNMENT NOTIFICATION POPUP -->
+<div id="assignPopupOverlay" onclick="apOverlayClick(event)">
+  <div id="assignPopupSheet">
+    <div class="ap-header">
+      <button class="ap-close" onclick="closeAssignPopup()">✕</button>
+      <div class="ap-bell">🔔</div>
+      <div class="ap-title">New Booking Assigned!</div>
+      <div class="ap-sub">Please respond to confirm your availability</div>
+    </div>
+    <div class="ap-body" id="apBody">
+      <div class="ap-row"><span class="ap-lbl">Booking ID</span><span class="ap-val" id="apBkId">—</span></div>
+      <div class="ap-row"><span class="ap-lbl">Service</span><span class="ap-val" id="apService">—</span></div>
+      <div class="ap-row"><span class="ap-lbl">Pet</span><span class="ap-val" id="apPet">—</span></div>
+      <div class="ap-row"><span class="ap-lbl">Date & Time</span><span class="ap-val" id="apDateTime">—</span></div>
+      <div class="ap-row"><span class="ap-lbl">Address</span><span class="ap-val" id="apAddress" style="max-width:200px;word-break:break-word;text-align:right">—</span></div>
+    </div>
+    <div class="ap-actions">
+      <button class="ap-btn ap-wait"    onclick="waitFromPopup()">⏳ Wait</button>
+      <button class="ap-btn ap-decline" onclick="declineFromPopup()">❌ Decline</button>
+      <button class="ap-btn ap-accept"  onclick="acceptFromPopup()">✅ Accept</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const { createClient } = supabase;
@@ -614,6 +681,21 @@ let currentUser = null;
 let execProfile = null;
 let allBookings = [];
 let bkFilter = 'all';
+let execRealtimeChannel = null;
+let execPollInterval = null;
+let _currentAssignPopupId = null;
+
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDtaQkalOe33dx98rXqruWI_ASrUL9FE_lmEKIQA68s3lMy4hoIodxt1VimXWGrJX2Vg/exec';
+const EXEC_NOTIFIED_KEY = 'exec_notified';
+
+function _wasNotified(id) {
+  return JSON.parse(localStorage.getItem(EXEC_NOTIFIED_KEY) || '[]').includes(id);
+}
+function _markNotified(id) {
+  const arr = JSON.parse(localStorage.getItem(EXEC_NOTIFIED_KEY) || '[]');
+  if (!arr.includes(id)) arr.push(id);
+  localStorage.setItem(EXEC_NOTIFIED_KEY, JSON.stringify(arr.slice(-100)));
+}
 
 function initials(name) {
   if (!name) return '?';
@@ -717,11 +799,15 @@ async function init() {
   // Load assigned bookings
   await loadBookings();
   renderDashboard();
+  subscribeExecRealtime();
 }
 
 async function loadBookings() {
   const { data } = await db.from('bookings').select('*').eq('executive_id', currentUser.id).order('booking_date', { ascending: false });
   allBookings = data || [];
+  // Show popup for assigned booking that hasn't been responded to yet
+  const unresponded = allBookings.find(b => b.status === 'assigned' && !b.exec_response && !_wasNotified(b.id));
+  if (unresponded) setTimeout(() => openAssignmentPopup(unresponded), 1500);
 }
 
 // ── DASHBOARD ──
@@ -835,14 +921,20 @@ function renderMyBookings() {
     ? filtered.map(b => {
         const amt = parseAmount(b.payment);
         const isAssigned = b.status === 'assigned';
+        const execResp = b.exec_response || null;
+        const respBadge = execResp
+          ? `<div style="margin-top:4px;font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:100px;display:inline-block;background:${execResp==='accepted'?'rgba(34,197,94,.12)':execResp==='declined'?'rgba(239,68,68,.1)':'rgba(245,158,11,.12)'};color:${execResp==='accepted'?'#15803d':execResp==='declined'?'#b91c1c':'#92400e'}">
+              ${execResp==='accepted'?'✅ Accepted':execResp==='declined'?'❌ Declined':'⏳ Waiting'}
+            </div>` : '';
         const actionCell = isAssigned
           ? `<div style="display:flex;flex-direction:column;gap:5px">
+               <button onclick="waitBooking('${b.id}')" style="background:#fef3c7;color:#92400e;border:1.5px solid #f59e0b;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">⏳ Wait</button>
                <button onclick="acceptBooking('${b.id}')" style="background:rgba(34,197,94,.15);color:#15803d;border:1.5px solid rgba(34,197,94,.4);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">✅ Accept</button>
                <button onclick="declineBooking('${b.id}')" style="background:rgba(239,68,68,.1);color:#b91c1c;border:1.5px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">❌ Decline</button>
              </div>`
           : b.status === 'confirmed'
-            ? `<button onclick="updateBkStatus('${b.id}','completed')" style="background:rgba(59,130,246,.12);color:#1d4ed8;border:none;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer">🎉 Mark Done</button>`
-            : `<span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>`;
+            ? `<div><button onclick="updateBkStatus('${b.id}','completed')" style="background:rgba(59,130,246,.12);color:#1d4ed8;border:none;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer">🎉 Mark Done</button>${respBadge}</div>`
+            : `<div><span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>${respBadge}</div>`;
         return `<tr style="${isAssigned ? 'background:rgba(245,158,11,.06);' : ''}">
           <td class="bid">${b.booking_id||'—'}</td>
           <td>${b.booking_date||'—'}<div class="bsub">${b.time_slot||''}</div></td>
@@ -1047,12 +1139,167 @@ async function saveProfile() {
   setTimeout(() => document.getElementById('pfSaveOk').style.display = 'none', 3000);
 }
 
+// ── Assignment popup ──────────────────────────────────────────────────────
+
+function openAssignmentPopup(b) {
+  _currentAssignPopupId = b.id;
+  _markNotified(b.id);
+  document.getElementById('apBkId').textContent    = '#' + (b.booking_id || b.id);
+  document.getElementById('apService').textContent = b.service || '—';
+  document.getElementById('apPet').textContent     = (b.pet_name || '—') + (b.breed ? ' · ' + b.breed : '');
+  document.getElementById('apDateTime').textContent = (b.booking_date || '—') + (b.time_slot ? ' · ' + b.time_slot : '');
+  document.getElementById('apAddress').textContent  = b.address || '—';
+  document.getElementById('assignPopupOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  sendExecAssignmentEmail(b);
+}
+
+function closeAssignPopup() {
+  document.getElementById('assignPopupOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  _currentAssignPopupId = null;
+}
+
+function apOverlayClick(e) {
+  if (e.target === document.getElementById('assignPopupOverlay')) closeAssignPopup();
+}
+
+async function waitFromPopup() {
+  if (!_currentAssignPopupId) return;
+  await waitBooking(_currentAssignPopupId);
+  closeAssignPopup();
+}
+
+async function acceptFromPopup() {
+  if (!_currentAssignPopupId) return;
+  await acceptBooking(_currentAssignPopupId);
+  closeAssignPopup();
+}
+
+async function declineFromPopup() {
+  if (!_currentAssignPopupId) return;
+  await declineBooking(_currentAssignPopupId);
+  closeAssignPopup();
+}
+
+// ── Wait / Accept / Decline ───────────────────────────────────────────────
+
+async function waitBooking(id) {
+  const { error } = await db.from('bookings').update({ exec_response: 'waiting' }).eq('id', id);
+  if (error && error.code !== '42703') { showToast('❌ ' + error.message, 'error'); return; }
+  const bk = allBookings.find(b => String(b.id) === String(id));
+  if (bk) bk.exec_response = 'waiting';
+  renderMyBookings(); renderDashboard();
+  showToast('⏳ Marked as waiting — admin has been notified.', '');
+}
+
+async function acceptBooking(id) {
+  const { error } = await db.from('bookings').update({ status: 'confirmed', exec_response: 'accepted' }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  const bk = allBookings.find(b => String(b.id) === String(id));
+  if (bk) { bk.status = 'confirmed'; bk.exec_response = 'accepted'; }
+  renderMyBookings(); renderDashboard();
+  showToast('✅ Booking accepted! Customer will be notified.', 'success');
+}
+
+async function declineBooking(id) {
+  if (!confirm('Decline this booking? It will be returned to admin for reassignment.')) return;
+  const { error } = await db.from('bookings').update({
+    status: 'pending', executive_id: null, executive_name: null,
+    executive_exec_id: null, exec_response: 'declined'
+  }).eq('id', id);
+  if (error) { showToast('❌ ' + error.message, 'error'); return; }
+  allBookings = allBookings.filter(b => String(b.id) !== String(id));
+  renderMyBookings(); renderDashboard();
+  showToast('Booking declined and returned to admin.', '');
+}
+
+// ── Email to executive on assignment ─────────────────────────────────────
+
+async function sendExecAssignmentEmail(b) {
+  if (!currentUser?.email) return;
+  try {
+    const fd = new FormData();
+    fd.append('to', currentUser.email);
+    fd.append('subject', `New Booking Assigned — #${b.booking_id||b.id} | Urban Paws`);
+    fd.append('htmlBody', `<div style="font-family:Inter,sans-serif;max-width:480px;margin:0 auto;padding:24px;background:#f8f8fc">
+      <div style="background:linear-gradient(135deg,#6C6FD4,#5254B8);border-radius:16px;padding:24px;text-align:center;margin-bottom:20px">
+        <div style="font-size:2.5rem">🔔</div>
+        <div style="color:#fff;font-family:Syne,sans-serif;font-size:1.2rem;font-weight:800;margin-top:10px">New Booking Assigned!</div>
+        <div style="color:rgba(255,255,255,.8);font-size:.83rem;margin-top:6px">Please Accept or Decline from your dashboard</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;padding:20px;margin-bottom:16px">
+        <table style="width:100%;border-collapse:collapse;font-size:.87rem">
+          <tr><td style="padding:7px 0;color:#6b7280;width:40%">Booking ID</td><td style="padding:7px 0;font-weight:700">#${b.booking_id||b.id}</td></tr>
+          <tr><td style="padding:7px 0;color:#6b7280">Service</td><td style="padding:7px 0;font-weight:700">${b.service||'—'}</td></tr>
+          <tr><td style="padding:7px 0;color:#6b7280">Pet</td><td style="padding:7px 0;font-weight:700">${b.pet_name||'—'}${b.breed?' · '+b.breed:''}</td></tr>
+          <tr><td style="padding:7px 0;color:#6b7280">Date & Time</td><td style="padding:7px 0;font-weight:700">${b.booking_date||'—'} ${b.time_slot||''}</td></tr>
+          <tr><td style="padding:7px 0;color:#6b7280">Address</td><td style="padding:7px 0;font-weight:700">${b.address||'—'}</td></tr>
+        </table>
+      </div>
+      <div style="text-align:center;margin-top:20px">
+        <a href="https://urbanpaws.app/executive-dashboard.html" style="display:inline-block;background:#6C6FD4;color:#fff;padding:13px 32px;border-radius:100px;font-weight:700;text-decoration:none;font-size:.95rem">Open Dashboard →</a>
+      </div>
+      <p style="text-align:center;font-size:.72rem;color:#9ca3af;margin-top:20px">Urban Paws Executive Portal · hello@urbanpaws.app</p>
+    </div>`);
+    fd.append('plainBody', `New Booking Assigned!\n\nBooking: #${b.booking_id||b.id}\nService: ${b.service||'—'}\nPet: ${b.pet_name||'—'}\nDate: ${b.booking_date||'—'} ${b.time_slot||''}\nAddress: ${b.address||'—'}\n\nOpen Dashboard: https://urbanpaws.app/executive-dashboard.html`);
+    await fetch(SHEET_ENDPOINT, { method: 'POST', body: fd });
+  } catch(e) {}
+}
+
+// ── Realtime + polling ────────────────────────────────────────────────────
+
+function subscribeExecRealtime() {
+  if (execRealtimeChannel) db.removeChannel(execRealtimeChannel);
+  execRealtimeChannel = db.channel('exec-bk-' + currentUser.id)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings', filter: 'executive_id=eq.' + currentUser.id }, payload => {
+      const b = payload.new || payload.old;
+      if (!b) return;
+      const idx = allBookings.findIndex(x => x.id === b.id);
+      if (payload.eventType === 'DELETE') {
+        allBookings = allBookings.filter(x => x.id !== b.id);
+      } else if (idx !== -1) {
+        allBookings[idx] = { ...allBookings[idx], ...b };
+      } else {
+        allBookings.unshift(b);
+      }
+      if (b.status === 'assigned' && !b.exec_response && !_wasNotified(b.id)) {
+        openAssignmentPopup(b);
+      }
+      renderMyBookings(); renderDashboard();
+      showToast('🐾 Booking #' + (b.booking_id||'') + ' updated', 'success');
+    }).subscribe();
+  startExecPolling();
+}
+
+function startExecPolling() {
+  if (execPollInterval) clearInterval(execPollInterval);
+  execPollInterval = setInterval(async () => {
+    const { data } = await db.from('bookings').select('*').eq('executive_id', currentUser.id).order('booking_date', { ascending: false });
+    if (!data) return;
+    let changed = false;
+    data.forEach(b => {
+      const idx = allBookings.findIndex(x => x.id === b.id);
+      if (idx === -1) { allBookings.unshift(b); changed = true; }
+      else if (allBookings[idx].status !== b.status || allBookings[idx].exec_response !== b.exec_response) {
+        allBookings[idx] = { ...allBookings[idx], ...b }; changed = true;
+      }
+      if (b.status === 'assigned' && !b.exec_response && !_wasNotified(b.id)) {
+        openAssignmentPopup(b);
+      }
+    });
+    if (changed) { renderMyBookings(); renderDashboard(); }
+  }, 30000);
+}
+
 function toggleFaq(btn) {
   const item = btn.closest('.faq-item');
   item.classList.toggle('open');
 }
 
 async function signOut() {
+  if (execRealtimeChannel) db.removeChannel(execRealtimeChannel);
+  if (execPollInterval) clearInterval(execPollInterval);
   await db.auth.signOut();
   window.location.href = 'index.html#join-executive';
 }

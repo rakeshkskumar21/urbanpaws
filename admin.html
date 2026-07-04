@@ -407,6 +407,7 @@
               <th>Paid Via</th>
               <th>Amount Paid</th>
               <th>Assigned Executive</th>
+              <th>Exec Response</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -881,6 +882,18 @@
           ${b.status==='assigned'
             ? `<button data-notify-id="${b.id}" onclick="notifyCustomer('${b.id}')" title="Send email to customer from hello@urbanpaws.app" style="margin-top:3px;background:rgba(34,197,94,.15);color:#15803d;border:1px solid rgba(34,197,94,.25);border-radius:7px;padding:4px 9px;font-size:.68rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;width:100%">📧 Notify Customer</button>`
             : ''}
+        </td>
+        <td style="min-width:110px">
+          ${b.exec_response === 'accepted'
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,.12);color:#15803d;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;">✅ Accepted</span>`
+            : b.exec_response === 'declined'
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,.1);color:#b91c1c;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;">❌ Declined</span>`
+            : b.exec_response === 'waiting'
+            ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(245,158,11,.12);color:#92400e;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:100px;">⏳ Waiting</span>`
+            : b.executive_id
+            ? `<span style="color:#aaa;font-size:.72rem">No response yet</span>`
+            : `<span style="color:#ddd;font-size:.72rem">—</span>`
+          }
         </td>
         <td>
           <select class="status-select" onchange="updateStatus('${b.id}', this.value)">
