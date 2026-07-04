@@ -1864,7 +1864,7 @@ window.addEventListener('load', async function loadPublicReviews() {
   try {
     const { data, error } = await db.from('feedback').select('*').eq('is_public', true).order('created_at', { ascending: false }).limit(12);
     if (error || !data || !data.length) {
-      document.getElementById('reviewsGrid').innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;grid-column:1/-1;">No reviews yet — be the first to share your experience!</div>';
+      document.getElementById('reviewsGrid').innerHTML = '';
       document.getElementById('totalReviews').textContent = '0 reviews';
       document.getElementById('avgRating').textContent = '—';
       return;
@@ -1898,7 +1898,7 @@ window.addEventListener('load', async function loadPublicReviews() {
       </div>`;
     }).join('');
   } catch(e) {
-    document.getElementById('reviewsGrid').innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;grid-column:1/-1;">No reviews yet — be the first!</div>';
+    document.getElementById('reviewsGrid').innerHTML = '';
   }
 });
 </script>
