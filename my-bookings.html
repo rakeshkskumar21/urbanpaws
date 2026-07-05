@@ -1,10 +1,27 @@
 <!DOCTYPE html>
+<!--
+SQL TO RUN IN SUPABASE (once):
+
+CREATE TABLE IF NOT EXISTS live_locations (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  booking_id text,
+  role text,
+  user_email text,
+  lat double precision,
+  lng double precision,
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE live_locations DISABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_live_locations_booking ON live_locations(booking_id, role);
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urban Paws — My Account</title>
 <meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231A1C52'/%3E%3Cellipse cx='20' cy='32' rx='9' ry='11' fill='%236C6FD4' transform='rotate(-18 20 32)'/%3E%3Cellipse cx='38' cy='20' rx='10.5' ry='12.5' fill='%236C6FD4' transform='rotate(-5 38 20)'/%3E%3Cellipse cx='62' cy='20' rx='10.5' ry='12.5' fill='%236C6FD4' transform='rotate(5 62 20)'/%3E%3Cellipse cx='80' cy='32' rx='9' ry='11' fill='%236C6FD4' transform='rotate(18 80 32)'/%3E%3Cpath d='M18 62 C18 46 28 38 40 38 C45 37 48 40 50 42 C52 40 55 37 60 38 C72 38 82 46 82 62 C82 78 68 90 50 90 C32 90 18 78 18 62Z' fill='%236C6FD4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1401,6 +1418,19 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
               <button class="save-btn" onclick="pfCancelHealthEdit()" style="background:var(--border);color:var(--night);">Cancel</button>
             </div>
           </div>
+
+          <!-- MY LOCATION CARD -->
+          <div class="profile-form-card" style="margin-top:1rem" id="myLocationCard">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+              <div class="pf-form-title" style="margin-bottom:0;">📍 My Location</div>
+              <button id="shareLocBtn" class="save-btn" style="padding:8px 18px;font-size:.82rem;" onclick="shareMyLocation()">Share My Location</button>
+            </div>
+            <div id="myLocStatus" style="font-size:.78rem;color:var(--muted);margin-bottom:.75rem"></div>
+            <div id="myLocMapWrap" style="display:none">
+              <div id="map-profile" style="height:200px;border-radius:12px;overflow:hidden;border:1px solid var(--border2);margin-bottom:.5rem"></div>
+              <div id="myLocUpdated" style="font-size:.72rem;color:var(--muted)"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2321,6 +2351,13 @@ function renderCard(b) {
           <span><span style="color:#9ca3af">▶ Start</span> <strong>${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>
           ${b.completed_at ? `<span><span style="color:#9ca3af">🏁 End</span> <strong>${new Date(b.completed_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>` : ''}
           <span><span style="color:#9ca3af">⏱</span> ${b.completed_at ? `<strong>${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</strong>` : `<strong id="timer-${b.id}" style="color:#f97316;font-variant-numeric:tabular-nums">--:--:--</strong>`}</span>
+        </div>
+      </div>` : ''}
+      ${(b.status === 'confirmed' || b.status === 'started') ? `<div style="margin-top:10px">
+        <button class="bk-action-btn" style="background:rgba(59,130,246,.1);color:#1d4ed8;border-color:rgba(59,130,246,.3);" onclick="toggleTrackMap('${bid}')">📍 Track Executive Live</button>
+        <div id="track-section-${bid}" style="display:none;margin-top:8px">
+          <div id="map-${bid}" style="height:280px;border-radius:12px;overflow:hidden;border:1px solid rgba(59,130,246,.2)"></div>
+          <div id="track-status-${bid}" style="font-size:.72rem;color:var(--muted);margin-top:5px;text-align:center">Loading location…</div>
         </div>
       </div>` : ''}
       ${active ? `<div class="bk-active-actions">
@@ -3963,6 +4000,120 @@ db.auth.onAuthStateChange((_event, session) => {
     <button class="pp-btn-dismiss" onclick="dismissProfilePrompt()">Later</button>
   </div>
 </div>
+<!-- GPS TRACKING SCRIPT -->
+<script>
+// ── GPS: My Location (Profile) ──
+let _profileMapInst = null;
+let _profileMarker  = null;
+
+async function shareMyLocation() {
+  if (!navigator.geolocation) {
+    document.getElementById('myLocStatus').textContent = 'Geolocation is not supported by your browser.';
+    return;
+  }
+  document.getElementById('myLocStatus').textContent = 'Getting your location…';
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+    const email = (currentUser && currentUser.email) ? currentUser.email : '';
+    // Insert location record (read latest with order on retrieval)
+    await db.from('live_locations').insert({
+      booking_id: 'profile',
+      role: 'customer',
+      user_email: email,
+      lat, lng,
+      updated_at: new Date().toISOString()
+    });
+    const now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', hour12:true});
+    document.getElementById('myLocStatus').textContent = 'Location shared successfully.';
+    document.getElementById('myLocUpdated').textContent = 'Last updated: ' + now;
+    document.getElementById('shareLocBtn').textContent = 'Update Location';
+    document.getElementById('myLocMapWrap').style.display = '';
+    if (!_profileMapInst) {
+      setTimeout(() => {
+        _profileMapInst = L.map('map-profile').setView([lat, lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap'}).addTo(_profileMapInst);
+        _profileMarker = L.marker([lat, lng]).addTo(_profileMapInst).bindPopup('My Location').openPopup();
+      }, 100);
+    } else {
+      _profileMapInst.setView([lat, lng], 15);
+      if (_profileMarker) _profileMarker.setLatLng([lat, lng]);
+      else _profileMarker = L.marker([lat, lng]).addTo(_profileMapInst);
+      setTimeout(() => _profileMapInst.invalidateSize(), 150);
+    }
+  }, err => {
+    document.getElementById('myLocStatus').textContent = 'Could not get location: ' + err.message;
+  });
+}
+
+// ── GPS: Track Executive (Booking cards) ──
+const _trackMaps   = {};   // bookingId -> leaflet map instance
+const _trackTimers = {};   // bookingId -> setInterval id
+const _trackOpen   = {};   // bookingId -> bool
+
+async function _loadTrackingData(bookingId) {
+  const statusEl = document.getElementById('track-status-' + bookingId);
+  // Load executive location
+  const { data: execRows } = await db.from('live_locations')
+    .select('*').eq('booking_id', bookingId).eq('role', 'executive')
+    .order('updated_at', { ascending: false }).limit(1);
+  const execLoc = execRows && execRows[0] ? execRows[0] : null;
+  // Load customer location
+  const { data: custRows } = await db.from('live_locations')
+    .select('*').eq('booking_id', bookingId).eq('role', 'customer')
+    .order('updated_at', { ascending: false }).limit(1);
+  const custLoc = custRows && custRows[0] ? custRows[0] : null;
+
+  if (!_trackMaps[bookingId]) return; // Map not yet initialized or closed
+
+  const map = _trackMaps[bookingId];
+  // Remove existing markers stored on map instance
+  if (map._execMarker) { map.removeLayer(map._execMarker); map._execMarker = null; }
+  if (map._custMarker) { map.removeLayer(map._custMarker); map._custMarker = null; }
+
+  if (!execLoc) {
+    if (statusEl) statusEl.textContent = 'Waiting for executive to share location…';
+    return;
+  }
+  const execIcon = L.divIcon({ html: '<div style="background:#3b82f6;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>', iconSize:[16,16], iconAnchor:[8,8], className:'' });
+  map._execMarker = L.marker([execLoc.lat, execLoc.lng], {icon: execIcon}).addTo(map).bindPopup('Executive<br><small>' + new Date(execLoc.updated_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}) + '</small>');
+  map.setView([execLoc.lat, execLoc.lng], 15);
+
+  if (custLoc) {
+    const custIcon = L.divIcon({ html: '<div style="background:#16a34a;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>', iconSize:[16,16], iconAnchor:[8,8], className:'' });
+    map._custMarker = L.marker([custLoc.lat, custLoc.lng], {icon: custIcon}).addTo(map).bindPopup('You');
+  }
+
+  const secsAgo = Math.round((Date.now() - new Date(execLoc.updated_at).getTime()) / 1000);
+  if (statusEl) statusEl.textContent = 'Last updated: ' + secsAgo + ' seconds ago';
+  map.invalidateSize();
+}
+
+function toggleTrackMap(bookingId) {
+  const section = document.getElementById('track-section-' + bookingId);
+  if (!section) return;
+  const isOpen = _trackOpen[bookingId];
+  if (isOpen) {
+    section.style.display = 'none';
+    _trackOpen[bookingId] = false;
+    if (_trackTimers[bookingId]) { clearInterval(_trackTimers[bookingId]); delete _trackTimers[bookingId]; }
+  } else {
+    section.style.display = '';
+    _trackOpen[bookingId] = true;
+    setTimeout(() => {
+      if (!_trackMaps[bookingId]) {
+        const center = [12.9716, 77.5946];
+        const map = L.map('map-' + bookingId).setView(center, 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap'}).addTo(map);
+        _trackMaps[bookingId] = map;
+      }
+      _loadTrackingData(bookingId);
+      _trackTimers[bookingId] = setInterval(() => _loadTrackingData(bookingId), 10000);
+    }, 150);
+  }
+}
+</script>
+
 <!-- FEEDBACK POPUP -->
 <div id="fbPopupOverlay" onclick="fbPopupOverlayClick(event)">
   <div id="fbPopupSheet">

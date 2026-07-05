@@ -7,6 +7,8 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231A1C52'/%3E%3Cellipse cx='20' cy='32' rx='9' ry='11' fill='%236C6FD4' transform='rotate(-18 20 32)'/%3E%3Cellipse cx='38' cy='20' rx='10.5' ry='12.5' fill='%236C6FD4' transform='rotate(-5 38 20)'/%3E%3Cellipse cx='62' cy='20' rx='10.5' ry='12.5' fill='%236C6FD4' transform='rotate(5 62 20)'/%3E%3Cellipse cx='80' cy='32' rx='9' ry='11' fill='%236C6FD4' transform='rotate(18 80 32)'/%3E%3Cpath d='M18 62 C18 46 28 38 40 38 C45 37 48 40 50 42 C52 40 55 37 60 38 C72 38 82 46 82 62 C82 78 68 90 50 90 C32 90 18 78 18 62Z' fill='%236C6FD4'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -323,6 +325,11 @@
       </div>
     </div>
 
+    <!-- Location Sharing Chip -->
+    <div id="dashLocChip" style="display:none;background:rgba(34,197,94,.12);border:1.5px solid rgba(34,197,94,.35);border-radius:100px;padding:5px 16px;margin-bottom:1rem;display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:#15803d">
+      📡 Location Sharing Active
+    </div>
+
     <!-- Quick Actions -->
     <div class="quick-actions">
       <button class="qa-btn" onclick="showPage('mybookings',document.getElementById('nav-mybookings'))"><span class="qa-icon">📋</span> My Bookings</button>
@@ -366,6 +373,21 @@
   <!-- MY BOOKINGS PAGE -->
   <div class="page" id="page-mybookings">
     <div class="page-title">My Bookings</div>
+    <!-- Location Sharing Status Bar -->
+    <div id="locShareBar" style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:.85rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+      <span style="font-size:.88rem;font-weight:700;color:var(--night)">📡 Live Location Sharing:</span>
+      <button id="locShareToggleBtn" onclick="toggleLocationSharing()" style="padding:6px 18px;border-radius:100px;border:none;font-size:.82rem;font-weight:700;cursor:pointer;background:rgba(34,197,94,.15);color:#15803d;transition:all .15s">OFF</button>
+      <span style="font-size:.75rem;color:var(--muted);flex:1;min-width:200px">Your location is shared with customers and admin when you have an active booking.</span>
+    </div>
+    <!-- Customer View Map Section for Active Bookings -->
+    <div id="execMapSection" style="display:none;margin-bottom:1rem">
+      <div class="card" style="padding:1rem">
+        <div class="card-title" style="margin-bottom:.75rem">📍 Active Booking Map — <span id="execMapBookingRef"></span></div>
+        <div id="exec-map-modal" style="height:300px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"></div>
+        <div id="execMapStatus" style="font-size:.72rem;color:var(--muted);margin-top:.4rem"></div>
+        <button onclick="closeExecMap()" style="margin-top:.6rem;background:var(--paw-soft);color:var(--paw2);border:none;border-radius:8px;padding:5px 14px;font-size:.8rem;font-weight:700;cursor:pointer">Close Map</button>
+      </div>
+    </div>
     <div class="card">
       <div id="needsActionBanner" style="display:none;background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.35);border-radius:12px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.85rem;font-weight:700;color:#b45309">
         🔔 <span id="needsActionCount">0</span> booking(s) need your response — Accept or Decline below.
@@ -970,12 +992,14 @@ function renderMyBookings() {
           : b.status === 'confirmed'
             ? `<div style="display:flex;flex-direction:column;gap:5px">
                  <button onclick="startSession('${b.id}')" style="background:rgba(249,115,22,.15);color:#c2410c;border:1.5px solid rgba(249,115,22,.4);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">🏃 Start Session</button>
+                 <button onclick="openExecMap('${b.id}','${b.booking_id||b.id}')" style="background:rgba(59,130,246,.12);color:#1d4ed8;border:1.5px solid rgba(59,130,246,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">📍 View Map</button>
                  ${respBadge}
                </div>`
             : b.status === 'started'
             ? `<div style="display:flex;flex-direction:column;gap:5px">
                  ${sessionBlock}
                  <button onclick="clockOut('${b.id}')" style="background:rgba(239,68,68,.12);color:#b91c1c;border:1.5px solid rgba(239,68,68,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">🏁 Clock Out</button>
+                 <button onclick="openExecMap('${b.id}','${b.booking_id||b.id}')" style="background:rgba(59,130,246,.12);color:#1d4ed8;border:1.5px solid rgba(59,130,246,.3);border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap">📍 View Map</button>
                  ${respBadge}
                </div>`
             : `<div><span class="s-badge s-${b.status||'pending'}">${b.status||'—'}</span>${respBadge}${sessionBlock}</div>`;
@@ -1472,6 +1496,155 @@ async function signOut() {
 
 init();
 
+</script>
+
+<!-- GPS TRACKING SCRIPT -->
+<script>
+// ── Executive Live Location Sharing ──
+let _watchId = null;
+let _locSharing = false;
+let _execMapInst = null;
+let _execMapTimer = null;
+let _execMapBookingId = null;
+
+function _getExecEmail() {
+  return (currentUser && currentUser.email) ? currentUser.email : '';
+}
+
+async function upsertExecLocation(pos) {
+  const email = _getExecEmail();
+  const lat = pos.coords.latitude;
+  const lng = pos.coords.longitude;
+  const now = new Date().toISOString();
+  // Update for all active bookings
+  const activeBookings = allBookings.filter(b => b.status === 'confirmed' || b.status === 'started');
+  for (const b of activeBookings) {
+    await db.from('live_locations').insert({
+      booking_id: b.id,
+      role: 'executive',
+      user_email: email,
+      lat, lng,
+      updated_at: now
+    });
+  }
+  // Also insert a general entry for exec
+  await db.from('live_locations').insert({
+    booking_id: 'exec-' + (currentUser ? currentUser.id : 'unknown'),
+    role: 'executive',
+    user_email: email,
+    lat, lng,
+    updated_at: now
+  });
+}
+
+function startLocationSharing() {
+  if (!navigator.geolocation) return;
+  if (_watchId !== null) return;
+  _watchId = navigator.geolocation.watchPosition(
+    pos => upsertExecLocation(pos),
+    err => console.warn('GPS error:', err.message),
+    { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 }
+  );
+  _locSharing = true;
+  const btn = document.getElementById('locShareToggleBtn');
+  if (btn) { btn.textContent = 'ON'; btn.style.background = 'rgba(34,197,94,.25)'; btn.style.color = '#15803d'; }
+  const chip = document.getElementById('dashLocChip');
+  if (chip) chip.style.display = 'inline-flex';
+}
+
+function stopLocationSharing() {
+  if (_watchId !== null) { navigator.geolocation.clearWatch(_watchId); _watchId = null; }
+  _locSharing = false;
+  const btn = document.getElementById('locShareToggleBtn');
+  if (btn) { btn.textContent = 'OFF'; btn.style.background = 'rgba(34,197,94,.15)'; btn.style.color = '#15803d'; }
+  const chip = document.getElementById('dashLocChip');
+  if (chip) chip.style.display = 'none';
+}
+
+function toggleLocationSharing() {
+  if (_locSharing) stopLocationSharing();
+  else startLocationSharing();
+}
+
+function autoStartIfActive() {
+  const hasActive = allBookings.some(b => b.status === 'confirmed' || b.status === 'started');
+  if (hasActive) startLocationSharing();
+}
+
+// ── Exec Map (view customer + own pin) ──
+async function _loadExecMapData() {
+  if (!_execMapBookingId || !_execMapInst) return;
+  const map = _execMapInst;
+  // Remove old markers
+  if (map._custMarker) { map.removeLayer(map._custMarker); map._custMarker = null; }
+  if (map._execMarker) { map.removeLayer(map._execMarker); map._execMarker = null; }
+
+  const { data: custRows } = await db.from('live_locations')
+    .select('*').eq('booking_id', _execMapBookingId).eq('role', 'customer')
+    .order('updated_at', { ascending: false }).limit(1);
+  const custLoc = custRows && custRows[0] ? custRows[0] : null;
+
+  if (custLoc) {
+    const custIcon = L.divIcon({ html: '<div style="background:#16a34a;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>', iconSize:[16,16], iconAnchor:[8,8], className:'' });
+    map._custMarker = L.marker([custLoc.lat, custLoc.lng], {icon: custIcon}).addTo(map).bindPopup('Customer<br><small>' + new Date(custLoc.updated_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}) + '</small>');
+    map.setView([custLoc.lat, custLoc.lng], 14);
+  }
+
+  // Show own latest position if available
+  const { data: execRows } = await db.from('live_locations')
+    .select('*').eq('booking_id', _execMapBookingId).eq('role', 'executive')
+    .order('updated_at', { ascending: false }).limit(1);
+  const execLoc = execRows && execRows[0] ? execRows[0] : null;
+
+  if (execLoc) {
+    const execIcon = L.divIcon({ html: '<div style="background:#3b82f6;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>', iconSize:[16,16], iconAnchor:[8,8], className:'' });
+    map._execMarker = L.marker([execLoc.lat, execLoc.lng], {icon: execIcon}).addTo(map).bindPopup('You (Executive)');
+    if (!custLoc) map.setView([execLoc.lat, execLoc.lng], 14);
+  }
+
+  if (!custLoc && !execLoc) {
+    const statusEl = document.getElementById('execMapStatus');
+    if (statusEl) statusEl.textContent = 'No location data available yet.';
+  } else {
+    const statusEl = document.getElementById('execMapStatus');
+    if (statusEl) statusEl.textContent = 'Live map — auto-refreshing every 10 seconds.';
+  }
+  map.invalidateSize();
+}
+
+function openExecMap(bookingId, bookingRef) {
+  _execMapBookingId = bookingId;
+  const section = document.getElementById('execMapSection');
+  const refEl = document.getElementById('execMapBookingRef');
+  if (refEl) refEl.textContent = '#' + bookingRef;
+  if (section) section.style.display = '';
+  setTimeout(() => {
+    if (!_execMapInst) {
+      _execMapInst = L.map('exec-map-modal').setView([12.9716, 77.5946], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap'}).addTo(_execMapInst);
+    }
+    _loadExecMapData();
+    if (_execMapTimer) clearInterval(_execMapTimer);
+    _execMapTimer = setInterval(_loadExecMapData, 10000);
+  }, 150);
+  // Scroll to map
+  if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeExecMap() {
+  const section = document.getElementById('execMapSection');
+  if (section) section.style.display = 'none';
+  if (_execMapTimer) { clearInterval(_execMapTimer); _execMapTimer = null; }
+  if (_execMapInst) { _execMapInst.remove(); _execMapInst = null; }
+  _execMapBookingId = null;
+}
+
+// Auto-start sharing after bookings load
+const _origLoadBookings = loadBookings;
+loadBookings = async function() {
+  await _origLoadBookings.apply(this, arguments);
+  autoStartIfActive();
+};
 </script>
 </body>
 </html>
