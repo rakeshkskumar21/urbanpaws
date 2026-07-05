@@ -2,16 +2,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "admin.urbanpaws.app" }],
-      "destination": "/admin"
-    },
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "app.urbanpaws.app" }],
-      "destination": "/bookings"
-    },
     { "source": "/bookings", "destination": "/my-bookings" },
     { "source": "/bookings/(.*)", "destination": "/my-bookings" },
     { "source": "/dashboard", "destination": "/executive-dashboard" },

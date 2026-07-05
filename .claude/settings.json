@@ -72,7 +72,9 @@
       "Bash(node _tmp_final_check.mjs)",
       "Bash(node _tmp_faq_check.mjs)",
       "Bash(node _tmp_faq_check2.mjs)",
-      "Bash(node _tmp_cities_check.mjs)"
+      "Bash(node _tmp_cities_check.mjs)",
+      "Bash(python3 -m json.tool /Users/rakeshks/urbanpaws/vercel.json)",
+      "Bash(node _tmp_footer_check.mjs)"
     ]
   }
 }
