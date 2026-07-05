@@ -970,7 +970,7 @@
   .footer-bottom a { color: rgba(255,255,255,0.4); text-decoration: none; }
 
   /* CITY BADGES */
-  .city-badges { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .city-badges { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0; }
   .city-badge {
     padding: 6px 14px; border-radius: 100px;
     background: #fff; border: 1px solid var(--border);
@@ -1538,14 +1538,7 @@
       <a href="javascript:void(0)" class="btn-primary" onclick="openBooking()">Book a Service ↗</a>
     </div>
 
-<!--===========================  CITIES===========================  -->
-<div style="background:#fff; padding:1.25rem 1.5rem; border-radius:20px; border:1px solid var(--border); margin-top:1.5rem; display:flex; align-items:center; gap:0.9rem; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;">
-  <p style="font-size:0.8rem; color:var(--muted); font-weight:500; white-space:nowrap; margin:0; flex-shrink:0;">Currently Available in</p>
-  <div class="city-badges" style="flex-wrap:nowrap; margin-bottom:0; flex-shrink:0;">
-    <div class="city-badge"><span class="city-dot"></span>Bengaluru</div>
-    <div class="city-badge"><span class="city-dot"></span>Whitefield</div>
-  </div>
-</div>
+
 
   </div>
 
@@ -1568,6 +1561,14 @@
           <span class="svc-price">Starting from ₹28</span>
         </a>
       </div>
+      <!--===========================  CITIES===========================  -->
+<div style="background:rgba(255,255,255,0.07);padding:0.4rem 0.9rem;border-radius:20px;border:1px solid rgba(255,255,255,0.1);margin-top:1rem;display:flex;align-items:center;gap:0.9rem;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;">
+  <p style="font-size:0.6rem;color:rgba(255,255,255,.5);font-weight:500;white-space:nowrap;margin:0;flex-shrink:0;">Currently Available in</p>
+  <div class="city-badges" style="flex-wrap:nowrap;margin-bottom:0;flex-shrink:0;">
+    <div class="city-badge" style="color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.15);background:transparent;"><span class="city-dot"></span>Bengaluru</div>
+    <div class="city-badge" style="color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.15);background:transparent;"><span class="city-dot"></span>Whitefield</div>
+  </div>
+</div>
     </div>
 
     <!-- Box 2: Become an Executive -->
