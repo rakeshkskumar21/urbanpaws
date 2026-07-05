@@ -76,7 +76,8 @@
       "Bash(python3 -m json.tool /Users/rakeshks/urbanpaws/vercel.json)",
       "Bash(node _tmp_footer_check.mjs)",
       "Bash(node _tmp_merge_check.mjs)",
-      "Bash(node _tmp_footer_merge_check.mjs)"
+      "Bash(node _tmp_footer_merge_check.mjs)",
+      "Bash(git revert *)"
     ]
   }
 }
