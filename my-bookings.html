@@ -258,6 +258,9 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .pp-btn-dismiss:hover { border-color: var(--muted); }
 .pp-close { position: absolute; top: 10px; right: 12px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1rem; line-height: 1; }
 
+/* VACCINATION REMINDER PROMPT (reuses .profile-prompt look) */
+.vax-prompt .pp-icon { background: #fee2e2; }
+
 /* PAGE HEADER */
 .page-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: .3rem; }
 .page-sub { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-bottom: 1.75rem; }
@@ -418,6 +421,30 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .feature-card-icon { font-size: 1.4rem; margin-bottom: .5rem; }
 .feature-card-title { font-weight: 700; font-size: .85rem; margin-bottom: 2px; }
 .feature-card-sub { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+
+/* PET VACCINATION CARD */
+.vax-card { background: var(--white); border: 1px solid var(--border2); border-radius: 16px; padding: 1.5rem 1.6rem; margin-bottom: 1.75rem; }
+.vax-card-hdr { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.vax-card-title-wrap { display: flex; align-items: center; gap: 12px; }
+.vax-card-icon { width: 42px; height: 42px; border-radius: 12px; background: #fee2e2; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+.vax-card-title { font-weight: 800; font-size: .98rem; }
+.vax-card-sub { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+.vax-empty { text-align: center; padding: 1.75rem 1rem; color: var(--muted); font-size: .85rem; border: 1.5px dashed var(--border2); border-radius: 12px; }
+.vax-list { display: flex; flex-direction: column; gap: .75rem; }
+.vax-row { display: flex; align-items: flex-start; gap: 12px; border: 1px solid var(--border2); border-radius: 12px; padding: .9rem 1rem; }
+.vax-row-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--paw-soft); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.vax-row-body { flex: 1; min-width: 0; }
+.vax-row-title { font-size: .88rem; font-weight: 700; }
+.vax-row-meta { font-size: .75rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.vax-row-notes { font-size: .75rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+.vax-due-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: .68rem; font-weight: 800; margin-top: 5px; white-space: nowrap; }
+.vax-due-overdue { background: #fee2e2; color: #dc2626; }
+.vax-due-soon { background: #fef3c7; color: #b45309; }
+.vax-due-ok { background: #dcfce7; color: #16a34a; }
+.vax-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.vax-row-actions button { background: #f3f4f6; border: none; border-radius: 8px; width: 30px; height: 30px; cursor: pointer; font-size: .82rem; color: var(--muted); transition: all .15s; }
+.vax-row-actions button:hover { background: #e5e7eb; color: var(--night); }
+.vax-row-actions button.vax-del:hover { background: #fee2e2; color: #dc2626; }
 
 /* INVOICE LIST */
 .inv-list { display: flex; flex-direction: column; gap: .75rem; }
@@ -925,7 +952,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       </a>
       <a onclick="showPage('pets')" id="nav-pets">
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918"/></svg></span>
-        My Pets
+        Pet Passport
       </a>
 
       <a onclick="showPage('referral')" id="nav-referral">
@@ -1100,15 +1127,29 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
     <!-- MY PETS -->
     <div class="page" id="page-pets" style="display:none">
-      <div class="page-title">My Pets 🐾</div>
+      <div class="page-title">Pet Passport 🐾</div>
       <div class="page-sub">Manage your pet profiles, health records & history</div>
+
+      <div class="vax-card">
+        <div class="vax-card-hdr">
+          <div class="vax-card-title-wrap">
+            <div class="vax-card-icon">💉</div>
+            <div>
+              <div class="vax-card-title">Pet Vaccination Card</div>
+              <div class="vax-card-sub">Track every vaccine your pet gets and never miss the next dose</div>
+            </div>
+          </div>
+          <button class="qa-btn qa-primary" onclick="openVaxModal()">➕ Add Vaccination</button>
+        </div>
+        <div id="vaxList"></div>
+      </div>
+
       <div class="placeholder-page">
         <div class="placeholder-icon">🐶</div>
         <div class="coming-badge">Coming Soon</div>
         <div class="placeholder-title">Digital Pet Profiles</div>
-        <div class="placeholder-sub">Give your pet a complete digital identity — health records, grooming history, vaccination reminders, and more. All in one place.</div>
+        <div class="placeholder-sub">Give your pet a complete digital identity — health records, grooming history, and more. All in one place.</div>
         <div class="feature-cards">
-          <div class="feature-card"><div class="feature-card-icon">💉</div><div class="feature-card-title">Vaccination History</div><div class="feature-card-sub">Track all vaccines with dates and reminders for the next dose</div></div>
           <div class="feature-card"><div class="feature-card-icon">✂️</div><div class="feature-card-title">Grooming History</div><div class="feature-card-sub">Photo log of every grooming session — see how they've changed!</div></div>
           <div class="feature-card"><div class="feature-card-icon">🩺</div><div class="feature-card-title">Medical Notes</div><div class="feature-card-sub">Allergies, medications, vet visits — all in one safe place</div></div>
           <div class="feature-card"><div class="feature-card-icon">📅</div><div class="feature-card-title">Timeline</div><div class="feature-card-sub">Complete history: walks, food, vet, grooming — every event</div></div>
@@ -2019,6 +2060,45 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   </div>
 </div>
 
+<!-- VACCINATION MODAL -->
+<div id="vaxModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:20px;max-width:480px;width:100%;padding:1.8rem;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto">
+    <div style="font-size:2rem;text-align:center;margin-bottom:.5rem">💉</div>
+    <div id="vaxModalTitle" style="font-size:1.1rem;font-weight:800;text-align:center;margin-bottom:1.2rem">Add Vaccination Record</div>
+    <input type="hidden" id="vaxEditId" value="">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1.2rem">
+      <div>
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Date <span style="color:#ef4444">*</span></label>
+        <input type="date" id="vaxDate" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+      <div>
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Time</label>
+        <input type="time" id="vaxTime" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Injections Given <span style="color:#ef4444">*</span></label>
+        <input type="text" id="vaxInjections" placeholder="e.g. Rabies, DHPPi" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Place / Clinic</label>
+        <input type="text" id="vaxPlace" placeholder="e.g. Urban Paws Vet Clinic" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Next Due Date <span style="color:#ef4444">*</span></label>
+        <input type="date" id="vaxNextDue" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box">
+      </div>
+      <div style="grid-column:1/-1">
+        <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Extra Notes (optional)</label>
+        <textarea id="vaxNotes" rows="2" placeholder="Any reactions, vet instructions, etc." style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box;resize:vertical"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:.75rem">
+      <button onclick="closeVaxModal()" style="flex:1;padding:11px;border-radius:100px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">Cancel</button>
+      <button onclick="saveVaccinationRecord()" style="flex:1;padding:11px;border-radius:100px;border:none;background:var(--paw);color:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">Save Record</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
@@ -2041,7 +2121,7 @@ const PAGE_LABELS = {
   dashboard:'Dashboard', bookings:'My Bookings', book:'Book a Service',
   profile:'My Profile', services:'Services', food:'Pet Food', shop:'Shop',
   pricing:'Pricing & Plans', faq:'FAQs', onboarding:'Set Up Plan',
-  pets:'My Pets', rewards:'Rewards', referral:'Invite a Friend',
+  pets:'Pet Passport', rewards:'Rewards', referral:'Invite a Friend',
 };
 function showPage(id) {
   PAGES.forEach(p => {
@@ -2057,6 +2137,7 @@ function showPage(id) {
   if (id==='rewards') renderRewards();
   if (id==='referral') renderReferral();
   if (id==='feedback') loadFeedbackReviews();
+  if (id==='pets') renderVaxCard();
 }
 
 function cbSearchInput(inputEl) {
@@ -2689,6 +2770,8 @@ async function loadProfile(user) {
   }
   document.getElementById('pfAddress').value = (p&&p.address)||'';
   loadHealthInfo();
+  renderVaxCard();
+  setTimeout(() => checkVaxReminders(false), 2600);
   checkProfileCompletion(p, user.id);
   renderPricingCTAs(plan);
   const bkStrip = document.getElementById('bkPlanStrip');
@@ -3047,6 +3130,153 @@ function saveHealthInfo() {
   loadHealthInfo();
   recomputeRingFromFields();
   pfCancelHealthEdit();
+}
+
+/* ── Pet Vaccination Card ── */
+function getVaxRecords() {
+  if (!currentUser) return [];
+  return JSON.parse(localStorage.getItem('urbanpaws_vax_'+currentUser.id) || '[]');
+}
+
+function setVaxRecords(records) {
+  if (!currentUser) return;
+  localStorage.setItem('urbanpaws_vax_'+currentUser.id, JSON.stringify(records));
+}
+
+function vaxDueInfo(nextDue) {
+  if (!nextDue) return { label: '', cls: '' };
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(nextDue + 'T00:00:00');
+  const days = Math.round((due - today) / 86400000);
+  if (days < 0)  return { label: `⚠ Overdue by ${Math.abs(days)}d`, cls: 'vax-due-overdue' };
+  if (days <= 7) return { label: days===0 ? '⏰ Due today' : `⏰ Due in ${days}d`, cls: 'vax-due-soon' };
+  return { label: `Next due ${due.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}`, cls: 'vax-due-ok' };
+}
+
+function renderVaxCard() {
+  const list = document.getElementById('vaxList');
+  if (!list) return;
+  const records = getVaxRecords().slice().sort((a,b) => (a.nextDue||'').localeCompare(b.nextDue||''));
+  if (!records.length) {
+    list.innerHTML = '<div class="vax-empty">No vaccination records yet. Click "Add Vaccination" to log your pet\'s first vaccine.</div>';
+    return;
+  }
+  list.innerHTML = '<div class="vax-list">' + records.map(r => {
+    const due = vaxDueInfo(r.nextDue);
+    const dateStr = r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—';
+    return `
+      <div class="vax-row">
+        <div class="vax-row-icon">💉</div>
+        <div class="vax-row-body">
+          <div class="vax-row-title">${escapeHtml(r.injections)}</div>
+          <div class="vax-row-meta">📅 ${dateStr}${r.time ? ' at '+r.time : ''}${r.place ? ' · 📍 '+escapeHtml(r.place) : ''}</div>
+          ${r.notes ? `<div class="vax-row-notes">"${escapeHtml(r.notes)}"</div>` : ''}
+          ${due.label ? `<div class="vax-due-badge ${due.cls}">${due.label}</div>` : ''}
+        </div>
+        <div class="vax-row-actions">
+          <button onclick="openVaxModal('${r.id}')" title="Edit">✎</button>
+          <button class="vax-del" onclick="deleteVaccinationRecord('${r.id}')" title="Delete">🗑</button>
+        </div>
+      </div>`;
+  }).join('') + '</div>';
+}
+
+function escapeHtml(s) {
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function openVaxModal(editId) {
+  document.getElementById('vaxEditId').value = editId || '';
+  if (editId) {
+    const r = getVaxRecords().find(x => x.id === editId);
+    document.getElementById('vaxModalTitle').textContent = 'Edit Vaccination Record';
+    document.getElementById('vaxDate').value = (r && r.date) || '';
+    document.getElementById('vaxTime').value = (r && r.time) || '';
+    document.getElementById('vaxInjections').value = (r && r.injections) || '';
+    document.getElementById('vaxPlace').value = (r && r.place) || '';
+    document.getElementById('vaxNextDue').value = (r && r.nextDue) || '';
+    document.getElementById('vaxNotes').value = (r && r.notes) || '';
+  } else {
+    document.getElementById('vaxModalTitle').textContent = 'Add Vaccination Record';
+    ['vaxDate','vaxTime','vaxInjections','vaxPlace','vaxNextDue','vaxNotes'].forEach(id => document.getElementById(id).value = '');
+  }
+  const m = document.getElementById('vaxModal');
+  m.style.display = 'flex';
+}
+
+function closeVaxModal() {
+  document.getElementById('vaxModal').style.display = 'none';
+}
+
+function saveVaccinationRecord() {
+  const date = document.getElementById('vaxDate').value;
+  const injections = document.getElementById('vaxInjections').value.trim();
+  const nextDue = document.getElementById('vaxNextDue').value;
+  if (!date || !injections || !nextDue) {
+    showToast('⚠️ Please fill Date, Injections and Next Due Date', 'error');
+    return;
+  }
+  const editId = document.getElementById('vaxEditId').value;
+  const records = getVaxRecords();
+  const entry = {
+    id: editId || (Date.now() + '-' + Math.random().toString(36).slice(2,8)),
+    date,
+    time: document.getElementById('vaxTime').value,
+    injections,
+    place: document.getElementById('vaxPlace').value.trim(),
+    nextDue,
+    notes: document.getElementById('vaxNotes').value.trim()
+  };
+  const idx = records.findIndex(r => r.id === editId);
+  if (editId && idx > -1) records[idx] = entry; else records.push(entry);
+  setVaxRecords(records);
+  closeVaxModal();
+  renderVaxCard();
+  showToast('✅ Vaccination record saved!', 'success');
+  checkVaxReminders(true);
+}
+
+function deleteVaccinationRecord(id) {
+  setVaxRecords(getVaxRecords().filter(r => r.id !== id));
+  renderVaxCard();
+  showToast('🗑 Vaccination record removed', 'success');
+}
+
+function checkVaxReminders(force) {
+  if (!currentUser) return;
+  const records = getVaxRecords();
+  const due = records.filter(r => {
+    const info = vaxDueInfo(r.nextDue);
+    return info.cls === 'vax-due-overdue' || info.cls === 'vax-due-soon';
+  });
+  if (!due.length) { document.getElementById('vaxPrompt').classList.remove('show'); return; }
+  const todayStr = new Date().toISOString().slice(0,10);
+  const dismissedOn = localStorage.getItem('urbanpaws_vaxDismiss_'+currentUser.id);
+  if (!force && dismissedOn === todayStr) return;
+  showVaxPrompt(due);
+}
+
+function showVaxPrompt(due) {
+  const sub = document.getElementById('vaxPromptSub');
+  const overdueCount = due.filter(r => vaxDueInfo(r.nextDue).cls === 'vax-due-overdue').length;
+  sub.textContent = overdueCount
+    ? `${overdueCount} vaccination${overdueCount>1?'s are':' is'} overdue. Please schedule a vet visit soon.`
+    : `Your pet has ${due.length} vaccination${due.length>1?'s':''} due soon.`;
+  document.getElementById('vaxPromptFields').innerHTML = due.map(r => {
+    const info = vaxDueInfo(r.nextDue);
+    return `<span class="pp-tag ${info.cls==='vax-due-overdue' ? 'missing' : 'done'}">${escapeHtml(r.injections)} — ${info.label}</span>`;
+  }).join('');
+  const prompt = document.getElementById('vaxPrompt');
+  const profilePrompt = document.getElementById('profilePrompt');
+  prompt.style.bottom = (profilePrompt && profilePrompt.classList.contains('show'))
+    ? (profilePrompt.offsetHeight + 40) + 'px'
+    : '1.5rem';
+  prompt.classList.add('show');
+}
+
+function dismissVaxPrompt() {
+  document.getElementById('vaxPrompt').classList.remove('show');
+  if (currentUser) localStorage.setItem('urbanpaws_vaxDismiss_'+currentUser.id, new Date().toISOString().slice(0,10));
 }
 
 function pfEnableEdit() {
@@ -3872,6 +4102,7 @@ document.addEventListener('click', e => {
   }
   if (e.target.id === 'cancelModal') closeCancelModal();
   if (e.target.id === 'rescheduleModal') closeReschedModal();
+  if (e.target.id === 'vaxModal') closeVaxModal();
 });
 
 function showToast(msg, type) {
@@ -3998,6 +4229,23 @@ db.auth.onAuthStateChange((_event, session) => {
   <div class="pp-actions">
     <button class="pp-btn-fill" onclick="showPage('profile');dismissProfilePrompt();pfEnableEdit()">Fill Details →</button>
     <button class="pp-btn-dismiss" onclick="dismissProfilePrompt()">Later</button>
+  </div>
+</div>
+
+<!-- VACCINATION REMINDER PROMPT -->
+<div class="profile-prompt vax-prompt" id="vaxPrompt">
+  <button class="pp-close" onclick="dismissVaxPrompt()">✕</button>
+  <div class="pp-top">
+    <div class="pp-icon">💉</div>
+    <div>
+      <div class="pp-title" id="vaxPromptTitle">Vaccination reminder</div>
+      <div class="pp-sub" id="vaxPromptSub">Your pet has a vaccination due soon.</div>
+    </div>
+  </div>
+  <div class="pp-fields" id="vaxPromptFields"></div>
+  <div class="pp-actions">
+    <button class="pp-btn-fill" onclick="showPage('pets');dismissVaxPrompt()">View Pet Passport →</button>
+    <button class="pp-btn-dismiss" onclick="dismissVaxPrompt()">Later</button>
   </div>
 </div>
 <!-- GPS TRACKING SCRIPT -->
