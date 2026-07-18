@@ -869,13 +869,16 @@
   /* PRICING */
   .pricing-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+    gap: 1.5rem; align-items: stretch;
   }
   .pricing-card {
     background: #fff; border: 1px solid var(--border);
     border-radius: var(--radius); padding: 2rem;
     position: relative;
+    display: flex; flex-direction: column;
   }
+  .pricing-card .plan-features { flex: 1; }
+  .pricing-card > .btn-primary, .pricing-card > .btn-outline { margin-top: auto; }
   .pricing-card.featured {
     background: var(--night); color: #fff;
     border-color: var(--night);
@@ -1724,24 +1727,21 @@
       
       <button class="btn-outline" style="width:100%;" onclick="openPlan('standard')">Get started</button>
     </div>
-    <div>
-      <div class="pricing-card" data-plan="carnival">
-        <h3>Carnival</h3>
-        <div class="plan-price">₹5,889 <span>/month</span></div>
-        <div class="plan-anchor-row"><s class="plan-anchor">₹6,999</s><span class="plan-save">Save 16%</span></div>
-        <div class="plan-desc">For families with 2+ dogs or cats.</div>
-        <ul class="plan-features">
-          <li class="plan-feature">30 walks included per month for 2 pets for 30 min</li>
-          <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
-          <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
-          <li class="plan-feature">Free delivery on medicines</li>
-          <li class="plan-feature">Free boarding up to 1 night</li>
-          <li class="plan-feature">10% off on food orders</li>
-          <li class="plan-feature">Live 🟢 tracking/photos</li>
-
-       </ul>
-       <button class="btn-outline" style="width:100%;" onclick="openPlan('carnival')">Get started</button>
-
+    <div class="pricing-card" data-plan="carnival">
+      <h3>Carnival</h3>
+      <div class="plan-price">₹5,889 <span>/month</span></div>
+      <div class="plan-anchor-row"><s class="plan-anchor">₹6,999</s><span class="plan-save">Save 16%</span></div>
+      <div class="plan-desc">For families with 2+ dogs or cats.</div>
+      <ul class="plan-features">
+        <li class="plan-feature">30 walks included per month for 2 pets for 30 min</li>
+        <li class="plan-feature">Free hair brushing/paws cleaning on every walk</li>
+        <li class="plan-feature">Free 1 grooming/month(wash + nails clipping)</li>
+        <li class="plan-feature">Free delivery on medicines</li>
+        <li class="plan-feature">Free boarding up to 1 night</li>
+        <li class="plan-feature">10% off on food orders</li>
+        <li class="plan-feature">Live 🟢 tracking/photos</li>
+     </ul>
+     <button class="btn-outline" style="width:100%;" onclick="openPlan('carnival')">Get started</button>
     </div>
   </div>
 </section>

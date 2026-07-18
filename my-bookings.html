@@ -419,6 +419,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .coming-badge { display: inline-block; background: var(--paw-soft); color: var(--paw); font-size: .7rem; font-weight: 800; padding: 4px 14px; border-radius: 100px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1.5rem; }
 .feature-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
 .feature-card { background: var(--white); border: 1.5px solid var(--border2); border-radius: 14px; padding: 1.1rem 1.2rem; text-align: left; flex: 1 1 200px; max-width: 260px; }
+.feature-card.clickable { cursor: pointer; transition: border-color .15s, transform .15s; }
+.feature-card.clickable:hover { border-color: var(--paw); transform: translateY(-2px); }
 .feature-card-icon { font-size: 1.4rem; margin-bottom: .5rem; }
 .feature-card-title { font-weight: 700; font-size: .85rem; margin-bottom: 2px; }
 .feature-card-sub { font-size: .75rem; color: var(--muted); line-height: 1.5; }
@@ -484,6 +486,31 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .bk-list-meta { font-size: .75rem; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bk-list-right { text-align: right; flex-shrink: 0; }
 .bk-list-pay { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+.bk-list-row.clickable { cursor: pointer; }
+.bk-list-chevron { font-size: 1.2rem; color: var(--muted); flex-shrink: 0; margin-left: 2px; }
+
+/* PAGINATION */
+.bk-pagination { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: 1.25rem; flex-wrap: wrap; }
+.bk-page-btn, .bk-page-nav {
+  min-width: 34px; height: 34px; padding: 0 10px; border-radius: 8px; border: 1.5px solid var(--border);
+  background: var(--white); color: var(--night); font-size: .82rem; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all .15s;
+}
+.bk-page-btn:hover, .bk-page-nav:hover:not(:disabled) { border-color: var(--paw); color: var(--paw); }
+.bk-page-btn.active { background: var(--paw); border-color: var(--paw); color: #fff; }
+.bk-page-nav:disabled { opacity: .4; cursor: not-allowed; }
+.bk-page-ellipsis { color: var(--muted); font-size: .82rem; padding: 0 4px; }
+
+/* BOOKING DETAIL PAGE */
+.bkd-back {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--paw);
+  font-weight: 700; font-size: .85rem; margin-bottom: 1rem; background: none; border: none; font-family: inherit; padding: 0;
+}
+.bkd-back:hover { text-decoration: underline; }
+.bkd-card { background: var(--white); border: 1px solid var(--border2); border-radius: 16px; padding: 1.5rem; }
+.bkd-top { display: flex; align-items: center; gap: 12px; margin-bottom: .25rem; }
+.bkd-title { font-size: 1.05rem; font-weight: 800; }
+.bkd-footer { display: flex; align-items: center; gap: .75rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border2); flex-wrap: wrap; }
 
 /* PROFILE */
 .profile-shell { display: grid; grid-template-columns: 260px 1fr; gap: 1.5rem; align-items: start; }
@@ -654,8 +681,10 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .shop-item .price { font-weight: 700; color: var(--paw); font-size: .92rem; margin-top: .4rem; display: block; }
 
 /* Pricing */
-.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.1rem; }
-.pricing-card { background: var(--white); border: 1px solid var(--border2); border-radius: 14px; padding: 1.5rem; position: relative; }
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.1rem; align-items: stretch; }
+.pricing-card { background: var(--white); border: 1px solid var(--border2); border-radius: 14px; padding: 1.5rem; position: relative; display: flex; flex-direction: column; }
+.pricing-card .ex-btn { margin-top: auto; }
+.pricing-card .plan-features { flex: 1; }
 .pricing-card.featured { background: var(--night); color: #fff; border-color: var(--night); }
 .pricing-card.featured h3, .pricing-card.featured .plan-price { color: #fff; }
 .pricing-card.featured .plan-desc { color: rgba(255,255,255,.55); }
@@ -717,7 +746,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 }
 
 /* BOOK A SERVICE PAGE */
-.book-form-wrap { max-width: 720px; }
+.book-form-wrap { max-width: 720px; margin: 0 auto; }
 .bk-form-card { background: var(--white); border: 1px solid var(--border2); border-radius: 20px; padding: 2rem; }
 .bk-step-label { display: block; font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: .6rem; }
 .bk-service-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 1.5rem; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
@@ -1126,6 +1155,12 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div id="bookingsList"><div class="loading-msg">Loading your bookings…</div></div>
     </div>
 
+    <!-- BOOKING DETAIL -->
+    <div class="page" id="page-bookingDetail" style="display:none">
+      <button class="bkd-back" onclick="showPage('bookings')">← Back to My Bookings</button>
+      <div id="bookingDetailContent"></div>
+    </div>
+
     <!-- MY PETS -->
     <div class="page" id="page-pets" style="display:none">
       <div class="page-title">Pet Passport 🐾</div>
@@ -1147,15 +1182,14 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
       <div class="placeholder-page">
         <div class="placeholder-icon">🐶</div>
-        <div class="coming-badge">Coming Soon</div>
         <div class="placeholder-title">Digital Pet Profiles</div>
-        <div class="placeholder-sub">Give your pet a complete digital identity — health records, grooming history, and more. All in one place.</div>
+        <div class="placeholder-sub">Your pet's complete digital identity — health records, grooming history, and more. All in one place.</div>
         <div class="feature-cards">
-          <div class="feature-card"><div class="feature-card-icon">✂️</div><div class="feature-card-title">Grooming History</div><div class="feature-card-sub">Photo log of every grooming session — see how they've changed!</div></div>
-          <div class="feature-card"><div class="feature-card-icon">🩺</div><div class="feature-card-title">Medical Notes</div><div class="feature-card-sub">Allergies, medications, vet visits — all in one safe place</div></div>
-          <div class="feature-card"><div class="feature-card-icon">📅</div><div class="feature-card-title">Timeline</div><div class="feature-card-sub">Complete history: walks, food, vet, grooming — every event</div></div>
-          <div class="feature-card"><div class="feature-card-icon">📸</div><div class="feature-card-title">Photo Gallery</div><div class="feature-card-sub">Your pet's journey through photos over time</div></div>
-          <div class="feature-card"><div class="feature-card-icon">📄</div><div class="feature-card-title">Downloadable Records</div><div class="feature-card-sub">Export your pet's full health record as a PDF anytime</div></div>
+          <div class="feature-card clickable" onclick="openGroomingModal()"><div class="feature-card-icon">✂️</div><div class="feature-card-title">Grooming History</div><div class="feature-card-sub">Photo log of every grooming session — see how they've changed!</div></div>
+          <div class="feature-card clickable" onclick="openMedicalNotesModal()"><div class="feature-card-icon">🩺</div><div class="feature-card-title">Medical Notes</div><div class="feature-card-sub">Allergies, medications, vet visits — all in one safe place</div></div>
+          <div class="feature-card clickable" onclick="openTimelineModal()"><div class="feature-card-icon">📅</div><div class="feature-card-title">Timeline</div><div class="feature-card-sub">Complete history: walks, food, vet, grooming — every event</div></div>
+          <div class="feature-card clickable" onclick="openPhotoGalleryModal()"><div class="feature-card-icon">📸</div><div class="feature-card-title">Photo Gallery</div><div class="feature-card-sub">Your pet's journey through photos over time</div></div>
+          <div class="feature-card clickable" onclick="downloadPetRecords()"><div class="feature-card-icon">📄</div><div class="feature-card-title">Downloadable Records</div><div class="feature-card-sub">Export your pet's full health record as a PDF anytime</div></div>
         </div>
       </div>
     </div>
@@ -1772,7 +1806,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
           <textarea id="fbMessage" rows="4" placeholder="Tell us about your experience with Urban Paws…" style="width:100%;padding:11px 14px;border:1.5px solid var(--border2);border-radius:10px;font-size:.9rem;font-family:inherit;resize:vertical;outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--paw)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
         </div>
 
-        <button class="bk-save-btn" style="margin-top:1rem;width:100%;" onclick="submitFeedback()">Submit Review ⭐</button>
+        <button class="save-btn" onclick="submitFeedback()">Submit Review ⭐</button>
         <div id="fbErr" style="margin-top:.5rem;font-size:.82rem;min-height:1rem;"></div>
       </div>
 
@@ -2100,6 +2134,17 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   </div>
 </div>
 
+<!-- PET FEATURE MODAL (Grooming / Medical Notes / Timeline / Photo Gallery) -->
+<div id="petFeatureModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:20px;max-width:560px;width:100%;padding:1.8rem;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div id="petFeatureModalTitle" style="font-size:1.1rem;font-weight:800"></div>
+      <button onclick="closePetFeatureModal()" style="background:#f3f4f6;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem;color:#6b7280">✕</button>
+    </div>
+    <div id="petFeatureModalBody"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
@@ -2117,18 +2162,19 @@ function closeSidebar() {
   document.getElementById('sbOverlay').classList.remove('open');
 }
 
-const PAGES = ['dashboard','bookings','pets','referral','rewards','book','onboarding','profile','services','food','pricing','faq','feedback'];
+const PAGES = ['dashboard','bookings','bookingDetail','pets','referral','rewards','book','onboarding','profile','services','food','pricing','faq','feedback'];
 const PAGE_LABELS = {
   dashboard:'Dashboard', bookings:'My Bookings', book:'Book a Service',
   profile:'My Profile', services:'Services', food:'Pet Food',
   pricing:'Pricing & Plans', faq:'FAQs', onboarding:'Set Up Plan',
   pets:'Pet Passport', rewards:'Rewards', referral:'Invite a Friend',
+  bookingDetail:'Booking Details',
 };
 function showPage(id) {
   PAGES.forEach(p => {
     document.getElementById('page-'+p).style.display = p===id ? '' : 'none';
     const nav = document.getElementById('nav-'+p);
-    if (nav) nav.classList.toggle('active', p===id);
+    if (nav) nav.classList.toggle('active', p===id || (id==='bookingDetail' && p==='bookings'));
   });
   const lbl = document.getElementById('cbPageLabel');
   if (lbl) lbl.textContent = PAGE_LABELS[id] || id;
@@ -2384,84 +2430,110 @@ function renderRewards() {
 }
 
 function renderCard(b) {
-  const cancelled = b.status === 'cancelled';
   const completed = b.status === 'completed';
-  const started   = b.status === 'started';
-  const active = ['pending','assigned','confirmed'].includes(b.status);
-  const svc = (b.service||'').replace(/'/g,"&#39;");
-  const bid = b.id;
-  const bJson = JSON.stringify(b).replace(/'/g, '&#39;');
-  return `<div class="bk-list-row" id="card-${b.id}">
+  return `<div class="bk-list-row clickable" id="card-${b.id}" onclick="openBookingDetail('${b.id}')">
     <div class="bk-list-icon">${svcIcon(b.service)}</div>
     <div class="bk-list-body">
       <div class="bk-list-svc">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
       <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
-      ${progressHtml(b.status)}
-      ${b.executive_id && !['pending','cancelled'].includes(b.status) ? `<div style="margin-top:10px;padding:12px 14px;background:#f5f6ff;border-radius:12px;border:1px solid rgba(108,111,212,.15)">
-        <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6C6FD4;margin-bottom:9px">✅ Booking Confirmed</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(108,111,212,.1)">
-          <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6C6FD4,#5254B8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:800;flex-shrink:0">${(b.executive_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
-          <div>
-            <div style="font-size:.85rem;font-weight:700;color:#1a1a2e">${b.executive_name||'—'}</div>
-            <div style="font-size:.7rem;color:#6b7280">Your Urban Paws Executive</div>
-            ${b.executive_exec_id ? `<span style="font-size:.62rem;font-weight:700;background:rgba(108,111,212,.1);color:#6C6FD4;padding:2px 8px;border-radius:5px">${b.executive_exec_id}</span>` : ''}
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
-            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">⏰ Estimated Arrival</div>
-            <div style="font-size:.78rem;font-weight:700;color:#1a1a2e">${b.time_slot||'—'}</div>
-            <div style="font-size:.65rem;color:#6b7280">${b.booking_date||''}</div>
-          </div>
-          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
-            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">📱 Contact</div>
-            <div style="font-size:.78rem;font-weight:700;color:#1a1a2e;word-break:break-all">${b.executive_phone||'hello@urbanpaws.app'}</div>
-          </div>
-          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
-            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">🚗 Vehicle</div>
-            <div style="font-size:.78rem;font-weight:700;color:#1a1a2e">${b.executive_vehicle||'Urban Paws Vehicle'}</div>
-          </div>
-          <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
-            <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">📍 Tracking</div>
-            <div style="font-size:.78rem;font-weight:700;color:${b.status==='started'?'#f97316':b.status==='completed'?'#16a34a':'#6C6FD4'}">${b.status==='assigned'?'● Assigned':b.status==='confirmed'?'● On the Way':b.status==='started'?'● In Progress':'✓ Completed'}</div>
-          </div>
-        </div>
-      </div>` : ''}
-      ${b.started_at ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(249,115,22,.07);border-radius:10px;border:1px solid rgba(249,115,22,.22);font-size:.75rem">
-        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
-          <span><span style="color:#9ca3af">📅</span> <strong>${new Date(b.started_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</strong></span>
-          <span><span style="color:#9ca3af">▶ Start</span> <strong>${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>
-          ${b.completed_at ? `<span><span style="color:#9ca3af">🏁 End</span> <strong>${new Date(b.completed_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>` : ''}
-          <span><span style="color:#9ca3af">⏱</span> ${b.completed_at ? `<strong>${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</strong>` : `<strong id="timer-${b.id}" style="color:#f97316;font-variant-numeric:tabular-nums">--:--:--</strong>`}</span>
-        </div>
-      </div>` : ''}
-      ${(b.status === 'confirmed' || b.status === 'started') ? `<div style="margin-top:10px">
-        <button class="bk-action-btn" style="background:rgba(59,130,246,.1);color:#1d4ed8;border-color:rgba(59,130,246,.3);" onclick="toggleTrackMap('${bid}')">📍 Track Executive Live</button>
-        <div id="track-section-${bid}" style="display:none;margin-top:8px">
-          <div id="map-${bid}" style="height:280px;border-radius:12px;overflow:hidden;border:1px solid rgba(59,130,246,.2)"></div>
-          <div id="track-status-${bid}" style="font-size:.72rem;color:var(--muted);margin-top:5px;text-align:center">Loading location…</div>
-        </div>
-      </div>` : ''}
-      ${active ? `<div class="bk-active-actions">
-        <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','${b.booking_date||''}','${(b.time_slot||'').replace(/'/g,"\\'")}','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
-        <button class="bk-action-btn bk-cancel-btn" onclick="openCancelModal('${bid}','${b.booking_id||bid}','${svc}')">✕ Cancel</button>
-      </div>` : ''}
-      ${cancelled ? `<div class="bk-cancel-actions">
-        <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','','','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
-        <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}','${bid}')">↩ Book Again</button>
-      </div>` : ''}
-      ${completed ? `<div class="bk-cancel-actions">
-        <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}','${bid}')">↩ Book Again</button>
-        <button class="bk-action-btn" style="background:#fef3c7;color:#92400e;border-color:#f59e0b;" onclick="openFeedbackFromBooking('${svc}')">⭐ Leave Feedback</button>
-      </div>` : ''}
     </div>
     <div class="bk-list-right">
       <div id="badge-${b.id}">${badgeHtml(b.status)}</div>
       ${completed ? `<span class="coins-earned"><span class="coin-icon">🎉</span> +100 🪙</span>` : ''}
       <div class="bk-list-pay">💳 ${b.payment||'—'}</div>
+    </div>
+    <div class="bk-list-chevron">›</div>
+  </div>`;
+}
+
+function renderBookingDetail(b) {
+  const cancelled = b.status === 'cancelled';
+  const completed = b.status === 'completed';
+  const active = ['pending','assigned','confirmed'].includes(b.status);
+  const svc = (b.service||'').replace(/'/g,"&#39;");
+  const bid = b.id;
+  const bJson = JSON.stringify(b).replace(/'/g, '&#39;');
+  return `<div class="bkd-card">
+    <div class="bkd-top">
+      <div class="bk-list-icon" style="width:48px;height:48px;font-size:1.3rem;">${svcIcon(b.service)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="bkd-title">${b.service||'—'} <span class="bk-list-id">#${b.booking_id||b.id}</span></div>
+        <div class="bk-list-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
+      </div>
+      <div id="badge-d-${b.id}">${badgeHtml(b.status)}</div>
+    </div>
+    ${progressHtml(b.status)}
+    ${b.executive_id && !['pending','cancelled'].includes(b.status) ? `<div style="margin-top:14px;padding:12px 14px;background:#f5f6ff;border-radius:12px;border:1px solid rgba(108,111,212,.15)">
+      <div style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6C6FD4;margin-bottom:9px">✅ Booking Confirmed</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(108,111,212,.1)">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6C6FD4,#5254B8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:800;flex-shrink:0">${(b.executive_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:#1a1a2e">${b.executive_name||'—'}</div>
+          <div style="font-size:.7rem;color:#6b7280">Your Urban Paws Executive</div>
+          ${b.executive_exec_id ? `<span style="font-size:.62rem;font-weight:700;background:rgba(108,111,212,.1);color:#6C6FD4;padding:2px 8px;border-radius:5px">${b.executive_exec_id}</span>` : ''}
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+          <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">⏰ Estimated Arrival</div>
+          <div style="font-size:.78rem;font-weight:700;color:#1a1a2e">${b.time_slot||'—'}</div>
+          <div style="font-size:.65rem;color:#6b7280">${b.booking_date||''}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+          <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">📱 Contact</div>
+          <div style="font-size:.78rem;font-weight:700;color:#1a1a2e;word-break:break-all">${b.executive_phone||'hello@urbanpaws.app'}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+          <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">🚗 Vehicle</div>
+          <div style="font-size:.78rem;font-weight:700;color:#1a1a2e">${b.executive_vehicle||'Urban Paws Vehicle'}</div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:7px 9px;border:1px solid #eeeef8">
+          <div style="font-size:.6rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">📍 Tracking</div>
+          <div style="font-size:.78rem;font-weight:700;color:${b.status==='started'?'#f97316':b.status==='completed'?'#16a34a':'#6C6FD4'}">${b.status==='assigned'?'● Assigned':b.status==='confirmed'?'● On the Way':b.status==='started'?'● In Progress':'✓ Completed'}</div>
+        </div>
+      </div>
+    </div>` : ''}
+    ${b.started_at ? `<div style="margin-top:10px;padding:8px 12px;background:rgba(249,115,22,.07);border-radius:10px;border:1px solid rgba(249,115,22,.22);font-size:.75rem">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <span><span style="color:#9ca3af">📅</span> <strong>${new Date(b.started_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</strong></span>
+        <span><span style="color:#9ca3af">▶ Start</span> <strong>${new Date(b.started_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>
+        ${b.completed_at ? `<span><span style="color:#9ca3af">🏁 End</span> <strong>${new Date(b.completed_at).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}).toUpperCase()}</strong></span>` : ''}
+        <span><span style="color:#9ca3af">⏱</span> ${b.completed_at ? `<strong>${Math.round((new Date(b.completed_at)-new Date(b.started_at))/60000)} min</strong>` : `<strong id="timer-${b.id}" style="color:#f97316;font-variant-numeric:tabular-nums">--:--:--</strong>`}</span>
+      </div>
+    </div>` : ''}
+    ${(b.status === 'confirmed' || b.status === 'started') ? `<div style="margin-top:10px">
+      <button class="bk-action-btn" style="background:rgba(59,130,246,.1);color:#1d4ed8;border-color:rgba(59,130,246,.3);" onclick="toggleTrackMap('${bid}')">📍 Track Executive Live</button>
+      <div id="track-section-${bid}" style="display:none;margin-top:8px">
+        <div id="map-${bid}" style="height:280px;border-radius:12px;overflow:hidden;border:1px solid rgba(59,130,246,.2)"></div>
+        <div id="track-status-${bid}" style="font-size:.72rem;color:var(--muted);margin-top:5px;text-align:center">Loading location…</div>
+      </div>
+    </div>` : ''}
+    ${active ? `<div class="bk-active-actions">
+      <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','${b.booking_date||''}','${(b.time_slot||'').replace(/'/g,"\\'")}','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
+      <button class="bk-action-btn bk-cancel-btn" onclick="openCancelModal('${bid}','${b.booking_id||bid}','${svc}')">✕ Cancel</button>
+    </div>` : ''}
+    ${cancelled ? `<div class="bk-cancel-actions">
+      <button class="bk-action-btn bk-reschedule" onclick="openReschedModal('${bid}','','','${svc}','${b.booking_id||bid}')">📅 Reschedule</button>
+      <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}','${bid}')">↩ Book Again</button>
+    </div>` : ''}
+    ${completed ? `<div class="bk-cancel-actions">
+      <button class="bk-action-btn bk-bookagain" onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'").split(' –')[0]}','${bid}')">↩ Book Again</button>
+      <button class="bk-action-btn" style="background:#fef3c7;color:#92400e;border-color:#f59e0b;" onclick="openFeedbackFromBooking('${svc}')">⭐ Leave Feedback</button>
+    </div>` : ''}
+    <div class="bkd-footer">
+      ${completed ? `<span class="coins-earned"><span class="coin-icon">🎉</span> +100 🪙</span>` : ''}
+      <div class="bk-list-pay">💳 ${b.payment||'—'}</div>
       ${completed ? `<button class="bk-invoice-btn" onclick='generateInvoice(${bJson})'>🧾 Invoice</button>` : ''}
     </div>
   </div>`;
+}
+
+function openBookingDetail(id) {
+  const b = allBookings.find(x => String(x.id) === String(id));
+  if (!b) return;
+  document.getElementById('bookingDetailContent').innerHTML = renderBookingDetail(b);
+  showPage('bookingDetail');
+  _startAllTimers();
 }
 
 function updateStats(bk) {
@@ -2512,10 +2584,14 @@ function renderRecent(bk) {
     </div>`).join('') + '</div>';
 }
 
+const BK_PAGE_SIZE = 10;
+let _bkFiltered = [];
+let _bkPage = 1;
+
 function applyBkFilter() {
   const status = document.getElementById('fStatus').value;
   const search = document.getElementById('fSearch').value.toLowerCase();
-  const filtered = allBookings.filter(b => {
+  _bkFiltered = allBookings.filter(b => {
     if (status && b.status!==status) return false;
     if (search && !(
       (b.service||'').toLowerCase().includes(search) ||
@@ -2524,14 +2600,47 @@ function applyBkFilter() {
     )) return false;
     return true;
   });
-  document.getElementById('bkCount').textContent = filtered.length + ' booking' + (filtered.length!==1?'s':'');
+  document.getElementById('bkCount').textContent = _bkFiltered.length + ' booking' + (_bkFiltered.length!==1?'s':'');
+  _bkPage = 1;
+  renderBkPage();
+}
+
+function renderBkPage() {
   const list = document.getElementById('bookingsList');
-  if (!filtered.length) {
+  if (!_bkFiltered.length) {
     list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No bookings match</h3><p>Try clearing your filters.</p></div>`;
     return;
   }
-  list.innerHTML = '<div class="bk-list">' + filtered.map(renderCard).join('') + '</div>';
+  const totalPages = Math.max(1, Math.ceil(_bkFiltered.length / BK_PAGE_SIZE));
+  _bkPage = Math.min(Math.max(1, _bkPage), totalPages);
+  const start = (_bkPage - 1) * BK_PAGE_SIZE;
+  const pageItems = _bkFiltered.slice(start, start + BK_PAGE_SIZE);
+  list.innerHTML = '<div class="bk-list">' + pageItems.map(renderCard).join('') + '</div>' + renderBkPagination(totalPages);
   _startAllTimers();
+}
+
+function renderBkPagination(totalPages) {
+  if (totalPages <= 1) return '';
+  const nums = [];
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - _bkPage) <= 1) nums.push(i);
+    else if (nums[nums.length - 1] !== '…') nums.push('…');
+  }
+  const numsHtml = nums.map(n => n === '…'
+    ? `<span class="bk-page-ellipsis">…</span>`
+    : `<button class="bk-page-btn ${n===_bkPage?'active':''}" onclick="goBkPage(${n})">${n}</button>`
+  ).join('');
+  return `<div class="bk-pagination">
+    <button class="bk-page-nav" onclick="goBkPage(${_bkPage-1})" ${_bkPage===1?'disabled':''}>‹ Prev</button>
+    ${numsHtml}
+    <button class="bk-page-nav" onclick="goBkPage(${_bkPage+1})" ${_bkPage===totalPages?'disabled':''}>Next ›</button>
+  </div>`;
+}
+
+function goBkPage(p) {
+  _bkPage = p;
+  renderBkPage();
+  document.getElementById('bookingsList').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function loadBookings(email) {
@@ -3241,6 +3350,169 @@ function deleteVaccinationRecord(id) {
   setVaxRecords(getVaxRecords().filter(r => r.id !== id));
   renderVaxCard();
   showToast('🗑 Vaccination record removed', 'success');
+}
+
+/* ── Pet Feature Modal (Grooming / Medical Notes / Timeline / Photo Gallery) ── */
+function closePetFeatureModal() {
+  document.getElementById('petFeatureModal').style.display = 'none';
+}
+function openPetFeatureModal(title, bodyHtml) {
+  document.getElementById('petFeatureModalTitle').textContent = title;
+  document.getElementById('petFeatureModalBody').innerHTML = bodyHtml;
+  document.getElementById('petFeatureModal').style.display = 'flex';
+}
+
+function getHealthInfo() {
+  if (!currentUser) return {};
+  return JSON.parse(localStorage.getItem('urbanpaws_health_' + currentUser.id) || '{}');
+}
+
+function getGroomingRecords() {
+  if (!currentUser) return [];
+  return JSON.parse(localStorage.getItem('urbanpaws_grooming_' + currentUser.id) || '[]');
+}
+function setGroomingRecords(records) {
+  if (!currentUser) return;
+  localStorage.setItem('urbanpaws_grooming_' + currentUser.id, JSON.stringify(records));
+}
+
+function renderGroomingBody() {
+  const records = getGroomingRecords().slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  const list = !records.length
+    ? `<div class="vax-empty">No grooming sessions logged yet. Add your pet's first one below.</div>`
+    : `<div class="vax-list" style="margin-bottom:1.2rem">${records.map(r => `
+      <div class="vax-row">
+        ${r.photoUrl ? `<img src="${escapeHtml(r.photoUrl)}" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">` : `<div class="vax-row-icon">✂️</div>`}
+        <div class="vax-row-body">
+          <div class="vax-row-title">${escapeHtml(r.groomer || 'Grooming Session')}</div>
+          <div class="vax-row-meta">📅 ${r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
+          ${r.notes ? `<div class="vax-row-notes">"${escapeHtml(r.notes)}"</div>` : ''}
+        </div>
+        <div class="vax-row-actions"><button class="vax-del" onclick="deleteGroomingEntry('${r.id}')" title="Delete">🗑</button></div>
+      </div>`).join('')}</div>`;
+  return list + `
+    <div style="border-top:1px solid var(--border2);padding-top:1rem">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:.75rem">Log a new grooming session</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+        <div><label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Date</label>
+          <input type="date" id="grmDate" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box"></div>
+        <div><label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Groomer / Salon</label>
+          <input type="text" id="grmGroomer" placeholder="e.g. Urban Paws Grooming" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box"></div>
+      </div>
+      <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Photo URL (optional)</label>
+      <input type="text" id="grmPhoto" placeholder="Paste a photo link" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box;margin-bottom:.75rem">
+      <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Notes</label>
+      <textarea id="grmNotes" rows="2" placeholder="e.g. Full groom + nail trim, coat looking great" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box;resize:vertical;margin-bottom:1rem"></textarea>
+      <button onclick="addGroomingEntry()" style="width:100%;padding:11px;border-radius:100px;border:none;background:var(--paw);color:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">➕ Add Session</button>
+    </div>`;
+}
+
+function openGroomingModal() {
+  openPetFeatureModal('✂️ Grooming History', renderGroomingBody());
+}
+
+function addGroomingEntry() {
+  const date = document.getElementById('grmDate').value;
+  if (!date) { showToast('⚠️ Please pick a date', 'error'); return; }
+  const records = getGroomingRecords();
+  records.push({
+    id: Date.now() + '-' + Math.random().toString(36).slice(2,8),
+    date,
+    groomer: document.getElementById('grmGroomer').value.trim(),
+    photoUrl: document.getElementById('grmPhoto').value.trim(),
+    notes: document.getElementById('grmNotes').value.trim(),
+  });
+  setGroomingRecords(records);
+  showToast('✅ Grooming session added!', 'success');
+  document.getElementById('petFeatureModalBody').innerHTML = renderGroomingBody();
+}
+
+function deleteGroomingEntry(id) {
+  setGroomingRecords(getGroomingRecords().filter(r => r.id !== id));
+  showToast('🗑 Grooming session removed', 'success');
+  document.getElementById('petFeatureModalBody').innerHTML = renderGroomingBody();
+}
+
+function openMedicalNotesModal() {
+  const h = getHealthInfo();
+  const rows = [
+    ['🐾 Allergies', h.allergies], ['🦴 Limping / Mobility', h.limping],
+    ['🩹 Recent Surgery', h.surgery], ['🍽 Eating Habits', h.eating],
+    ['💉 Vaccination Status', h.vaccinated], ['🐕 Temperament', h.temperament],
+    ['📝 Other Concerns', h.other_issues],
+  ].filter(([,v]) => v);
+  const body = !rows.length
+    ? `<div class="vax-empty">No medical notes yet. Add them from your profile's Additional Health Info section.</div>`
+    : `<div class="vax-list">${rows.map(([label,val]) => `
+      <div class="vax-row">
+        <div class="vax-row-body">
+          <div class="vax-row-title">${label}</div>
+          <div class="vax-row-meta">${escapeHtml(val)}</div>
+        </div>
+      </div>`).join('')}</div>`;
+  openPetFeatureModal('🩺 Medical Notes', body + `
+    <button onclick="closePetFeatureModal();showPage('profile')" style="width:100%;margin-top:1rem;padding:11px;border-radius:100px;border:1.5px solid #e5e7eb;background:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">✎ Edit in My Profile</button>`);
+}
+
+function openTimelineModal() {
+  const events = [];
+  (allBookings||[]).forEach(b => events.push({
+    date: b.booking_date || '', icon: svcIcon(b.service), title: b.service || 'Booking',
+    meta: badgeHtml(b.status).replace(/<[^>]+>/g,'').trim() ? (b.status||'') : '',
+  }));
+  getVaxRecords().forEach(r => events.push({ date: r.date || '', icon: '💉', title: 'Vaccination: ' + (r.injections||'—'), meta: r.place||'' }));
+  getGroomingRecords().forEach(r => events.push({ date: r.date || '', icon: '✂️', title: 'Grooming Session', meta: r.groomer||'' }));
+  events.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  const body = !events.length
+    ? `<div class="vax-empty">No history yet. Bookings, vaccinations and grooming sessions will show up here.</div>`
+    : `<div class="vax-list">${events.map(e => `
+      <div class="vax-row">
+        <div class="vax-row-icon">${e.icon}</div>
+        <div class="vax-row-body">
+          <div class="vax-row-title">${escapeHtml(e.title)}</div>
+          <div class="vax-row-meta">📅 ${e.date ? new Date(e.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}${e.meta ? ' · '+escapeHtml(e.meta) : ''}</div>
+        </div>
+      </div>`).join('')}</div>`;
+  openPetFeatureModal('📅 Timeline', body);
+}
+
+function openPhotoGalleryModal() {
+  const photos = getGroomingRecords().filter(r => r.photoUrl);
+  const body = !photos.length
+    ? `<div class="vax-empty">No photos yet. Add a photo link when you log a grooming session and it'll show up here.</div>`
+    : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem">${photos.map(r => `
+      <div>
+        <img src="${escapeHtml(r.photoUrl)}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid var(--border2)" onerror="this.style.display='none'">
+        <div style="font-size:.68rem;color:var(--muted);margin-top:4px;text-align:center">${r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : ''}</div>
+      </div>`).join('')}</div>`;
+  openPetFeatureModal('📸 Photo Gallery', body);
+}
+
+function downloadPetRecords() {
+  const h = getHealthInfo();
+  const vax = getVaxRecords();
+  const grooming = getGroomingRecords();
+  const petName = h.pet_name || 'Your Pet';
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>${petName} — Pet Records</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1a2e;background:#fff;padding:48px}
+  .header{margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #f0f0f5}.brand{font-size:1.5rem;font-weight:800;color:#6C6FD4}
+  .brand-sub{font-size:.8rem;color:#9ca3af;margin-top:3px}h2{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#9ca3af;margin:24px 0 10px}
+  .row{padding:10px 0;border-bottom:1px solid #f5f5f5;font-size:.9rem}.row b{display:inline-block;min-width:180px;color:#6b7280;font-weight:600}
+  .print-btn{display:block;margin:32px auto 0;padding:12px 36px;background:#6C6FD4;color:#fff;border:none;border-radius:100px;font-size:.95rem;font-weight:700;cursor:pointer}
+  @media print{.print-btn{display:none!important}}</style></head><body>
+  <div class="header"><div class="brand">🐾 Urban Paws</div><div class="brand-sub">Pet Health Record — ${petName}</div></div>
+  <h2>Pet Details</h2>
+  ${['pet_name','breed','pet_age','gender'].map(k => `<div class="row"><b>${k.replace('_',' ')}</b> ${escapeHtml(h[k]||'—')}</div>`).join('')}
+  <h2>Medical Notes</h2>
+  ${['allergies','limping','surgery','eating','vaccinated','temperament','other_issues'].map(k => `<div class="row"><b>${k.replace('_',' ')}</b> ${escapeHtml(h[k]||'—')}</div>`).join('')}
+  <h2>Vaccination Records (${vax.length})</h2>
+  ${vax.length ? vax.map(r => `<div class="row"><b>${escapeHtml(r.date||'—')}</b> ${escapeHtml(r.injections||'—')} ${r.place ? '· '+escapeHtml(r.place) : ''}</div>`).join('') : `<div class="row">No records yet.</div>`}
+  <h2>Grooming History (${grooming.length})</h2>
+  ${grooming.length ? grooming.map(r => `<div class="row"><b>${escapeHtml(r.date||'—')}</b> ${escapeHtml(r.groomer||'—')} ${r.notes ? '· '+escapeHtml(r.notes) : ''}</div>`).join('') : `<div class="row">No records yet.</div>`}
+  <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  </body></html>`);
+  win.document.close();
 }
 
 function checkVaxReminders(force) {

@@ -82,7 +82,11 @@
       "Bash(node _tmp_exec_mobile_check.mjs)",
       "Bash(node _tmp_bookings_mobile_check.mjs)",
       "Bash(curl -s https://unpkg.com/leaflet@1.9.4/dist/leaflet.css)",
-      "Bash(node _tmp_verify_leaflet_fix.mjs)"
+      "Bash(node _tmp_verify_leaflet_fix.mjs)",
+      "Bash(grep -n \"'badge-'\\\\|\\\\\"badge-\\\\\"\\\\|badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
+      "Bash(grep -n \"getElementById\\('badge-\\\\|getElementById\\(\\\\\"badge-\\\\|id=\\\\\"badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
+      "Bash(grep -n \"'badge-' *+\\\\|\\\\`badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
+      "Bash(node _tmp_verify_all.mjs)"
     ]
   }
 }
