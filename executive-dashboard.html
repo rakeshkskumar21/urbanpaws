@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>.leaflet-container{isolation:isolate;}</style>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,7 +26,7 @@
     /* ── SIDEBAR ── */
     .sidebar {
       position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
-      background: #fff; border-right: 1px solid var(--border); z-index: 50;
+      background: #fff; border-right: 1px solid var(--border); z-index: 100;
       display: flex; flex-direction: column; overflow-y: auto;
     }
     .sb-brand { padding: 1.25rem 1.2rem .9rem; border-bottom: 1px solid var(--border); }
@@ -326,7 +327,7 @@
     </div>
 
     <!-- Location Sharing Chip -->
-    <div id="dashLocChip" style="display:none;background:rgba(34,197,94,.12);border:1.5px solid rgba(34,197,94,.35);border-radius:100px;padding:5px 16px;margin-bottom:1rem;display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:#15803d">
+    <div id="dashLocChip" style="display:none;background:rgba(34,197,94,.12);border:1.5px solid rgba(34,197,94,.35);border-radius:100px;padding:5px 16px;margin-bottom:1rem;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:#15803d">
       📡 Location Sharing Active
     </div>
 
