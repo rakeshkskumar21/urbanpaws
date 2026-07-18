@@ -1130,8 +1130,19 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
     <!-- BOOKINGS -->
     <div class="page" id="page-bookings" style="display:none">
-      <div class="page-title">My Bookings</div>
-      <div class="page-sub">All your service bookings in one place</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+        <div>
+          <div class="page-title" style="margin-bottom:.3rem;">My Bookings</div>
+          <div class="page-sub">All your service bookings in one place</div>
+        </div>
+        <button class="qa-btn qa-primary" onclick="showPage('book')">➕ New Booking</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card accent"><div class="stat-label">Total Bookings</div><div class="stat-value" id="bkStatTotal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Upcoming</div><div class="stat-value" id="bkStatUpcoming">—</div></div>
+        <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="bkStatCompleted">—</div></div>
+        <div class="stat-card"><div class="stat-label">Cancelled</div><div class="stat-value" id="bkStatCancelled">—</div></div>
+      </div>
       <div class="bk-plan-strip" id="bkPlanStrip" style="display:none">
         <span>📋 Active plan: <strong id="bkPlanName">—</strong></span>
         <span style="margin-left:auto;cursor:pointer;color:var(--paw);font-weight:700;font-size:.8rem" onclick="showPage('pricing')">Change plan ↗</span>
@@ -2537,10 +2548,18 @@ function openBookingDetail(id) {
 }
 
 function updateStats(bk) {
-  document.getElementById('statTotal').textContent     = bk.length;
-  document.getElementById('statUpcoming').textContent  = bk.filter(b=>['pending','assigned','confirmed','started'].includes(b.status)).length;
-  document.getElementById('statCompleted').textContent = bk.filter(b=>b.status==='completed').length;
-  document.getElementById('statCancelled').textContent = bk.filter(b=>b.status==='cancelled').length;
+  const total     = bk.length;
+  const upcoming  = bk.filter(b=>['pending','assigned','confirmed','started'].includes(b.status)).length;
+  const completed = bk.filter(b=>b.status==='completed').length;
+  const cancelled = bk.filter(b=>b.status==='cancelled').length;
+  document.getElementById('statTotal').textContent     = total;
+  document.getElementById('statUpcoming').textContent  = upcoming;
+  document.getElementById('statCompleted').textContent = completed;
+  document.getElementById('statCancelled').textContent = cancelled;
+  document.getElementById('bkStatTotal').textContent     = total;
+  document.getElementById('bkStatUpcoming').textContent  = upcoming;
+  document.getElementById('bkStatCompleted').textContent = completed;
+  document.getElementById('bkStatCancelled').textContent = cancelled;
 }
 
 const _timerMap = {};

@@ -86,7 +86,9 @@
       "Bash(grep -n \"'badge-'\\\\|\\\\\"badge-\\\\\"\\\\|badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
       "Bash(grep -n \"getElementById\\('badge-\\\\|getElementById\\(\\\\\"badge-\\\\|id=\\\\\"badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
       "Bash(grep -n \"'badge-' *+\\\\|\\\\`badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
-      "Bash(node _tmp_verify_all.mjs)"
+      "Bash(node _tmp_verify_all.mjs)",
+      "Bash(node _tmp_hero_mobile_check.mjs)",
+      "Bash(node _tmp_verify_stats.mjs)"
     ]
   }
 }
