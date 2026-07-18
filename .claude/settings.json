@@ -88,7 +88,8 @@
       "Bash(grep -n \"'badge-' *+\\\\|\\\\`badge-\\\\${\" /Users/rakeshks/urbanpaws/my-bookings.html)",
       "Bash(node _tmp_verify_all.mjs)",
       "Bash(node _tmp_hero_mobile_check.mjs)",
-      "Bash(node _tmp_verify_stats.mjs)"
+      "Bash(node _tmp_verify_stats.mjs)",
+      "Bash(node _tmp_admin_sidebar_check.mjs)"
     ]
   }
 }
