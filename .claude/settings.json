@@ -92,7 +92,10 @@
       "Bash(node _tmp_admin_sidebar_check.mjs)",
       "Bash(node _tmp_hide_sidebar_check.mjs)",
       "Bash(node _tmp_repro_ini.mjs)",
-      "Bash(node _tmp_xss_verify.mjs)"
+      "Bash(node _tmp_xss_verify.mjs)",
+      "Bash(node _tmp_verify_hide_all.mjs)",
+      "Bash(node _tmp_verify_hide2.mjs)",
+      "Bash(node _tmp_final_check2.mjs)"
     ]
   }
 }
