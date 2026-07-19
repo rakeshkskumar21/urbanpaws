@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var t=localStorage.getItem('up_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('up_theme');if(t)document.documentElement.setAttribute('data-theme',t);if(localStorage.getItem('up_sidebar_hidden')==='1')document.documentElement.classList.add('sidebar-hidden');}catch(e){}})();</script>
 <title>Urban Paws Admin</title>
 <meta name="theme-color" content="#1A1C52">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231A1C52'/%3E%3Cellipse cx='20' cy='32' rx='9' ry='11' fill='%236C6FD4' transform='rotate(-18 20 32)'/%3E%3Cellipse cx='38' cy='20' rx='10.5' ry='12.5' fill='%236C6FD4' transform='rotate(-5 38 20)'/%3E%3Cellipse cx='62' cy='20' rx='10.5' ry='12.5' fill='%236C6FD4' transform='rotate(5 62 20)'/%3E%3Cellipse cx='80' cy='32' rx='9' ry='11' fill='%236C6FD4' transform='rotate(18 80 32)'/%3E%3Cpath d='M18 62 C18 46 28 38 40 38 C45 37 48 40 50 42 C52 40 55 37 60 38 C72 38 82 46 82 62 C82 78 68 90 50 90 C32 90 18 78 18 62Z' fill='%236C6FD4'/%3E%3C/svg%3E">
@@ -115,18 +115,25 @@
   }
   .refresh-btn:hover { opacity: 0.88; box-shadow: 0 4px 18px rgba(108,111,212,.45); }
 
-  main { padding: 2rem; max-width: 1440px; margin: 0 auto; margin-left: calc(var(--sidebar-w) + 2rem); }
+  main { padding: 2rem; max-width: 1440px; margin: 0 auto; margin-left: calc(var(--sidebar-w) + 2rem); transition: margin-left .25s ease; }
 
   /* ── SIDEBAR ── */
   .sidebar {
     position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
     background: var(--surface); border-right: 1px solid var(--border); z-index: 100;
     display: flex; flex-direction: column; overflow-y: auto;
+    transition: transform .25s ease;
   }
   .sb-brand { padding: 1.25rem 1.2rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  .sb-brand-name { display: flex; flex-direction: column; line-height: 1; gap: 1px; }
+  .sb-brand-name { display: flex; flex-direction: column; line-height: 1; gap: 1px; flex: 1; min-width: 0; }
   .sb-brand-name span:first-child { font-size: 0.55rem; letter-spacing: 0.2em; font-weight: 700; color: var(--text); }
   .sb-brand-name span:last-child { font-size: 0.55rem; letter-spacing: 0.2em; font-weight: 700; color: var(--accent); }
+  .sb-hide-btn {
+    width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border); background: none;
+    color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: .8rem; flex-shrink: 0; transition: all .15s;
+  }
+  .sb-hide-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
   nav.sb-nav { flex: 1; padding: .9rem .75rem; display: flex; flex-direction: column; gap: 2px; }
   .sb-nav button { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: none; background: none; text-align: left; text-decoration: none; font-size: .86rem; font-weight: 700; color: var(--muted); font-family: inherit; cursor: pointer; transition: all .12s; width: 100%; }
   .sb-nav button:hover { background: var(--surface2); color: var(--text); }
@@ -139,6 +146,21 @@
     color: var(--muted); transition: all 0.2s;
   }
   .sb-signout-btn:hover { border-color: rgba(239,68,68,.4); color: var(--red); background: var(--red-bg); }
+
+  /* ── SIDEBAR HIDDEN (desktop collapse) ── */
+  .sb-show-btn {
+    display: none; position: fixed; top: 14px; left: 14px; z-index: 110;
+    width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); cursor: pointer; align-items: center; justify-content: center;
+    font-size: 1rem; box-shadow: 0 2px 10px rgba(108,111,212,.15);
+  }
+  .sb-show-btn:hover { border-color: var(--accent); color: var(--accent); }
+  @media (min-width: 1025px) {
+    html.sidebar-hidden .sidebar { transform: translateX(-100%); }
+    html.sidebar-hidden header { margin-left: 0; }
+    html.sidebar-hidden main { margin-left: auto; }
+    html.sidebar-hidden .sb-show-btn { display: flex; }
+  }
 
   /* ── MOBILE TOPBAR / OVERLAY ── */
   .tb-burger { display: none; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px; background: none; cursor: pointer; align-items: center; justify-content: center; flex-direction: column; gap: 4px; padding: 8px; flex-shrink: 0; }
@@ -363,6 +385,7 @@
 <!-- DASHBOARD -->
 <div id="dashboard">
   <div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
+  <button class="sb-show-btn" onclick="toggleDesktopSidebar()" title="Show sidebar">☰</button>
 
   <div class="sidebar" id="sidebar">
     <div class="sb-brand">
@@ -379,6 +402,7 @@
         <span>PAWS</span>
       </span>
       <span class="admin-badge">Admin</span>
+      <button class="sb-hide-btn" onclick="toggleDesktopSidebar()" title="Hide sidebar">◀</button>
     </div>
     <nav class="sb-nav">
       <button class="active" id="tabBookings" onclick="switchAdminTab('bookings')">📋 Bookings</button>
@@ -1150,6 +1174,10 @@
   function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sbOverlay').classList.remove('open');
+  }
+  function toggleDesktopSidebar() {
+    const hidden = document.documentElement.classList.toggle('sidebar-hidden');
+    try { localStorage.setItem('up_sidebar_hidden', hidden ? '1' : '0'); } catch(e) {}
   }
 
   // ── Food Menu ─────────────────────────────────────────────────────────────
