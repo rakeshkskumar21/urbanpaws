@@ -1256,7 +1256,12 @@
     const prev = document.getElementById('foodPhotoPreview');
     const delBtn = document.getElementById('foodPhotoDeleteBtn');
     if (url) {
-      prev.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.parentElement.textContent='${emoji||'🍲'}'">`;
+      prev.innerHTML = '';
+      const img = document.createElement('img');
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:10px;';
+      img.src = url;
+      img.onerror = () => { prev.textContent = emoji || '🍲'; };
+      prev.appendChild(img);
       delBtn.style.display = 'flex';
     } else {
       prev.textContent = emoji || '🍲';
