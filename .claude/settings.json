@@ -95,7 +95,8 @@
       "Bash(node _tmp_xss_verify.mjs)",
       "Bash(node _tmp_verify_hide_all.mjs)",
       "Bash(node _tmp_verify_hide2.mjs)",
-      "Bash(node _tmp_final_check2.mjs)"
+      "Bash(node _tmp_final_check2.mjs)",
+      "Bash(node _tmp_verify_hang_fix.mjs)"
     ]
   }
 }

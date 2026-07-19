@@ -4455,7 +4455,16 @@ db.auth.getSession().then(({ data: { session } }) => {
   } else if (!_appInited) {
     showAuthGate();
   }
+}).catch((err) => {
+  console.error('getSession failed:', err);
+  if (!_appInited) showAuthGate();
 });
+
+// Safety net: never leave the user stuck on the loading spinner if the
+// session check hangs (flaky network, etc.) — fall back to the auth gate.
+setTimeout(() => {
+  if (!_appInited) showAuthGate();
+}, 8000);
 
 db.auth.onAuthStateChange((_event, session) => {
   const user = session?.user ?? null;
