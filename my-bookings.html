@@ -459,6 +459,54 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .filter-select:focus, .filter-input:focus { border-color: var(--paw); }
 .filter-input { min-width: 180px; }
 
+/* FILTER POPOVER */
+.bk-filter-wrap { position: relative; }
+.bk-filter-btn {
+  display: flex; align-items: center; gap: 7px; padding: 8px 14px;
+  border: 1.5px solid var(--border); border-radius: 8px; background: var(--white);
+  color: var(--night); font-size: .83rem; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: border-color .15s;
+}
+.bk-filter-btn:hover, .bk-filter-btn.active { border-color: var(--paw); color: var(--paw); }
+.bk-filter-badge {
+  background: var(--paw); color: #fff; font-size: .68rem; font-weight: 800;
+  border-radius: 100px; padding: 1px 7px; line-height: 1.4;
+}
+.bk-filter-popover {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 300;
+  background: var(--white); border: 1px solid var(--border2); border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.14); width: 300px; overflow: hidden;
+}
+.bk-filter-pop-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1.1rem; border-bottom: 1px solid var(--border2);
+  font-weight: 800; font-size: .92rem; color: var(--night);
+}
+.bk-filter-clear { font-size: .78rem; font-weight: 600; color: var(--muted); cursor: pointer; }
+.bk-filter-clear:hover { color: var(--paw); }
+.bk-filter-cat { border-bottom: 1px solid var(--border2); }
+.bk-filter-cat-hdr {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  padding: .8rem 1.1rem; background: none; border: none; cursor: pointer;
+  font-size: .86rem; font-weight: 600; color: var(--night); font-family: inherit; text-align: left;
+}
+.bk-filter-chevron { transition: transform .15s; color: var(--muted); }
+.bk-filter-cat.open .bk-filter-chevron { transform: rotate(90deg); }
+.bk-filter-cat-body { display: none; padding: 0 1.1rem 1rem; flex-direction: column; gap: .55rem; }
+.bk-filter-cat.open .bk-filter-cat-body { display: flex; }
+.bk-filter-cat-body label { display: flex; align-items: center; gap: 8px; font-size: .83rem; color: var(--night); cursor: pointer; }
+.bk-filter-cat-body input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--paw); cursor: pointer; }
+.bk-filter-cat-body input[type="date"] {
+  padding: 7px 10px; border: 1.5px solid var(--border); border-radius: 7px;
+  font-size: .8rem; font-family: inherit; outline: none; width: 100%;
+}
+.bk-filter-apply-btn {
+  display: block; width: calc(100% - 2.2rem); margin: 1rem 1.1rem;
+  padding: 11px; border: none; border-radius: 9px; background: var(--paw); color: #fff;
+  font-size: .86rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background .15s;
+}
+.bk-filter-apply-btn:hover { background: var(--paw2); }
+
 /* BOOKING LIST */
 .bk-list { display: flex; flex-direction: column; border: 1px solid var(--border2); border-radius: 14px; overflow: hidden; background: var(--white); }
 .bk-list-row { display: flex; align-items: center; gap: 12px; padding: .85rem 1rem; border-bottom: 1px solid var(--border2); transition: background .12s; }
@@ -1103,16 +1151,46 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <span style="margin-left:auto;cursor:pointer;color:var(--paw);font-weight:700;font-size:.8rem" onclick="showPage('pricing')">Change plan ↗</span>
       </div>
       <div class="filters">
-        <select class="filter-select" id="fStatus" onchange="applyBkFilter()">
-          <option value="">All Status</option>
-          <option value="pending">⏳ Pending</option>
-          <option value="assigned">👤 Assigned</option>
-          <option value="confirmed">🚶 On the Way</option>
-          <option value="started">▶ Started</option>
-          <option value="completed">🎉 Completed</option>
-          <option value="cancelled">❌ Cancelled</option>
-        </select>
-        <input class="filter-input" id="fSearch" placeholder="Search service, pet…" oninput="applyBkFilter()">
+        <input class="filter-input" id="fSearch" placeholder="Search service, pet, booking ID…" oninput="applyBkFilter()">
+        <div class="bk-filter-wrap">
+          <button class="bk-filter-btn" id="bkFilterBtn" onclick="toggleBkFilterPopover()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+            Filter
+            <span class="bk-filter-badge" id="bkFilterBadge" style="display:none">0</span>
+          </button>
+          <div class="bk-filter-popover" id="bkFilterPopover" style="display:none">
+            <div class="bk-filter-pop-hdr">
+              <span>Filter</span>
+              <span class="bk-filter-clear" onclick="clearBkFilters()">Clear All</span>
+            </div>
+            <div class="bk-filter-cat">
+              <button class="bk-filter-cat-hdr" onclick="toggleBkFilterCat(this)">Status <span class="bk-filter-chevron">›</span></button>
+              <div class="bk-filter-cat-body">
+                <label><input type="checkbox" class="bk-filter-status" value="pending">⏳ Pending</label>
+                <label><input type="checkbox" class="bk-filter-status" value="assigned">👤 Assigned</label>
+                <label><input type="checkbox" class="bk-filter-status" value="confirmed">🚶 On the Way</label>
+                <label><input type="checkbox" class="bk-filter-status" value="started">▶ Started</label>
+                <label><input type="checkbox" class="bk-filter-status" value="completed">🎉 Completed</label>
+                <label><input type="checkbox" class="bk-filter-status" value="cancelled">❌ Cancelled</label>
+              </div>
+            </div>
+            <div class="bk-filter-cat">
+              <button class="bk-filter-cat-hdr" onclick="toggleBkFilterCat(this)">Service <span class="bk-filter-chevron">›</span></button>
+              <div class="bk-filter-cat-body">
+                <label><input type="checkbox" class="bk-filter-service" value="walk">🦮 Pet Walking</label>
+                <label><input type="checkbox" class="bk-filter-service" value="food">🍲 Pet Food</label>
+              </div>
+            </div>
+            <div class="bk-filter-cat">
+              <button class="bk-filter-cat-hdr" onclick="toggleBkFilterCat(this)">Date Range <span class="bk-filter-chevron">›</span></button>
+              <div class="bk-filter-cat-body">
+                <label>From <input type="date" id="bkFilterDateFrom"></label>
+                <label>To <input type="date" id="bkFilterDateTo"></label>
+              </div>
+            </div>
+            <button class="bk-filter-apply-btn" onclick="applyBkFilterPopover()">Apply</button>
+          </div>
+        </div>
       </div>
       <div class="section-hdr">
         <div class="section-title">All Bookings</div>
@@ -2472,11 +2550,19 @@ const BK_PAGE_SIZE = 10;
 let _bkFiltered = [];
 let _bkPage = 1;
 
+let _bkFilterState = { statuses: [], services: [], dateFrom: '', dateTo: '' };
+
 function applyBkFilter() {
-  const status = document.getElementById('fStatus').value;
   const search = document.getElementById('fSearch').value.toLowerCase();
+  const { statuses, services, dateFrom, dateTo } = _bkFilterState;
   _bkFiltered = allBookings.filter(b => {
-    if (status && b.status!==status) return false;
+    if (statuses.length && !statuses.includes(b.status)) return false;
+    if (services.length) {
+      const sl = (b.service||'').toLowerCase();
+      if (!services.some(s => sl.includes(s))) return false;
+    }
+    if (dateFrom && (b.booking_date||'') < dateFrom) return false;
+    if (dateTo && (b.booking_date||'') > dateTo) return false;
     if (search && !(
       (b.service||'').toLowerCase().includes(search) ||
       (b.pet_name||'').toLowerCase().includes(search) ||
@@ -2488,6 +2574,53 @@ function applyBkFilter() {
   _bkPage = 1;
   renderBkPage();
 }
+
+function toggleBkFilterPopover() {
+  const pop = document.getElementById('bkFilterPopover');
+  const isOpen = pop.style.display !== 'none';
+  pop.style.display = isOpen ? 'none' : 'block';
+  document.getElementById('bkFilterBtn').classList.toggle('active', !isOpen);
+}
+
+function toggleBkFilterCat(btn) {
+  btn.closest('.bk-filter-cat').classList.toggle('open');
+}
+
+function applyBkFilterPopover() {
+  _bkFilterState = {
+    statuses: [...document.querySelectorAll('.bk-filter-status:checked')].map(el => el.value),
+    services: [...document.querySelectorAll('.bk-filter-service:checked')].map(el => el.value),
+    dateFrom: document.getElementById('bkFilterDateFrom').value,
+    dateTo: document.getElementById('bkFilterDateTo').value,
+  };
+  const count = _bkFilterState.statuses.length + _bkFilterState.services.length
+    + (_bkFilterState.dateFrom ? 1 : 0) + (_bkFilterState.dateTo ? 1 : 0);
+  const badge = document.getElementById('bkFilterBadge');
+  badge.style.display = count ? 'inline-block' : 'none';
+  badge.textContent = count;
+  document.getElementById('bkFilterPopover').style.display = 'none';
+  document.getElementById('bkFilterBtn').classList.toggle('active', count > 0);
+  applyBkFilter();
+}
+
+function clearBkFilters() {
+  document.querySelectorAll('.bk-filter-status:checked, .bk-filter-service:checked').forEach(el => el.checked = false);
+  document.getElementById('bkFilterDateFrom').value = '';
+  document.getElementById('bkFilterDateTo').value = '';
+  _bkFilterState = { statuses: [], services: [], dateFrom: '', dateTo: '' };
+  document.getElementById('bkFilterBadge').style.display = 'none';
+  document.getElementById('bkFilterBtn').classList.remove('active');
+  applyBkFilter();
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.bk-filter-wrap');
+  const pop = document.getElementById('bkFilterPopover');
+  if (wrap && pop && pop.style.display !== 'none' && !wrap.contains(e.target)) {
+    pop.style.display = 'none';
+    document.getElementById('bkFilterBtn').classList.toggle('active', _bkFilterState.statuses.length + _bkFilterState.services.length + (_bkFilterState.dateFrom?1:0) + (_bkFilterState.dateTo?1:0) > 0);
+  }
+});
 
 function renderBkPage() {
   const list = document.getElementById('bookingsList');
