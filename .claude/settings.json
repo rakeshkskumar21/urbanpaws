@@ -162,7 +162,8 @@
       "Bash(JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\" ./gradlew clean assembleDebug)",
       "Bash(rm -rf android ios node_modules package-lock.json)",
       "Bash(/Users/rakeshks/Library/Android/sdk/platform-tools/adb devices *)",
-      "Bash(node _tmp_verify_final.mjs)"
+      "Bash(node _tmp_verify_final.mjs)",
+      "Bash(node _tmp_verify_sidebar.mjs)"
     ]
   }
 }

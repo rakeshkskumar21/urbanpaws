@@ -103,9 +103,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   border-bottom: 1px solid var(--border2);
   display: flex; align-items: center; gap: 8px;
 }
-.sb-brand-logo { font-size: 1.3rem; line-height: 1; }
 .sb-brand-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: .95rem; color: var(--night); }
-.sb-brand-sub { font-size: .68rem; color: var(--muted); margin-top: 1px; }
 .sb-hide-btn {
   width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border2); background: none;
   color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -124,19 +122,6 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
   html.sidebar-hidden .main-wrap { margin-left: 0; }
   html.sidebar-hidden .sb-show-btn { display: flex; }
 }
-
-.sb-user {
-  display: flex; align-items: center; gap: 10px;
-  padding: .8rem 1.2rem;
-  border-bottom: 1px solid var(--border2);
-}
-.sb-avatar {
-  width: 32px; height: 32px; border-radius: 50%; background: var(--paw);
-  color: #fff; font-size: .72rem; font-weight: 700; font-family: 'Syne', sans-serif;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.sb-user-name { font-size: .8rem; font-weight: 700; color: var(--night); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sb-user-plan { font-size: .66rem; color: var(--muted); margin-top: 1px; }
 
 .sb-nav { flex: 1; padding: .5rem .75rem; overflow-y: auto; }
 .sb-nav a {
@@ -529,8 +514,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .avatar-uploading { position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,.55);
   display: none; align-items: center; justify-content: center; font-size: .7rem; color: #fff; font-weight: 700; }
-/* small avatars in sidebar/topbar support images */
-.sb-avatar img, .tb-ring-avatar img, .cb-avatar img {
+/* small avatars in topbar support images */
+.tb-ring-avatar img, .cb-avatar img {
   width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
 }
 /* Photo upload row */
@@ -952,19 +937,16 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
   <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
-      <span class="sb-brand-logo">🐾</span>
-      <div>
-        <div class="sb-brand-text">Urban Paws</div>
-        <div class="sb-brand-sub">Pet Services, Bengaluru</div>
-      </div>
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="22" fill="#1A1C52"/>
+        <ellipse cx="20" cy="32" rx="9"    ry="11"   fill="#6C6FD4" transform="rotate(-18 20 32)"/>
+        <ellipse cx="38" cy="20" rx="10.5" ry="12.5" fill="#6C6FD4" transform="rotate(-5 38 20)"/>
+        <ellipse cx="62" cy="20" rx="10.5" ry="12.5" fill="#6C6FD4" transform="rotate(5 62 20)"/>
+        <ellipse cx="80" cy="32" rx="9"    ry="11"   fill="#6C6FD4" transform="rotate(18 80 32)"/>
+        <path d="M18 62 C18 46 28 38 40 38 C45 37 48 40 50 42 C52 40 55 37 60 38 C72 38 82 46 82 62 C82 78 68 90 50 90 C32 90 18 78 18 62Z" fill="#6C6FD4"/>
+      </svg>
+      <div class="sb-brand-text">Urban Paws</div>
       <button class="sb-hide-btn" onclick="toggleDesktopSidebar()" title="Hide sidebar">◀</button>
-    </div>
-    <div class="sb-user">
-      <div class="sb-avatar" id="sbAvatar">?</div>
-      <div style="min-width:0;">
-        <div class="sb-user-name" id="sbName">Loading…</div>
-        <div class="sb-user-plan" id="sbPlan">Starter Plan</div>
-      </div>
     </div>
     <nav class="sb-nav">
       <a onclick="showPage('profile')" id="nav-profile">
@@ -1147,7 +1129,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
     <!-- MY PETS -->
     <div class="page" id="page-pets" style="display:none">
-      <div class="page-title">Pet Passport 🐾</div>
+      <div class="page-title">Pet Passport 🐶</div>
       <div class="page-sub">Manage your pet profiles, health records & history</div>
 
       <div class="vax-card">
@@ -2627,7 +2609,6 @@ function initials(name) { return (name||'?').split(' ').map(n=>n[0]).join('').to
 function setAllAvatars(name, imgUrl) {
   const ini = initials(name);
   const ids = [
-    { id: 'sbAvatar',   isImg: false },
     { id: 'tbAvatar',   isImg: false },
     { id: 'cbAvatar',   isImg: false },
   ];
@@ -2744,8 +2725,6 @@ async function loadProfile(user) {
   const avatarUrl = (p && p.avatar_url) || null;
   _currentAvatarUrl = avatarUrl;
   setAllAvatars(name, avatarUrl);
-  document.getElementById('sbName').textContent    = name.split(' ')[0];
-  document.getElementById('sbPlan').textContent    = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[plan]||'Starter Plan';
   // Populate dropdown
   const planLabels = {starter:'⭐ Starter',casual:'🐾 Casual',standard:'🌟 Standard Pro',carnival:'🎊 Carnival'};
   const el = id => document.getElementById(id);
@@ -2983,9 +2962,7 @@ async function obSubmit() {
   localStorage.setItem('urbanpaws_health_'+currentUser.id, JSON.stringify(h));
   document.getElementById('pfNameBig').textContent   = full_name;
   setAllAvatars(full_name, _currentAvatarUrl);
-  document.getElementById('sbName').textContent      = full_name.split(' ')[0];
   document.getElementById('welcomeMsg').textContent  = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
-  document.getElementById('sbPlan').textContent      = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[_obPlan]||'Starter Plan';
   setPlanChip(_obPlan);
   loadHealthInfo();
   renderPricingCTAs(_obPlan);
@@ -3054,7 +3031,6 @@ async function upgradePlanRazorpay(targetPlan) {
       if (error) { showToast('❌ Payment done but plan update failed. Contact support.'); return; }
       _currentPlan = targetPlan;
       setPlanChip(targetPlan);
-      document.getElementById('sbPlan').textContent = {casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[targetPlan]||'Starter Plan';
       const bkStrip = document.getElementById('bkPlanStrip');
       if (bkStrip) { bkStrip.style.display = ''; document.getElementById('bkPlanName').textContent = meta.label; }
       renderPricingCTAs(targetPlan);
@@ -3079,7 +3055,6 @@ async function activatePlan(targetPlan) {
   if (error) { showToast('❌ Could not update plan. Please try again.'); return; }
   _currentPlan = targetPlan;
   setPlanChip(targetPlan);
-  document.getElementById('sbPlan').textContent = {starter:'Starter Plan',casual:'Casual Plan',standard:'Standard Pro',carnival:'Carnival Plan'}[targetPlan]||'Starter Plan';
   const bkStrip = document.getElementById('bkPlanStrip');
   if (bkStrip) bkStrip.style.display = targetPlan !== 'starter' ? '' : 'none';
   if (targetPlan !== 'starter') document.getElementById('bkPlanName').textContent = meta.label;
@@ -3409,7 +3384,6 @@ async function saveProfile() {
   if (error) { showToast('❌ '+error.message); return; }
   document.getElementById('pfNameBig').textContent    = full_name;
   setAllAvatars(full_name, _currentAvatarUrl);
-  document.getElementById('sbName').textContent       = full_name.split(' ')[0];
   document.getElementById('welcomeMsg').textContent   = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
   const ok = document.getElementById('saveOk'); ok.classList.add('show'); setTimeout(()=>ok.classList.remove('show'),3000);
   showToast('✅ Profile saved!', 'success');
