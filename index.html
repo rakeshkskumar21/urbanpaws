@@ -2619,7 +2619,7 @@ window.addEventListener('load', async function loadPublicReviews() {
     const btn = document.querySelector('#paneForgot .auth-submit');
     btn.disabled = true; btn.textContent = 'Sending…';
     const { error } = await db.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/reset-password'
+      redirectTo: 'https://urbanpaws.app/reset-password'
     });
     btn.disabled = false; btn.textContent = 'Send Reset Link →';
     if (error) {

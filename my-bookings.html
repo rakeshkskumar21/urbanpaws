@@ -311,25 +311,6 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 .section-title { font-weight: 700; font-size: .95rem; }
 .section-count { font-size: .8rem; color: var(--muted); }
 
-/* RECENT ROWS */
-.recent-bkgs { display: flex; flex-direction: column; gap: .6rem; }
-.recent-row {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--white); border: 1px solid var(--border2); border-radius: 12px; padding: .85rem 1rem;
-}
-.recent-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--paw-soft); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
-.recent-info { flex: 1; min-width: 0; }
-.recent-svc { font-size: .88rem; font-weight: 700; }
-.recent-meta { font-size: .75rem; color: var(--muted); margin-top: 1px; }
-
-/* BOOK AGAIN */
-.book-again-btn {
-  background: var(--paw); color: #fff; border: none; border-radius: 100px;
-  padding: 4px 12px; font-size: .7rem; font-weight: 700; cursor: pointer;
-  font-family: inherit; white-space: nowrap; transition: background .15s, transform .1s;
-}
-.book-again-btn:hover { background: var(--paw2); transform: scale(1.04); }
-
 /* BOOKING PROGRESS STEPPER */
 .bk-progress { display: flex; align-items: center; gap: 0; margin-top: .75rem; flex-wrap: nowrap; overflow: hidden; }
 .prog-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
@@ -990,15 +971,11 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg></span>
         My Profile
       </a>
-      <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">
-        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg></span>
-        Dashboard
-      </a>
       <a onclick="showPage('book')" id="nav-book">
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
         Book a Service
       </a>
-      <a onclick="showPage('bookings')" id="nav-bookings">
+      <a onclick="showPage('bookings')" id="nav-bookings" class="active">
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg></span>
         My Bookings
       </a>
@@ -1019,10 +996,6 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
       <hr class="sb-divider">
 
-      <a onclick="showPage('services')" id="nav-services">
-        <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg></span>
-        Services
-      </a>
       <a onclick="showPage('food')" id="nav-food">
         <span class="sb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 9.75a3 3 0 11-6 0 3 3 0 016 0zm-9 9h12a2 2 0 002-2v-1H4v1a2 2 0 002 2z"/></svg></span>
         Pet Food
@@ -1074,7 +1047,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       <div class="cb-breadcrumb" id="cbBreadcrumb">
         <span class="cb-bc-home">🏠 Home</span>
         <span class="cb-bc-sep">›</span>
-        <span class="cb-bc-cur" id="cbPageLabel">Dashboard</span>
+        <span class="cb-bc-cur" id="cbPageLabel">My Bookings</span>
       </div>
       <div class="cb-search-wrap">
         <svg class="cb-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1117,7 +1090,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
     </div>
 
     <!-- DASHBOARD -->
-    <div class="page" id="page-dashboard">
+    <!-- BOOKINGS -->
+    <div class="page" id="page-bookings">
       <div id="welcomeBanner" class="welcome-banner" style="display:none">
         <div class="wb-emoji" id="wbEmoji">🎉</div>
         <div>
@@ -1126,38 +1100,15 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         </div>
         <button class="wb-close" onclick="dismissWelcome()">×</button>
       </div>
-      <div class="page-title" id="welcomeMsg">Welcome back 👋</div>
-      <div class="page-sub"><span class="rt-dot"></span> Live updates enabled — status changes appear instantly</div>
-
-      <div class="stats-grid">
-        <div class="stat-card accent"><div class="stat-label">Total Bookings</div><div class="stat-value" id="statTotal">—</div></div>
-        <div class="stat-card"><div class="stat-label">Upcoming</div><div class="stat-value" id="statUpcoming">—</div></div>
-        <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">—</div></div>
-        <div class="stat-card"><div class="stat-label">Cancelled</div><div class="stat-value" id="statCancelled">—</div></div>
-      </div>
-
-      <div class="quick-actions">
-        <button class="qa-btn qa-primary" onclick="showPage('book')">➕ New Booking</button>
-        <button class="qa-btn qa-ghost" onclick="showPage('pets')">🐾 Add Pet</button>
-        <button class="qa-btn qa-ghost" onclick="showPage('bookings')">📋 My Bookings</button>
-        <button class="qa-btn qa-ghost" onclick="window.location='mailto:hello@urbanpaws.app'">💬 Contact Support</button>
-      </div>
-
-      <div class="section-hdr">
-        <div class="section-title">Recent Bookings</div>
-        <button class="qa-btn qa-ghost" style="padding:6px 14px;font-size:.78rem" onclick="showPage('bookings')">View all →</button>
-      </div>
-      <div id="recentList"><div class="loading-msg">Loading…</div></div>
-    </div>
-
-    <!-- BOOKINGS -->
-    <div class="page" id="page-bookings" style="display:none">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
         <div>
-          <div class="page-title" style="margin-bottom:.3rem;">My Bookings</div>
-          <div class="page-sub">All your service bookings in one place</div>
+          <div class="page-title" id="welcomeMsg" style="margin-bottom:.3rem;">Welcome back 👋</div>
+          <div class="page-sub"><span class="rt-dot"></span> Live updates enabled — status changes appear instantly</div>
         </div>
-        <button class="qa-btn qa-primary" onclick="showPage('book')">➕ New Booking</button>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+          <button class="qa-btn qa-ghost" onclick="window.location='mailto:hello@urbanpaws.app'">💬 Contact Support</button>
+          <button class="qa-btn qa-primary" onclick="showPage('book')">➕ New Booking</button>
+        </div>
       </div>
       <div class="stats-grid">
         <div class="stat-card accent"><div class="stat-label">Total Bookings</div><div class="stat-value" id="bkStatTotal">—</div></div>
@@ -1218,10 +1169,8 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
         <div class="placeholder-title">Digital Pet Profiles</div>
         <div class="placeholder-sub">Your pet's complete digital identity — health records, grooming history, and more. All in one place.</div>
         <div class="feature-cards">
-          <div class="feature-card clickable" onclick="openGroomingModal()"><div class="feature-card-icon">✂️</div><div class="feature-card-title">Grooming History</div><div class="feature-card-sub">Photo log of every grooming session — see how they've changed!</div></div>
           <div class="feature-card clickable" onclick="openMedicalNotesModal()"><div class="feature-card-icon">🩺</div><div class="feature-card-title">Medical Notes</div><div class="feature-card-sub">Allergies, medications, vet visits — all in one safe place</div></div>
           <div class="feature-card clickable" onclick="openTimelineModal()"><div class="feature-card-icon">📅</div><div class="feature-card-title">Timeline</div><div class="feature-card-sub">Complete history: walks, food, vet, grooming — every event</div></div>
-          <div class="feature-card clickable" onclick="openPhotoGalleryModal()"><div class="feature-card-icon">📸</div><div class="feature-card-title">Photo Gallery</div><div class="feature-card-sub">Your pet's journey through photos over time</div></div>
           <div class="feature-card clickable" onclick="downloadPetRecords()"><div class="feature-card-icon">📄</div><div class="feature-card-title">Downloadable Records</div><div class="feature-card-sub">Export your pet's full health record as a PDF anytime</div></div>
         </div>
       </div>
@@ -1544,65 +1493,6 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
       </div>
     </div>
 
-    <!-- SERVICES -->
-    <div class="page" id="page-services" style="display:none">
-      <div class="ex-label">What we do</div>
-      <div class="page-title">Every service your pet needs</div>
-      <div class="page-sub">From daily walks to emergency care — one app, one partner, all covered.</div>
-      <div class="services-grid">
-        <div class="service-card" onclick="bookWith('walk')" style="cursor:pointer;">
-          <div class="service-icon">🦮</div>
-          <h3>Pet Walking</h3>
-          <p>Professional pet executors take your dog for a 15–45 min walk. Live photos, paw cleaning on return & route recorded.</p>
-          <div class="service-price">From ₹89/walk <span class="service-tag">Most Popular</span></div>
-        </div>
-        <div class="service-card" onclick="bookWith('food')" style="cursor:pointer;">
-          <div class="service-icon">🍲</div>
-          <h3>Fresh Pet Food</h3>
-          <p>Freshly cooked meals delivered in 45–55 min. Veg & non-veg options from a cloud kitchen with vet-approved ingredients.</p>
-          <div class="service-price">From ₹28/bowl</div>
-        </div>
-        <div class="service-card" style="opacity:.45;cursor:default;pointer-events:none;">
-          <div class="service-icon">✂️</div>
-          <h3>Washing & Grooming <span class="service-tag">Coming soon</span></h3>
-          <p>Full bath, blow dry, nail clipping, ear cleaning, and breed-specific grooming at your doorstep.</p>
-          <div class="service-price">From ₹478/session</div>
-        </div>
-        <div class="service-card" style="opacity:.45;cursor:default;pointer-events:none;">
-          <div class="service-icon">🏠</div>
-          <h3>Pet Boarding <span class="service-tag">Coming soon</span></h3>
-          <p>Heading out of the city? Leave your dog or cat with our verified host families. Daily updates guaranteed.</p>
-          <div class="service-price">From ₹478/night</div>
-        </div>
-        <div class="service-card" style="opacity:.45;cursor:default;pointer-events:none;">
-          <div class="service-icon">💉</div>
-          <h3>Vaccination & Medicine <span class="service-tag">Coming soon</span></h3>
-          <p>Vet visits at home for scheduled vaccinations, medicine delivery within 2 hours, and health check-ups.</p>
-          <div class="service-price">From ₹299/visit</div>
-        </div>
-        <div class="service-card" style="opacity:.45;cursor:default;pointer-events:none;">
-          <div class="service-icon">🚐</div>
-          <h3>Pet Taxi & Transport <span class="service-tag">Coming soon</span></h3>
-          <p>Dedicated four-wheeler transport for your pets — safe, calm, air-conditioned rides.</p>
-          <div class="service-price">From ₹289 per 7–8 km</div>
-        </div>
-        <div class="service-card" style="opacity:.45;cursor:default;pointer-events:none;">
-          <div class="service-icon">🛡️</div>
-          <h3>Pet Insurance <span class="service-tag">Coming soon</span></h3>
-          <p>Affordable health coverage for accidents, illnesses, and surgeries. Enroll in under 5 minutes.</p>
-          <div class="service-price">From ₹999/year</div>
-        </div>
-        <div class="service-card" style="opacity:.45;cursor:default;pointer-events:none;">
-          <div class="service-icon">🧡</div>
-          <h3>Pet Sitting <span class="service-tag">Coming soon</span></h3>
-          <p>In-home sitting while you're at work. Our sitter comes to you — no displacement stress for your pet.</p>
-          <div class="service-price">From ₹299/session</div>
-        </div>
-      </div>
-      <div style="margin-top:1.5rem;">
-        <button class="qa-btn qa-primary" onclick="showPage('book')">➕ Book a Service Now</button>
-      </div>
-    </div>
 
     <!-- PET FOOD -->
     <div class="page" id="page-food" style="display:none">
@@ -1845,7 +1735,7 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
 
       <!-- Past reviews -->
       <div class="section-hdr" style="margin-top:2rem;">
-        <div class="section-title">All Reviews</div>
+        <div class="section-title">Your Reviews</div>
         <div class="section-count" id="fbReviewCount"></div>
       </div>
       <div id="fbReviewsList"><div class="loading-msg">Loading reviews…</div></div>
@@ -2199,10 +2089,10 @@ function toggleDesktopSidebar() {
   try { localStorage.setItem('up_sidebar_hidden', hidden ? '1' : '0'); } catch(e) {}
 }
 
-const PAGES = ['dashboard','bookings','bookingDetail','pets','referral','rewards','book','onboarding','profile','services','food','pricing','faq','feedback'];
+const PAGES = ['bookings','bookingDetail','pets','referral','rewards','book','onboarding','profile','food','pricing','faq','feedback'];
 const PAGE_LABELS = {
-  dashboard:'Dashboard', bookings:'My Bookings', book:'Book a Service',
-  profile:'My Profile', services:'Services', food:'Pet Food',
+  bookings:'My Bookings', book:'Book a Service',
+  profile:'My Profile', food:'Pet Food',
   pricing:'Pricing & Plans', faq:'FAQs', onboarding:'Set Up Plan',
   pets:'Pet Passport', rewards:'Rewards', referral:'Invite a Friend',
   bookingDetail:'Booking Details',
@@ -2578,10 +2468,6 @@ function updateStats(bk) {
   const upcoming  = bk.filter(b=>['pending','assigned','confirmed','started'].includes(b.status)).length;
   const completed = bk.filter(b=>b.status==='completed').length;
   const cancelled = bk.filter(b=>b.status==='cancelled').length;
-  document.getElementById('statTotal').textContent     = total;
-  document.getElementById('statUpcoming').textContent  = upcoming;
-  document.getElementById('statCompleted').textContent = completed;
-  document.getElementById('statCancelled').textContent = cancelled;
   document.getElementById('bkStatTotal').textContent     = total;
   document.getElementById('bkStatUpcoming').textContent  = upcoming;
   document.getElementById('bkStatCompleted').textContent = completed;
@@ -2604,29 +2490,6 @@ function _startTimer(id, startedAt) {
 }
 function _startAllTimers() {
   allBookings.filter(b => b.status === 'started' && b.started_at).forEach(b => _startTimer(b.id, b.started_at));
-}
-
-function renderRecent(bk) {
-  const recent = bk.slice(0,4);
-  const el = document.getElementById('recentList');
-  if (!recent.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>No bookings yet</h3><p>Ready to book your first pet service?</p><button onclick="showPage('book')" style="display:inline-block;background:var(--paw);color:#fff;border-radius:100px;padding:10px 24px;font-size:.9rem;font-weight:700;border:none;cursor:pointer;font-family:inherit">Book a Service →</button></div>`;
-    return;
-  }
-  el.innerHTML = '<div class="recent-bkgs">' + recent.map(b => `
-    <div class="recent-row">
-      <div class="recent-icon">${svcIcon(b.service)}</div>
-      <div class="recent-info">
-        <div class="recent-svc">${b.service||'—'} <span style="font-weight:400;color:var(--muted);font-size:.8rem">· #${b.booking_id||b.id}</span></div>
-        <div class="recent-meta">🐾 ${b.pet_name||'—'} · 📅 ${b.booking_date||'—'} · ⏰ ${b.time_slot||'—'}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-        <div id="badge-r-${b.id}">${badgeHtml(b.status)}</div>
-        ${b.status==='completed' ? `<span class="coins-earned"><span class="coin-icon">🎉</span> +100 🪙</span>` : ''}
-        ${b.status==='completed' ? `<button onclick="bookAgain('${(b.service||'').replace(/'/g,"\\'")}')" class="book-again-btn">↩ Book Again</button>` : ''}
-        ${b.status==='completed' ? `<button onclick="openFeedbackFromBooking('${(b.service||'').replace(/'/g,"\\'")}')" class="book-again-btn" style="background:#fef3c7;color:#92400e;border-color:#f59e0b;">⭐ Review</button>` : ''}
-      </div>
-    </div>`).join('') + '</div>';
 }
 
 const BK_PAGE_SIZE = 10;
@@ -2693,7 +2556,6 @@ async function loadBookings(email) {
   if (error) { document.getElementById('bookingsList').innerHTML = '<div class="loading-msg">Could not load bookings.</div>'; return; }
   allBookings = data || [];
   updateStats(allBookings);
-  renderRecent(allBookings);
   applyBkFilter();
   // Show feedback popup for most recent completed booking not yet reviewed
   const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
@@ -2712,8 +2574,6 @@ function applyBookingUpdate(b) {
   const cardEl = document.getElementById('card-' + b.id);
   if (cardEl) cardEl.outerHTML = renderCard(allBookings[idx]);
   if (allBookings[idx].status === 'started' && allBookings[idx].started_at) _startTimer(allBookings[idx].id, allBookings[idx].started_at);
-  // Update recent-row badge
-  ['badge-r-'+b.id].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=badgeHtml(b.status); });
   return true;
 }
 
@@ -2730,7 +2590,6 @@ function startPolling(email) {
     let anyChanged = false;
     data.forEach(b => { if (applyBookingUpdate(b)) anyChanged = true; });
     if (anyChanged) {
-      renderRecent(allBookings);
       // Check for new completed bookings to prompt feedback
       const skipped = JSON.parse(localStorage.getItem(FB_SKIPPED_KEY) || '[]');
       const pending = allBookings.find(b => b.status === 'completed' && !skipped.includes(b.id));
@@ -2746,7 +2605,6 @@ function subscribeRealtime(email) {
       const b = payload.new;
       const changed = applyBookingUpdate(b);
       if (changed) {
-        renderRecent(allBookings);
         showToast('🐾 Booking #'+b.booking_id+' is now '+b.status+'!', 'success');
         if (Notification.permission==='granted') new Notification('Urban Paws', { body: 'Booking #'+b.booking_id+' ('+b.service+') → '+b.status });
         if (b.status === 'completed') setTimeout(() => openFbPopup(b), 1500);
@@ -3137,7 +2995,7 @@ async function obSubmit() {
     bkStrip.style.display = '';
   }
   showToast('🎉 Plan activated! Welcome to Urban Paws!', 'success');
-  showPage('dashboard');
+  showPage('bookings');
 }
 
 function renderPricingCTAs(currentPlan) {
@@ -3422,68 +3280,6 @@ function getGroomingRecords() {
   if (!currentUser) return [];
   return JSON.parse(localStorage.getItem('urbanpaws_grooming_' + currentUser.id) || '[]');
 }
-function setGroomingRecords(records) {
-  if (!currentUser) return;
-  localStorage.setItem('urbanpaws_grooming_' + currentUser.id, JSON.stringify(records));
-}
-
-function renderGroomingBody() {
-  const records = getGroomingRecords().slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
-  const list = !records.length
-    ? `<div class="vax-empty">No grooming sessions logged yet. Add your pet's first one below.</div>`
-    : `<div class="vax-list" style="margin-bottom:1.2rem">${records.map(r => `
-      <div class="vax-row">
-        ${r.photoUrl ? `<img src="${escapeHtml(r.photoUrl)}" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">` : `<div class="vax-row-icon">✂️</div>`}
-        <div class="vax-row-body">
-          <div class="vax-row-title">${escapeHtml(r.groomer || 'Grooming Session')}</div>
-          <div class="vax-row-meta">📅 ${r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
-          ${r.notes ? `<div class="vax-row-notes">"${escapeHtml(r.notes)}"</div>` : ''}
-        </div>
-        <div class="vax-row-actions"><button class="vax-del" onclick="deleteGroomingEntry('${r.id}')" title="Delete">🗑</button></div>
-      </div>`).join('')}</div>`;
-  return list + `
-    <div style="border-top:1px solid var(--border2);padding-top:1rem">
-      <div style="font-weight:700;font-size:.85rem;margin-bottom:.75rem">Log a new grooming session</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
-        <div><label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Date</label>
-          <input type="date" id="grmDate" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box"></div>
-        <div><label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Groomer / Salon</label>
-          <input type="text" id="grmGroomer" placeholder="e.g. Urban Paws Grooming" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box"></div>
-      </div>
-      <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Photo URL (optional)</label>
-      <input type="text" id="grmPhoto" placeholder="Paste a photo link" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box;margin-bottom:.75rem">
-      <label style="font-size:.8rem;font-weight:700;display:block;margin-bottom:.4rem">Notes</label>
-      <textarea id="grmNotes" rows="2" placeholder="e.g. Full groom + nail trim, coat looking great" style="width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;font-family:inherit;font-size:.85rem;outline:none;box-sizing:border-box;resize:vertical;margin-bottom:1rem"></textarea>
-      <button onclick="addGroomingEntry()" style="width:100%;padding:11px;border-radius:100px;border:none;background:var(--paw);color:#fff;font-weight:700;font-family:inherit;font-size:.85rem;cursor:pointer">➕ Add Session</button>
-    </div>`;
-}
-
-function openGroomingModal() {
-  openPetFeatureModal('✂️ Grooming History', renderGroomingBody());
-}
-
-function addGroomingEntry() {
-  const date = document.getElementById('grmDate').value;
-  if (!date) { showToast('⚠️ Please pick a date', 'error'); return; }
-  const records = getGroomingRecords();
-  records.push({
-    id: Date.now() + '-' + Math.random().toString(36).slice(2,8),
-    date,
-    groomer: document.getElementById('grmGroomer').value.trim(),
-    photoUrl: document.getElementById('grmPhoto').value.trim(),
-    notes: document.getElementById('grmNotes').value.trim(),
-  });
-  setGroomingRecords(records);
-  showToast('✅ Grooming session added!', 'success');
-  document.getElementById('petFeatureModalBody').innerHTML = renderGroomingBody();
-}
-
-function deleteGroomingEntry(id) {
-  setGroomingRecords(getGroomingRecords().filter(r => r.id !== id));
-  showToast('🗑 Grooming session removed', 'success');
-  document.getElementById('petFeatureModalBody').innerHTML = renderGroomingBody();
-}
-
 function openMedicalNotesModal() {
   const h = getHealthInfo();
   const rows = [
@@ -3525,18 +3321,6 @@ function openTimelineModal() {
         </div>
       </div>`).join('')}</div>`;
   openPetFeatureModal('📅 Timeline', body);
-}
-
-function openPhotoGalleryModal() {
-  const photos = getGroomingRecords().filter(r => r.photoUrl);
-  const body = !photos.length
-    ? `<div class="vax-empty">No photos yet. Add a photo link when you log a grooming session and it'll show up here.</div>`
-    : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem">${photos.map(r => `
-      <div>
-        <img src="${escapeHtml(r.photoUrl)}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid var(--border2)" onerror="this.style.display='none'">
-        <div style="font-size:.68rem;color:var(--muted);margin-top:4px;text-align:center">${r.date ? new Date(r.date+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : ''}</div>
-      </div>`).join('')}</div>`;
-  openPetFeatureModal('📸 Photo Gallery', body);
 }
 
 function downloadPetRecords() {
@@ -4331,11 +4115,9 @@ async function loadFeedbackReviews() {
 }
 
 const PAGES_INDEX = [
-  { id:'dashboard',  label:'Dashboard',       icon:'🏠', sub:'Overview & stats' },
   { id:'profile',    label:'My Profile',      icon:'👤', sub:'Edit your details' },
   { id:'book',       label:'Book a Service',  icon:'➕', sub:'Walk or food delivery' },
   { id:'bookings',   label:'My Bookings',     icon:'📋', sub:'View all bookings' },
-  { id:'services',   label:'Services',        icon:'🛎', sub:'What we offer' },
   { id:'food',       label:'Pet Food',        icon:'🍲', sub:'Fresh food delivery' },
   { id:'shop',       label:'Shop',            icon:'🛒', sub:'Pet supplies' },
   { id:'pricing',    label:'Pricing & Plans', icon:'💳', sub:'Upgrade your plan' },
