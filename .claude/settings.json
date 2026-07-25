@@ -163,7 +163,8 @@
       "Bash(rm -rf android ios node_modules package-lock.json)",
       "Bash(/Users/rakeshks/Library/Android/sdk/platform-tools/adb devices *)",
       "Bash(node _tmp_verify_final.mjs)",
-      "Bash(node _tmp_verify_sidebar.mjs)"
+      "Bash(node _tmp_verify_sidebar.mjs)",
+      "Bash(node _tmp_verify_referral.mjs)"
     ]
   }
 }
