@@ -166,7 +166,14 @@
       "Bash(node _tmp_verify_sidebar.mjs)",
       "Bash(node _tmp_verify_referral.mjs)",
       "Bash(node _tmp_verify_filter.mjs)",
-      "Bash(sed -i '' \"s/status:'completed'/status:'confirmed'/\" /Users/rakeshks/urbanpaws/_tmp_verify_filter.mjs)"
+      "Bash(sed -i '' \"s/status:'completed'/status:'confirmed'/\" /Users/rakeshks/urbanpaws/_tmp_verify_filter.mjs)",
+      "Bash(sed -i '' \"s|/bookings|my-bookings.html|g\" index.html)",
+      "Bash(sed -i '' 's|href=\"executive-login.html\"|href=\"https://urbanpaws.app/login\" target=\"_blank\" rel=\"noopener\"|g' index.html)",
+      "Bash(sed -i '' \"s|window.location.replace\\('/'\\)|window.location.replace\\('index.html'\\)|g\" my-bookings.html)",
+      "Bash(JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\" ./gradlew assembleDebug)",
+      "Bash(python3 - /private/tmp/claude-501/-Users-rakeshks-urbanpaws/fbd3aad8-189e-4415-813c-9d21c61bf17b/scratchpad/mb.js)",
+      "Bash(node --check /private/tmp/claude-501/-Users-rakeshks-urbanpaws/fbd3aad8-189e-4415-813c-9d21c61bf17b/scratchpad/mb.js)",
+      "Bash(awk -F/ '{print $2\"/\"$3}')"
     ]
   }
 }
