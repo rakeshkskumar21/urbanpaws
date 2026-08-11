@@ -1297,7 +1297,11 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
               <option>Female</option>
             </select>
           </div>
-          <div class="pf-group full"><label>Address <span class="bk-req">*</span></label><textarea id="obAddress" placeholder="Apartment, area, city, PIN code" rows="2"></textarea></div>
+          <div class="pf-group"><label>Flat No / Door No <span class="bk-req">*</span></label><input type="text" id="obFlatNo" placeholder="e.g. 20, 3B"></div>
+          <div class="pf-group"><label>Road / Street <span class="bk-req">*</span></label><input type="text" id="obStreet" placeholder="e.g. 3rd Cross, Varthur Road"></div>
+          <div class="pf-group"><label>Area <span class="bk-req">*</span></label><input type="text" id="obArea" placeholder="e.g. Thubarahalli, Whitefield"></div>
+          <div class="pf-group"><label>City <span class="bk-req">*</span></label><input type="text" id="obCity" placeholder="e.g. Bengaluru"></div>
+          <div class="pf-group"><label>Pincode <span class="bk-req">*</span></label><input type="text" id="obPincode" inputmode="numeric" maxlength="6" placeholder="e.g. 560066"></div>
         </div>
       </div>
 
@@ -1419,7 +1423,11 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
               <div class="pf-group"><label>Full Name <span class="bk-req">*</span></label><input type="text" id="pfName" placeholder="Your full name" disabled></div>
               <div class="pf-group"><label>Email Address <span class="bk-req">*</span></label><input type="email" id="pfEmail" disabled></div>
               <div class="pf-group"><label>Phone Number <span class="bk-req">*</span></label><input type="tel" id="pfPhone" placeholder="+91 XXXXX XXXXX" disabled></div>
-              <div class="pf-group full"><label>Address <span class="bk-req">*</span></label><textarea id="pfAddress" placeholder="Apartment, area, city, PIN code" disabled></textarea></div>
+              <div class="pf-group"><label>Flat No / Door No <span class="bk-req">*</span></label><input type="text" id="pfFlatNo" placeholder="e.g. 20, 3B" disabled></div>
+              <div class="pf-group"><label>Road / Street <span class="bk-req">*</span></label><input type="text" id="pfStreet" placeholder="e.g. 3rd Cross, Varthur Road" disabled></div>
+              <div class="pf-group"><label>Area <span class="bk-req">*</span></label><input type="text" id="pfArea" placeholder="e.g. Thubarahalli, Whitefield" disabled></div>
+              <div class="pf-group"><label>City <span class="bk-req">*</span></label><input type="text" id="pfCity" placeholder="e.g. Bengaluru" disabled></div>
+              <div class="pf-group"><label>Pincode <span class="bk-req">*</span></label><input type="text" id="pfPincode" inputmode="numeric" maxlength="6" placeholder="e.g. 560066" disabled></div>
             </div>
             <div id="pfEditActions" style="display:none; margin-top:1.2rem; gap:.75rem; flex-wrap:wrap;">
               <button class="save-btn" id="saveBtn" onclick="saveProfile()">Save Changes →</button>
@@ -1882,10 +1890,32 @@ body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(
             </select>
             <span class="bk-err" id="bkerr-gender">Please select your pet's gender.</span>
           </div>
+          <div class="bk-group">
+            <label>Flat No / Door No <span class="bk-req">*</span></label>
+            <input type="text" id="bkFlatNo" placeholder="e.g. 20, 3B">
+            <span class="bk-err" id="bkerr-flatNo">Please enter your flat / door number.</span>
+          </div>
+          <div class="bk-group">
+            <label>Road / Street <span class="bk-req">*</span></label>
+            <input type="text" id="bkStreet" placeholder="e.g. 3rd Cross, Varthur Road">
+            <span class="bk-err" id="bkerr-street">Please enter your road / street.</span>
+          </div>
+          <div class="bk-group">
+            <label>Area <span class="bk-req">*</span></label>
+            <input type="text" id="bkArea" placeholder="e.g. Thubarahalli, Whitefield">
+            <span class="bk-err" id="bkerr-area">Please enter your area.</span>
+          </div>
+          <div class="bk-group">
+            <label>City <span class="bk-req">*</span></label>
+            <input type="text" id="bkCity" placeholder="e.g. Bengaluru">
+            <span class="bk-err" id="bkerr-city">Please enter your city.</span>
+          </div>
+          <div class="bk-group">
+            <label>Pincode <span class="bk-req">*</span></label>
+            <input type="text" id="bkPincode" inputmode="numeric" maxlength="6" placeholder="e.g. 560066">
+            <span class="bk-err" id="bkerr-pincode">Please enter a valid 6-digit pincode.</span>
+          </div>
           <div class="bk-group full">
-            <label>Your address <span class="bk-req">*</span></label>
-            <input type="text" id="bkAddress" placeholder="Flat / Tower / Apartment, Area, City">
-            <span class="bk-err" id="bkerr-address">Please enter your address.</span>
             <span class="bk-dist-status" id="bkDistStatus"></span>
           </div>
           <div class="bk-group">
@@ -2882,7 +2912,6 @@ async function loadProfile(user) {
   // Pre-fill booking form with known user details
   const bkEmailEl   = document.getElementById('bkEmail');
   const bkPhoneEl   = document.getElementById('bkPhone');
-  const bkAddressEl = document.getElementById('bkAddress');
   if (bkEmailEl   && !bkEmailEl.value)   bkEmailEl.value   = user.email       || '';
   if (bkPhoneEl   && !bkPhoneEl.value)   bkPhoneEl.value   = (p&&p.phone)     || '';
   // Pre-fill feedback form
@@ -2890,12 +2919,13 @@ async function loadProfile(user) {
   const fbEmailEl = document.getElementById('fbEmail');
   if (fbNameEl  && !fbNameEl.value)  fbNameEl.value  = (p&&p.full_name) || '';
   if (fbEmailEl && !fbEmailEl.value) fbEmailEl.value = user.email || '';
-  if (bkAddressEl && !bkAddressEl.value) {
-    const profileAddr = (p&&p.address) || '';
-    bkAddressEl.value = profileAddr;
-    if (profileAddr) autoSelectDelivery(profileAddr);
-  }
-  document.getElementById('pfAddress').value = (p&&p.address)||'';
+  // Fetch the saved address into both the profile fields and the booking form,
+  // and price delivery from it straight away.
+  const savedAddr = addrFromProfile(p);
+  addrFill('pf', savedAddr);
+  addrFill('bk', savedAddr);
+  const savedGeoQuery = addrGeoQuery(addrRead('bk'));
+  if (savedGeoQuery) autoSelectDelivery(savedGeoQuery);
   loadHealthInfo();
   renderVaxCard();
   setTimeout(() => checkVaxReminders(false), 2600);
@@ -2933,7 +2963,7 @@ function recomputeRingFromFields() {
     name:        val('pfName').trim() !== '' && !val('pfName').includes('@'),
     email:       val('pfEmail').trim() !== '',
     phone:       val('pfPhone').trim() !== '',
-    address:     val('pfAddress').trim() !== '',
+    address:     addrIsComplete(addrRead('pf')),
     petName:     val('pfPetName').trim() !== '',
     breed:       val('pfBreed').trim() !== '',
     petAge:      val('pfPetAge').trim() !== '',
@@ -2958,7 +2988,7 @@ function checkProfileCompletion(p, userId) {
     name:        !!(p && p.full_name && !p.full_name.includes('@')),
     email:       !!(uEmail),
     phone:       !!(p && p.phone && p.phone.trim()),
-    address:     !!(p && p.address && p.address.trim()),
+    address:     addrIsComplete(addrFromProfile(p)),
     petName:     !!(health.pet_name && health.pet_name.trim()),
     breed:       !!(health.breed && health.breed.trim()),
     petAge:      !!(health.pet_age && health.pet_age.trim()),
@@ -2975,7 +3005,7 @@ function checkProfileCompletion(p, userId) {
   if (pct < 100 && !sessionStorage.getItem('ppDismissed')) {
     setTimeout(() => showProfilePrompt(checks), 1800);
   }
-  const allIds = ['pfName','pfEmail','pfPhone','pfAddress','pfPetName','pfBreed','pfPetAge','pfGender','pfAllergies','pfLimping','pfSurgery','pfEating','pfVaccinated','pfTemperament'];
+  const allIds = ['pfName','pfEmail','pfPhone','pfFlatNo','pfStreet','pfArea','pfCity','pfPincode','pfPetName','pfBreed','pfPetAge','pfGender','pfAllergies','pfLimping','pfSurgery','pfEating','pfVaccinated','pfTemperament'];
   allIds.forEach(id => {
     const el = document.getElementById(id);
     if (el && !el._ringListenerAttached) {
@@ -3045,7 +3075,7 @@ function obInit(plan) {
       if (p) {
         document.getElementById('obName').value    = p.full_name || '';
         document.getElementById('obPhone').value   = p.phone || '';
-        document.getElementById('obAddress').value = p.address || '';
+        addrFill('ob', addrFromProfile(p));
       }
       const h = JSON.parse(localStorage.getItem('urbanpaws_health_'+currentUser.id)||'{}');
       document.getElementById('obPetName').value     = h.pet_name||'';
@@ -3067,12 +3097,16 @@ async function obSubmit() {
   if (!currentUser) return;
   const full_name = document.getElementById('obName').value.trim();
   const phone     = document.getElementById('obPhone').value.trim();
-  const address   = document.getElementById('obAddress').value.trim();
+  const addr      = addrRead('ob');
   const pet_name  = document.getElementById('obPetName').value.trim();
-  if (!full_name || !phone || !address || !pet_name) { showToast('❌ Please fill in all required fields'); return; }
+  if (!full_name || !phone || !pet_name) { showToast('❌ Please fill in all required fields'); return; }
+  if (!addrIsComplete(addr)) { showToast('❌ Please fill in every address field, with a 6-digit pincode'); return; }
   const btn = document.getElementById('obSubmitBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
-  const { error } = await db.from('profiles').upsert({ id:currentUser.id, email:currentUser.email, full_name, phone, address, plan:_obPlan });
+  const error = await upsertProfile(Object.assign({
+    id:currentUser.id, email:currentUser.email, full_name, phone,
+    address: addrCompose(addr), plan:_obPlan
+  }, addr));
   btn.disabled = false; btn.textContent = 'Confirm & Get Started →';
   if (error) { showToast('❌ '+error.message); return; }
   const h = {
@@ -3492,13 +3526,13 @@ function dismissVaxPrompt() {
 }
 
 function pfEnableEdit() {
-  ['pfName','pfPhone','pfAddress'].forEach(id => document.getElementById(id).disabled = false);
+  ['pfName','pfPhone','pfFlatNo','pfStreet','pfArea','pfCity','pfPincode'].forEach(id => document.getElementById(id).disabled = false);
   document.getElementById('pfEditActions').style.display = 'flex';
   document.getElementById('editBtn').style.display = 'none';
 }
 
 function pfCancelEdit() {
-  ['pfName','pfPhone','pfAddress'].forEach(id => document.getElementById(id).disabled = true);
+  ['pfName','pfPhone','pfFlatNo','pfStreet','pfArea','pfCity','pfPincode'].forEach(id => document.getElementById(id).disabled = true);
   document.getElementById('pfEditActions').style.display = 'none';
   document.getElementById('editBtn').style.display = '';
 }
@@ -3508,9 +3542,26 @@ async function saveProfile() {
   const btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
   const full_name = document.getElementById('pfName').value.trim();
-  const { error } = await db.from('profiles').upsert({ id: currentUser.id, email: currentUser.email, full_name, phone: document.getElementById('pfPhone').value.trim(), address: document.getElementById('pfAddress').value.trim() });
+  const addr = addrRead('pf');
+  if (!addrIsComplete(addr)) {
+    btn.disabled = false; btn.textContent = 'Save Changes →';
+    showToast('❌ Please fill in every address field, with a 6-digit pincode');
+    return;
+  }
+  const error = await upsertProfile(Object.assign({
+    id: currentUser.id, email: currentUser.email, full_name,
+    phone: document.getElementById('pfPhone').value.trim(),
+    address: addrCompose(addr)
+  }, addr));
   btn.disabled = false; btn.textContent = 'Save Changes →';
   if (error) { showToast('❌ '+error.message); return; }
+  // Keep the booking form in step with the address just saved
+  ADDRESS_PARTS.forEach(k => {
+    const el = document.getElementById(ADDRESS_FIELD_IDS.bk[k]);
+    if (el) el.value = addr[k];
+  });
+  const geoQuery = addrGeoQuery(addr);
+  if (geoQuery) autoSelectDelivery(geoQuery);
   document.getElementById('pfNameBig').textContent    = full_name;
   setAllAvatars(full_name, _currentAvatarUrl);
   document.getElementById('welcomeMsg').textContent   = 'Welcome back, '+full_name.split(' ')[0]+' 👋';
@@ -3547,7 +3598,11 @@ function bkSetupValidationClears() {
     { id:'bkBreed',     err:'bkerr-breed',      ev:'change', ok: v => v !== '' },
     { id:'bkPetAge',    err:'bkerr-petAge',     ev:'change', ok: v => v !== '' },
     { id:'bkGender',    err:'bkerr-gender',     ev:'change', ok: v => v !== '' },
-    { id:'bkAddress',   err:'bkerr-address',    ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkFlatNo',    err:'bkerr-flatNo',     ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkStreet',    err:'bkerr-street',     ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkArea',      err:'bkerr-area',       ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkCity',      err:'bkerr-city',       ev:'input',  ok: v => v.trim() !== '' },
+    { id:'bkPincode',   err:'bkerr-pincode',    ev:'input',  ok: v => /^\d{6}$/.test(v.trim()) },
     { id:'bkDate',      err:'bkerr-date',       ev:'change', ok: v => v !== '' },
     { id:'bkTimeSlot',  err:'bkerr-timeSlot',   ev:'change', ok: v => v !== '' },
     { id:'bkPhone',     err:'bkerr-phone',      ev:'input',  ok: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
@@ -3567,15 +3622,19 @@ function bkSetupValidationClears() {
       if (ok(el.value)) { el.classList.remove('invalid'); errEl.classList.remove('visible'); }
     });
   });
-  // Re-detect delivery distance when address changes
-  const addrEl = document.getElementById('bkAddress');
-  if (addrEl) {
-    let _addrTimer;
-    addrEl.addEventListener('input', () => {
+  // Re-detect delivery distance when the area, city or pincode changes
+  let _addrTimer;
+  ['bkArea', 'bkCity', 'bkPincode'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => {
       clearTimeout(_addrTimer);
-      _addrTimer = setTimeout(() => { if (addrEl.value.trim()) autoSelectDelivery(addrEl.value.trim()); }, 800);
+      _addrTimer = setTimeout(() => {
+        const q = addrGeoQuery(addrRead('bk'));
+        if (q) autoSelectDelivery(q);
+      }, 800);
     });
-  }
+  });
 }
 
 let _bkWalkDur = '15', _bkWalkPaise = 8900, _bkSelectedFood = '', _bkFoodPaise = 0, _bkDeliveryPaise = 0, _bkDeliveryLabel = '';
@@ -3586,6 +3645,92 @@ const FOOD_PRICES = {
   'Rice & Curd': 4900, 'Rice & Chicken': 11900, 'Rice & Raw Egg': 7900,
   'Rice & Milk': 4900, 'Rice, Carrots, Beans & Potato': 7900, 'Rice & Boiled Egg': 6900
 };
+
+/* ── Structured address ──
+   The address is captured as five mandatory parts across three forms: the
+   booking form (bk*), My Profile (pf*) and onboarding (ob*). Profiles store
+   the parts in their own columns plus a composed `address` string, which is
+   what invoices, the sheet export and the admin/executive views still read. */
+const ADDRESS_PARTS = ['flat_no', 'street', 'area', 'city', 'pincode'];
+
+const ADDRESS_FIELD_IDS = {
+  bk: { flat_no:'bkFlatNo', street:'bkStreet', area:'bkArea', city:'bkCity', pincode:'bkPincode' },
+  pf: { flat_no:'pfFlatNo', street:'pfStreet', area:'pfArea', city:'pfCity', pincode:'pfPincode' },
+  ob: { flat_no:'obFlatNo', street:'obStreet', area:'obArea', city:'obCity', pincode:'obPincode' },
+};
+
+function addrRead(prefix) {
+  const ids = ADDRESS_FIELD_IDS[prefix], out = {};
+  ADDRESS_PARTS.forEach(k => {
+    const el = document.getElementById(ids[k]);
+    out[k] = el ? el.value.trim() : '';
+  });
+  return out;
+}
+
+// Fills empty fields only, so a half-typed address is never overwritten.
+function addrFill(prefix, parts) {
+  const ids = ADDRESS_FIELD_IDS[prefix];
+  ADDRESS_PARTS.forEach(k => {
+    const el = document.getElementById(ids[k]);
+    if (el && !el.value) el.value = parts[k] || '';
+  });
+}
+
+function addrCompose(a) {
+  const line = [a.flat_no, a.street, a.area, a.city].filter(Boolean).join(', ');
+  if (!a.pincode) return line;
+  return line ? line + ' - ' + a.pincode : a.pincode;
+}
+
+function addrIsComplete(a) {
+  return ADDRESS_PARTS.every(k => (a[k] || '').trim() !== '') && /^\d{6}$/.test((a.pincode || '').trim());
+}
+
+// Delivery distance is measured from the area/city/pincode only — flat and
+// street numbers add noise to the geocoder without improving the fix.
+function addrGeoQuery(a) {
+  return [a.area, a.city, a.pincode].filter(Boolean).join(', ');
+}
+
+// Best-effort split of a legacy single-line address, so profiles saved before
+// the fields were separated still prefill something usable.
+function addrFromLegacy(str) {
+  const parts = { flat_no:'', street:'', area:'', city:'', pincode:'' };
+  if (!str) return parts;
+  let rest = String(str).trim();
+  const pin = rest.match(/(\d{6})\s*$/);
+  if (pin) { parts.pincode = pin[1]; rest = rest.slice(0, pin.index).replace(/[\s,–-]+$/, ''); }
+  const bits = rest.split(',').map(s => s.trim()).filter(Boolean);
+  parts.flat_no = bits.shift() || '';
+  parts.city    = bits.length ? bits.pop() : '';
+  parts.street  = bits.shift() || '';
+  parts.area    = bits.join(', ');
+  return parts;
+}
+
+function addrFromProfile(p) {
+  if (!p) return addrFromLegacy('');
+  const hasParts = ADDRESS_PARTS.some(k => (p[k] || '').trim() !== '');
+  if (!hasParts) return addrFromLegacy(p.address);
+  const out = {};
+  ADDRESS_PARTS.forEach(k => out[k] = (p[k] || '').trim());
+  return out;
+}
+
+// Upserts a profile row, retrying without the structured address columns if
+// supabase-address-fields.sql hasn't been applied yet — so saving a profile
+// never hard-fails on a database that is a migration behind.
+async function upsertProfile(row) {
+  let { error } = await db.from('profiles').upsert(row);
+  if (error && /column|schema cache/i.test(error.message || '')) {
+    console.warn('Structured address columns missing — run supabase-address-fields.sql. Saving composed address only.');
+    const fallback = Object.assign({}, row);
+    ADDRESS_PARTS.forEach(k => delete fallback[k]);
+    ({ error } = await db.from('profiles').upsert(fallback));
+  }
+  return error;
+}
 
 // Urban Paws kitchen — No 20 Nandajyothi, Siddapura, Whitefield, Bengaluru
 const URBAN_PAWS_HUB = { lat: 12.95644, lng: 77.73240 };
@@ -3609,27 +3754,27 @@ function bkSetDistStatus(msg) {
   if (el) el.textContent = msg;
 }
 
-// Geocodes the customer address and picks the delivery tier from its
+// Geocodes the area/city/pincode and picks the delivery tier from its
 // straight-line distance to the kitchen. Returns the tier, or null if the
-// address couldn't be located.
-async function autoSelectDelivery(address) {
-  if (!address) return null;
+// location couldn't be found.
+async function autoSelectDelivery(geoQuery) {
+  if (!geoQuery) return null;
   bkSetDistStatus('📍 Detecting distance…');
   try {
-    const q = encodeURIComponent(address + ', Bengaluru, India');
+    const q = encodeURIComponent(geoQuery + ', India');
     const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + q + '&format=json&limit=1', {
       headers: { 'Accept-Language': 'en' }
     });
     const data = await res.json();
     if (!data.length) {
       _bkDistanceKm = null; _bkGeoAddress = '';
-      bkSetDistStatus('⚠️ Couldn’t locate that address — add the area or landmark');
+      bkSetDistStatus('⚠️ Couldn’t locate that area — check the area, city and pincode');
       return null;
     }
     const km = haversineKm(URBAN_PAWS_HUB.lat, URBAN_PAWS_HUB.lng, parseFloat(data[0].lat), parseFloat(data[0].lon));
     const tier = DELIVERY_TIERS.find(t => km <= t.km);
     _bkDistanceKm = km;
-    _bkGeoAddress = address;
+    _bkGeoAddress = geoQuery;
     bkSelectDelivery(null, tier.paise, tier.label);
     bkSetDistStatus('✓ ~' + km.toFixed(1) + ' km from our kitchen · ' + tier.label + ' · ₹' + tier.paise / 100 + ' delivery');
     return tier;
@@ -3875,7 +4020,11 @@ async function bkSubmit() {
     { id:'bkBreed',      err:'bkerr-breed',       check: v => v !== '' },
     { id:'bkPetAge',     err:'bkerr-petAge',      check: v => v !== '' },
     { id:'bkGender',     err:'bkerr-gender',      check: v => v !== '' },
-    { id:'bkAddress',    err:'bkerr-address',     check: v => v.trim() !== '' },
+    { id:'bkFlatNo',     err:'bkerr-flatNo',      check: v => v.trim() !== '' },
+    { id:'bkStreet',     err:'bkerr-street',      check: v => v.trim() !== '' },
+    { id:'bkArea',       err:'bkerr-area',        check: v => v.trim() !== '' },
+    { id:'bkCity',       err:'bkerr-city',        check: v => v.trim() !== '' },
+    { id:'bkPincode',    err:'bkerr-pincode',     check: v => /^\d{6}$/.test(v.trim()) },
     { id:'bkDate',       err:'bkerr-date',        check: v => v !== '' },
     { id:'bkTimeSlot',   err:'bkerr-timeSlot',    check: v => v !== '' },
     { id:'bkPhone',      err:'bkerr-phone',       check: v => /^[0-9+\s\-]{10,}$/.test(v.trim()) },
@@ -3909,8 +4058,8 @@ async function bkSubmit() {
   // Resolve the delivery tier from the address before opening checkout, so the
   // fee always matches the address the customer actually entered.
   if (!isWalk) {
-    const addr = document.getElementById('bkAddress').value.trim();
-    if (_bkDistanceKm === null || _bkGeoAddress !== addr) await autoSelectDelivery(addr);
+    const geoQuery = addrGeoQuery(addrRead('bk'));
+    if (_bkDistanceKm === null || _bkGeoAddress !== geoQuery) await autoSelectDelivery(geoQuery);
     if (!_bkDeliveryPaise) {
       const fallback = DELIVERY_TIERS[0];
       _bkDeliveryPaise = fallback.paise;
@@ -3928,7 +4077,7 @@ async function bkSubmit() {
     breed: document.getElementById('bkBreed').value,
     pet_age: document.getElementById('bkPetAge').value,
     gender: document.getElementById('bkGender').value,
-    address: document.getElementById('bkAddress').value.trim(),
+    address: addrCompose(addrRead('bk')),
     booking_date: document.getElementById('bkDate').value,
     time_slot: document.getElementById('bkTimeSlot').value,
     phone: document.getElementById('bkPhone').value.trim(),
@@ -3986,7 +4135,7 @@ function bkSave(data, btn) {
     fd.append('otherIssues',  data.other_issues);
     fetch(SHEET_ENDPOINT, { method: 'POST', body: fd }).catch(() => {});
 
-    ['bkPetName','bkAddress','bkInstructions','bkOtherIssues'].forEach(i => document.getElementById(i).value = '');
+    ['bkPetName','bkFlatNo','bkStreet','bkArea','bkCity','bkPincode','bkInstructions','bkOtherIssues'].forEach(i => document.getElementById(i).value = '');
     ['bkBreed','bkPetAge','bkGender','bkTimeSlot','bkPayment','bkAllergies','bkLimping','bkSurgery','bkEating','bkVaccinated','bkTemperament'].forEach(i => document.getElementById(i).selectedIndex = 0);
     // Clear the resolved distance so the next order re-detects from its own address
     _bkDistanceKm = null; _bkGeoAddress = ''; _bkDeliveryPaise = 0; _bkDeliveryLabel = '';
