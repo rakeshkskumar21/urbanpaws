@@ -173,7 +173,25 @@
       "Bash(JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\" ./gradlew assembleDebug)",
       "Bash(python3 - /private/tmp/claude-501/-Users-rakeshks-urbanpaws/fbd3aad8-189e-4415-813c-9d21c61bf17b/scratchpad/mb.js)",
       "Bash(node --check /private/tmp/claude-501/-Users-rakeshks-urbanpaws/fbd3aad8-189e-4415-813c-9d21c61bf17b/scratchpad/mb.js)",
-      "Bash(awk -F/ '{print $2\"/\"$3}')"
+      "Bash(awk -F/ '{print $2\"/\"$3}')",
+      "Bash(git ls-remote *)",
+      "Bash(xargs cat)",
+      "Bash(gh auth *)",
+      "Bash(gh run *)",
+      "Bash(curl -sI -L --max-time 25 \"https://urbanpaws.app/bookings\")",
+      "Bash(curl -s -L --max-time 25 \"https://urbanpaws.app/bookings?cb=$\\(date +%s\\)\")",
+      "Bash(xargs -I{} printf \"  found: {}\\\\n\")",
+      "Bash(awk '/id=\"page-food\"/,/id=\"page-pricing\"/' my-bookings.html)",
+      "Bash(grep -n 'PetAge'\\\\''\\).value\\\\|PetAge'\\\\'' *)",
+      "Bash(python3 -)",
+      "Bash(python3 - __TRACKED_VAR__/mb.js)",
+      "Bash(node --check __TRACKED_VAR__/mb.js)",
+      "Bash(python3 -m http.server 8899)",
+      "Bash(curl -s -o /dev/null -w \"server: %{http_code}\\\\n\" http://localhost:8899/my-bookings.html)",
+      "Read(//Applications/Chromium.app/Contents/MacOS/**)",
+      "Read(//Users/rakeshks/.cache/**)",
+      "Bash(sed -n '/Land the customer on the booking/,+6p' my-bookings.html)",
+      "Bash(sed -n '/^function openBookingDetail/,+4p' my-bookings.html)"
     ]
   }
 }
